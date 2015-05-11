@@ -1,0 +1,553 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Monkey-Moore 0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-11-29 18:00-0200\n"
+"PO-Revision-Date: 2009-11-29 19:00-0300\n"
+"Last-Translator: Ricardo J. Ricken <ricardoricken@gmail.com>\n"
+"Language-Team: Trans-Center <contato@trans-center.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+"X-Poedit-SourceCharset: iso-8859-2\n"
+
+#: ../../src/constants.hpp:29
+msgid "Choose where you want to save the table..."
+msgstr "Escolha onde quer salvar a tabela..."
+
+#: ../../src/constants.hpp:30
+msgid "Choose the file you want to search on..."
+msgstr "Escolha o arquivo a ser utilizado na busca..."
+
+#: ../../src/constants.hpp:33
+msgid "You must choose a file to perform the search on."
+msgstr "Escolha o arquivo onde a busca será realizada."
+
+#: ../../src/constants.hpp:34
+msgid ""
+"Unable to open the specified file.\n"
+"Check if it exists and if it's not being\n"
+"used by other applications."
+msgstr ""
+"Não foi possível abrir o arquivo especificado.\n"
+"Verifique se o mesmo existe e/ou não\n"
+"está em uso por outros programas."
+
+#: ../../src/constants.hpp:35
+msgid ""
+"Unable to open the specified file for reading.\n"
+"Check if it's not being used by other applications."
+msgstr ""
+"Não foi possível abrir o arquivo especificado para leitura.\n"
+"Verifique se o mesmo não está em uso por outros programas."
+
+#: ../../src/constants.hpp:36
+msgid "You must input a keyword with 3 or more characters."
+msgstr "A palavra utilizada na busca deve ter 3 ou mais caracteres."
+
+#: ../../src/constants.hpp:37
+msgid ""
+"The keyword must have at least\n"
+"3 upper or lower characters."
+msgstr ""
+"A palavra utilizada na busca deve ter\n"
+"3 ou mais letras maiúsculas ou minúsculas."
+
+#: ../../src/constants.hpp:38
+msgid ""
+"The keyword must have at least\n"
+"3 letters, excluding wildcards."
+msgstr ""
+"A palavra utilizada na busca deve ter\n"
+"3 ou mais letras, sem contar curingas."
+
+#: ../../src/constants.hpp:39
+msgid ""
+"Only letters and wildcards are supported.\n"
+"You may not use any other characters."
+msgstr ""
+"Somente letras e curingas são suportados.\n"
+"Não utilize outros caracteres."
+
+#: ../../src/constants.hpp:40
+msgid "You must input 3 or more non-wildcard characters."
+msgstr ""
+"A palavra utilizada na busca deve conter\n"
+"3 ou mais caracteres que não sejam curingas."
+
+#: ../../src/constants.hpp:41
+msgid "You must input a keyword containg ONLY characters found in your defined charset."
+msgstr ""
+"A palavra utilizada na busca deve conter APENAS caracteres\n"
+"presentes no conjunto de caracteres que você definiu."
+
+#: ../../src/constants.hpp:42
+msgid ""
+"Invalid value found. You should input only\n"
+"non-negative decimal numbers."
+msgstr ""
+"Um valor inválido foi encontrado.\n"
+"Digite apenas números decimais positivos."
+
+#: ../../src/constants.hpp:43
+msgid "You cannot use the defined wildcard character in your custom charset."
+msgstr "O conjunto de caracteres que você definiu não pode conter curingas."
+
+#: ../../src/constants.hpp:44
+msgid "The defined character set may not contain duplicated characters."
+msgstr ""
+"O conjunto de caracteres que você definiu\n"
+"não pode conter caracteres duplicados."
+
+#: ../../src/constants.hpp:45
+msgid ""
+"The wildcard option is enabled.\n"
+"You must input the desired wildcard in the field."
+msgstr ""
+"Você ativou o uso de curingas.\n"
+"Defina o caractere que o representa."
+
+#: ../../src/constants.hpp:46
+msgid ""
+"Only one character should be used as wildcard.\n"
+"Remove extra characters."
+msgstr ""
+"Somente um caractere deve ser utilizado como curinga.\n"
+"Remova os caracteres extras."
+
+#: ../../src/constants.hpp:47
+msgid ""
+"You must choose an item from the results\n"
+"list in order to create a Thingy table."
+msgstr ""
+"Escolha um dos itens exibidos na lista\n"
+"de resultados para então criar a tabela."
+
+#: ../../src/constants.hpp:48
+msgid "You cannot create a table while there are no results."
+msgstr "Não é possível criar uma tabela quando não há resultados."
+
+#: ../../src/constants.hpp:49
+msgid "Unable to start a worker thread to perform the search."
+msgstr "Não foi possível criar a thread secundária responsável pela busca."
+
+#: ../../src/monkey_about.hpp:45
+msgid "&Close"
+msgstr "&Fechar"
+
+#: ../../src/monkey_about.hpp:46
+msgid "Close this dialog box."
+msgstr "Fechar esta caixa de diálogo."
+
+#: ../../src/monkey_about.hpp:48
+msgid "Project's Website"
+msgstr "Página do projeto"
+
+#: ../../src/monkey_about.hpp:50
+msgid "Visit project homepage, at F.U.T."
+msgstr ""
+"Visite o tópico oficial do projeto,\n"
+"no Fórum Unificado de Tradução."
+
+#: ../../src/monkey_about.hpp:75
+#, c-format
+msgid "Version %s (build %s)"
+msgstr "Versão %s (build %s)"
+
+#: ../../src/monkey_about.hpp:76
+msgid "2007-2009, writen by Darkl0rd."
+msgstr "2007-2009, escrito por Darkl0rd."
+
+#: ../../src/monkey_about.hpp:77
+msgid "All rights reserved."
+msgstr "Todos os direitos reservados."
+
+#: ../../src/monkey_about.hpp:78
+msgid "This is a free software and it's"
+msgstr "Este é um software livre e está"
+
+#: ../../src/monkey_about.hpp:79
+msgid "under GNU's General Public"
+msgstr "de acordo com a Licença Pública"
+
+#: ../../src/monkey_about.hpp:80
+msgid "License (GPL)."
+msgstr "Geral da GNU (GPL)."
+
+#: ../../src/monkey_app.cpp:41
+msgid ""
+"Error during preferences loading.\n"
+"Monkey-Moore will use the default settings."
+msgstr ""
+"Ocorreu um erro durante o carregamento das preferências.\n"
+"O Monkey-Moore utilizará as opções padrão."
+
+#: ../../src/monkey_app.cpp:41
+msgid "Error"
+msgstr "Erro"
+
+#: ../../src/monkey_frame.cpp:84
+msgid "File"
+msgstr "Arquivo"
+
+#: ../../src/monkey_frame.cpp:96
+msgid " Relative search"
+msgstr " Busca relativa"
+
+#: ../../src/monkey_frame.cpp:97
+msgid " Value scan relative"
+msgstr " Busca por valores relativos"
+
+#: ../../src/monkey_frame.cpp:121
+msgid " Enable Wildcards"
+msgstr " Usar curingas"
+
+#: ../../src/monkey_frame.cpp:132
+msgid "Search Parameters"
+msgstr "Parâmetros da Busca"
+
+#: ../../src/monkey_frame.cpp:142
+msgid " Define character set:"
+msgstr " Definir charset:"
+
+#: ../../src/monkey_frame.cpp:155
+msgid "Advanced"
+msgstr "Opções Avançadas"
+
+#: ../../src/monkey_frame.cpp:163
+msgid "&Create Table"
+msgstr "&Criar tabela"
+
+#: ../../src/monkey_frame.cpp:164
+msgid "&Clear List"
+msgstr "&Limpar lista"
+
+#: ../../src/monkey_frame.cpp:167
+msgid "Results: "
+msgstr "Resultados:"
+
+#: ../../src/monkey_frame.cpp:180
+msgid "Results"
+msgstr "Resultados"
+
+#: ../../src/monkey_frame.cpp:182
+msgid " Show repeated results"
+msgstr " Mostrar resultados repetidos"
+
+#: ../../src/monkey_frame.cpp:187
+msgid "Offset"
+msgstr "Endereço"
+
+#: ../../src/monkey_frame.cpp:188
+msgid "Values"
+msgstr "Valores"
+
+#: ../../src/monkey_frame.cpp:189
+msgid "Preview"
+msgstr "Visualização Prévia"
+
+#: ../../src/monkey_frame.cpp:196
+#: ../../src/monkey_frame.cpp:435
+msgid "Searching..."
+msgstr "Procurando..."
+
+#: ../../src/monkey_frame.cpp:203
+msgid "Search Progress"
+msgstr "Progresso da Busca"
+
+#: ../../src/monkey_frame.cpp:226
+msgid ""
+"Path of the file where the\n"
+"search will be performed."
+msgstr "Arquivo utilizado na busca."
+
+#: ../../src/monkey_frame.cpp:227
+msgid "Search a file in your computer."
+msgstr "Procure um arquivo no seu computador."
+
+#: ../../src/monkey_frame.cpp:228
+msgid ""
+"Sets the search type\n"
+"to relative search."
+msgstr "Ativa a busca relativa."
+
+#: ../../src/monkey_frame.cpp:229
+msgid ""
+"Sets the search type\n"
+"to value scan relative."
+msgstr "Ativa a busca por valores relativos."
+
+#: ../../src/monkey_frame.cpp:230
+msgid "Type the search keyword."
+msgstr "Campo de busca"
+
+#: ../../src/monkey_frame.cpp:231
+msgid ""
+"Perform a search with\n"
+"the specified parameters."
+msgstr ""
+"Faz a busca utilizando\n"
+"os parâmetros especificados."
+
+#: ../../src/monkey_frame.cpp:232
+msgid "Allows the use of wildcards."
+msgstr "Permite o uso de curingas."
+
+#: ../../src/monkey_frame.cpp:233
+msgid ""
+"Type the desired wildcard\n"
+"in this field."
+msgstr ""
+"Digite aqui o caractere que será\n"
+"utilizado como curinga."
+
+#: ../../src/monkey_frame.cpp:234
+msgid "Shows/hides the advanced panel."
+msgstr "Exibe/oculta as opções avançadas."
+
+#: ../../src/monkey_frame.cpp:235
+msgid ""
+"Allows the use of a\n"
+"custom character set."
+msgstr ""
+"Permite a utilização de um\n"
+"conjunto de caracteres próprio."
+
+#: ../../src/monkey_frame.cpp:236
+msgid ""
+"Type the desired character\n"
+"set in this field."
+msgstr ""
+"Digite o conjunto de caracteres\n"
+"neste campo de texto."
+
+#: ../../src/monkey_frame.cpp:237
+msgid ""
+"Choose from a list of\n"
+"common character sets."
+msgstr ""
+"Escolha um conjunto de caracteres\n"
+"de uma lista personalizada."
+
+#: ../../src/monkey_frame.cpp:238
+msgid "Shows/hides duplicated results."
+msgstr "Mostra/oculta resultados repetidos."
+
+#: ../../src/monkey_frame.cpp:239
+msgid ""
+"Build a table based on\n"
+"your search results."
+msgstr ""
+"Monta uma tabela usando\n"
+"os resultados da busca."
+
+#: ../../src/monkey_frame.cpp:240
+msgid "Clear results of the last search."
+msgstr ""
+"Remove todos os resultados\n"
+"da última busca."
+
+#: ../../src/monkey_frame.cpp:241
+msgid ""
+"Change application\n"
+"options and settings."
+msgstr ""
+"Modifique as opções e\n"
+"configuração do programa."
+
+#: ../../src/monkey_frame.cpp:242
+msgid ""
+"Displays more info\n"
+"about Monkey-Moore."
+msgstr ""
+"Mostra mais informações\n"
+"sobre o Monkey-Moore."
+
+#: ../../src/monkey_frame.cpp:243
+msgid ""
+"Number of results found\n"
+"in the last search."
+msgstr ""
+"Número de resultados encontrados\n"
+"durante a última busca."
+
+#: ../../src/monkey_frame.cpp:244
+msgid "Abort the current search."
+msgstr "Cancelar a busca atual."
+
+#: ../../src/monkey_frame.cpp:287
+msgid "All files (*.*)|*.*"
+msgstr "Todos os arquivos (*.*)|*.*"
+
+#: ../../src/monkey_frame.cpp:573
+msgid "Create table file"
+msgstr "Gerar tabela"
+
+#: ../../src/monkey_frame.cpp:604
+msgid "Settings"
+msgstr "Configurações"
+
+#: ../../src/monkey_frame.cpp:616
+msgid "About Monkey-Moore"
+msgstr "Sobre o Monkey-Moore"
+
+#: ../../src/monkey_frame.cpp:880
+msgid "Elapsed time: "
+msgstr "Duração da busca: "
+
+#: ../../src/monkey_frame.cpp:883
+msgid "%M minute(s) and %S second(s)."
+msgstr "%M minuto(s) e %S segundo(s)."
+
+#: ../../src/monkey_frame.cpp:883
+#, c-format
+msgid "%S second(s)."
+msgstr "%S segundo(s)."
+
+#: ../../src/monkey_frame.cpp:884
+msgid "less than one second."
+msgstr "menos de um segundo."
+
+#: ../../src/monkey_frame.cpp:888
+msgid "No results found."
+msgstr "Nenhum resultado foi encontrado."
+
+#: ../../src/monkey_frame.cpp:908
+msgid "Search was aborted."
+msgstr "Busca cancelada."
+
+#: ../../src/monkey_frame.hpp:94
+#: ../../src/monkey_table.hpp:222
+msgid "Monkey-Moore - Error"
+msgstr "Monkey-Moore - Erro"
+
+#: ../../src/monkey_options.hpp:47
+msgid "General"
+msgstr "Geral"
+
+#: ../../src/monkey_options.hpp:48
+msgid " Always center main window on screen"
+msgstr " Centralizar a janela do programa na tela"
+
+#: ../../src/monkey_options.hpp:49
+msgid " Remember window size"
+msgstr " Lembrar o tamanho da janela"
+
+#: ../../src/monkey_options.hpp:50
+msgid " Remember window position"
+msgstr " Lembrar a posição da janela"
+
+#: ../../src/monkey_options.hpp:51
+msgid " Remember user interface options"
+msgstr " Lembrar as opções da interface"
+
+#: ../../src/monkey_options.hpp:58
+msgid "Offset mode:"
+msgstr "Exibir offsets em:"
+
+#: ../../src/monkey_options.hpp:59
+msgid "hex"
+msgstr "hexadecimal"
+
+#: ../../src/monkey_options.hpp:60
+msgid "decimal"
+msgstr "decimal"
+
+#: ../../src/monkey_options.hpp:66
+msgid "Preview width:"
+msgstr "Tamanho da visualização prévia:"
+
+#: ../../src/monkey_options.hpp:68
+msgid " bytes"
+msgstr " bytes"
+
+#: ../../src/monkey_options.hpp:75
+msgid "Display"
+msgstr "Visualização"
+
+#: ../../src/monkey_options.hpp:80
+msgid "Search buffer:"
+msgstr "Buffer de busca:"
+
+#: ../../src/monkey_options.hpp:82
+msgid " MB"
+msgstr " MB"
+
+#: ../../src/monkey_options.hpp:89
+msgid "Search"
+msgstr "Busca"
+
+#: ../../src/monkey_options.hpp:93
+msgid "Ok"
+msgstr "Salvar"
+
+#: ../../src/monkey_options.hpp:94
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: ../../src/monkey_table.hpp:50
+msgid "Thingy table file (*.tbl)|*.tbl"
+msgstr "Tabela do Thingy (*.tbl)|*.tbl"
+
+#: ../../src/monkey_table.hpp:54
+msgid "You can edit the table values below before saving:"
+msgstr "Antes de salvar, é possível editar os valores da tabela:"
+
+#: ../../src/monkey_table.hpp:57
+msgid "Byte"
+msgstr "Byte"
+
+#: ../../src/monkey_table.hpp:58
+msgid "Value"
+msgstr "Valor"
+
+#: ../../src/monkey_table.hpp:61
+msgid "Name "
+msgstr "Nome"
+
+#: ../../src/monkey_table.hpp:72
+msgid "Format "
+msgstr "Formato"
+
+#: ../../src/monkey_table.hpp:74
+msgid "Encoding "
+msgstr "Codificação"
+
+#: ../../src/monkey_table.hpp:77
+msgid "Thingy table file (*.tbl)"
+msgstr "Tabela do Thingy (*.tbl)"
+
+#: ../../src/monkey_table.hpp:80
+msgid "ANSI (ISO-8859-1)"
+msgstr "ANSI (ISO-8859-1)"
+
+#: ../../src/monkey_table.hpp:81
+msgid "Unicode (UTF-8)"
+msgstr "Unicode (UTF-8)"
+
+#: ../../src/monkey_table.hpp:82
+msgid "Unicode (UTF-16)"
+msgstr "Unicode (UTF-16)"
+
+#: ../../src/monkey_table.hpp:132
+msgid ""
+"Can't save in the specified encoding:\n"
+"The table contains non-ANSI characters."
+msgstr ""
+"Não foi possível salvar com a codificação escolhida:\n"
+"A tabela contém caracteres que não fazem parte do padrão ANSI."
+
+#: ../../src/monkey_table.hpp:140
+msgid "The table file couldn't be created. Try again."
+msgstr "Não foi possível salvar a tabela. Tente novamente."
+
+#: ../../src/monkey_table.hpp:158
+msgid "Table saved successfully."
+msgstr "A tabela foi criada com sucesso."
+

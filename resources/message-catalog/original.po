@@ -1,0 +1,500 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-11-29 18:12-0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../src/constants.hpp:29
+msgid "Choose where you want to save the table..."
+msgstr ""
+
+#: ../../src/constants.hpp:30
+msgid "Choose the file you want to search on..."
+msgstr ""
+
+#: ../../src/constants.hpp:33
+msgid "You must choose a file to perform the search on."
+msgstr ""
+
+#: ../../src/constants.hpp:34
+msgid ""
+"Unable to open the specified file.\n"
+"Check if it exists and if it's not being\n"
+"used by other applications."
+msgstr ""
+
+#: ../../src/constants.hpp:35
+msgid ""
+"Unable to open the specified file for reading.\n"
+"Check if it's not being used by other applications."
+msgstr ""
+
+#: ../../src/constants.hpp:36
+msgid "You must input a keyword with 3 or more characters."
+msgstr ""
+
+#: ../../src/constants.hpp:37
+msgid ""
+"The keyword must have at least\n"
+"3 upper or lower characters."
+msgstr ""
+
+#: ../../src/constants.hpp:38
+msgid ""
+"The keyword must have at least\n"
+"3 letters, excluding wildcards."
+msgstr ""
+
+#: ../../src/constants.hpp:39
+msgid ""
+"Only letters and wildcards are supported.\n"
+"You may not use any other characters."
+msgstr ""
+
+#: ../../src/constants.hpp:40
+msgid "You must input 3 or more non-wildcard characters."
+msgstr ""
+
+#: ../../src/constants.hpp:41
+msgid ""
+"You must input a keyword containg ONLY characters found in your defined "
+"charset."
+msgstr ""
+
+#: ../../src/constants.hpp:42
+msgid ""
+"Invalid value found. You should input only\n"
+"non-negative decimal numbers."
+msgstr ""
+
+#: ../../src/constants.hpp:43
+msgid "You cannot use the defined wildcard character in your custom charset."
+msgstr ""
+
+#: ../../src/constants.hpp:44
+msgid "The defined character set may not contain duplicated characters."
+msgstr ""
+
+#: ../../src/constants.hpp:45
+msgid ""
+"The wildcard option is enabled.\n"
+"You must input the desired wildcard in the field."
+msgstr ""
+
+#: ../../src/constants.hpp:46
+msgid ""
+"Only one character should be used as wildcard.\n"
+"Remove extra characters."
+msgstr ""
+
+#: ../../src/constants.hpp:47
+msgid ""
+"You must choose an item from the results\n"
+"list in order to create a Thingy table."
+msgstr ""
+
+#: ../../src/constants.hpp:48
+msgid "You cannot create a table while there are no results."
+msgstr ""
+
+#: ../../src/constants.hpp:49
+msgid "Unable to start a worker thread to perform the search."
+msgstr ""
+
+#: ../../src/monkey_about.hpp:45
+msgid "&Close"
+msgstr ""
+
+#: ../../src/monkey_about.hpp:46
+msgid "Close this dialog box."
+msgstr ""
+
+#: ../../src/monkey_about.hpp:48
+msgid "Project's Website"
+msgstr ""
+
+#: ../../src/monkey_about.hpp:50
+msgid "Visit project homepage, at F.U.T."
+msgstr ""
+
+#: ../../src/monkey_about.hpp:75
+#, c-format
+msgid "Version %s (build %s)"
+msgstr ""
+
+#: ../../src/monkey_about.hpp:76
+msgid "2007-2009, writen by Darkl0rd."
+msgstr ""
+
+#: ../../src/monkey_about.hpp:77
+msgid "All rights reserved."
+msgstr ""
+
+#: ../../src/monkey_about.hpp:78
+msgid "This is a free software and it's"
+msgstr ""
+
+#: ../../src/monkey_about.hpp:79
+msgid "under GNU's General Public"
+msgstr ""
+
+#: ../../src/monkey_about.hpp:80
+msgid "License (GPL)."
+msgstr ""
+
+#: ../../src/monkey_app.cpp:41
+msgid ""
+"Error during preferences loading.\n"
+"Monkey-Moore will use the default settings."
+msgstr ""
+
+#: ../../src/monkey_app.cpp:41
+msgid "Error"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:84
+msgid "File"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:96
+msgid " Relative search"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:97
+msgid " Value scan relative"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:121
+msgid " Enable Wildcards"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:132
+msgid "Search Parameters"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:142
+msgid " Define character set:"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:155
+msgid "Advanced"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:163
+msgid "&Create Table"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:164
+msgid "&Clear List"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:167
+msgid "Results: "
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:180
+msgid "Results"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:182
+msgid " Show repeated results"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:187
+msgid "Offset"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:188
+msgid "Values"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:189
+msgid "Preview"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:196 ../../src/monkey_frame.cpp:435
+msgid "Searching..."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:203
+msgid "Search Progress"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:226
+msgid ""
+"Path of the file where the\n"
+"search will be performed."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:227
+msgid "Search a file in your computer."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:228
+msgid ""
+"Sets the search type\n"
+"to relative search."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:229
+msgid ""
+"Sets the search type\n"
+"to value scan relative."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:230
+msgid "Type the search keyword."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:231
+msgid ""
+"Perform a search with\n"
+"the specified parameters."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:232
+msgid "Allows the use of wildcards."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:233
+msgid ""
+"Type the desired wildcard\n"
+"in this field."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:234
+msgid "Shows/hides the advanced panel."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:235
+msgid ""
+"Allows the use of a\n"
+"custom character set."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:236
+msgid ""
+"Type the desired character\n"
+"set in this field."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:237
+msgid ""
+"Choose from a list of\n"
+"common character sets."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:238
+msgid "Shows/hides duplicated results."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:239
+msgid ""
+"Build a table based on\n"
+"your search results."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:240
+msgid "Clear results of the last search."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:241
+msgid ""
+"Change application\n"
+"options and settings."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:242
+msgid ""
+"Displays more info\n"
+"about Monkey-Moore."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:243
+msgid ""
+"Number of results found\n"
+"in the last search."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:244
+msgid "Abort the current search."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:287
+msgid "All files (*.*)|*.*"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:573
+msgid "Create table file"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:604
+msgid "Settings"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:616
+msgid "About Monkey-Moore"
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:880
+msgid "Elapsed time: "
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:883
+msgid "%M minute(s) and %S second(s)."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:883
+#, c-format
+msgid "%S second(s)."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:884
+msgid "less than one second."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:888
+msgid "No results found."
+msgstr ""
+
+#: ../../src/monkey_frame.cpp:908
+msgid "Search was aborted."
+msgstr ""
+
+#: ../../src/monkey_frame.hpp:94 ../../src/monkey_table.hpp:222
+msgid "Monkey-Moore - Error"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:47
+msgid "General"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:48
+msgid " Always center main window on screen"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:49
+msgid " Remember window size"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:50
+msgid " Remember window position"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:51
+msgid " Remember user interface options"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:58
+msgid "Offset mode:"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:59
+msgid "hex"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:60
+msgid "decimal"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:66
+msgid "Preview width:"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:68
+msgid " bytes"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:75
+msgid "Display"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:80
+msgid "Search buffer:"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:82
+msgid " MB"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:89
+msgid "Search"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:93
+msgid "Ok"
+msgstr ""
+
+#: ../../src/monkey_options.hpp:94
+msgid "Cancel"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:50
+msgid "Thingy table file (*.tbl)|*.tbl"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:54
+msgid "You can edit the table values below before saving:"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:57
+msgid "Byte"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:58
+msgid "Value"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:61
+msgid "Name "
+msgstr ""
+
+#: ../../src/monkey_table.hpp:72
+msgid "Format "
+msgstr ""
+
+#: ../../src/monkey_table.hpp:74
+msgid "Encoding "
+msgstr ""
+
+#: ../../src/monkey_table.hpp:77
+msgid "Thingy table file (*.tbl)"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:80
+msgid "ANSI (ISO-8859-1)"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:81
+msgid "Unicode (UTF-8)"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:82
+msgid "Unicode (UTF-16)"
+msgstr ""
+
+#: ../../src/monkey_table.hpp:132
+msgid ""
+"Can't save in the specified encoding:\n"
+"The table contains non-ANSI characters."
+msgstr ""
+
+#: ../../src/monkey_table.hpp:140
+msgid "The table file couldn't be created. Try again."
+msgstr ""
+
+#: ../../src/monkey_table.hpp:158
+msgid "Table saved successfully."
+msgstr ""
