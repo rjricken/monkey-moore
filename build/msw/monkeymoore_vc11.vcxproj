@@ -56,19 +56,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\trunk\library\libraries.props" />
+    <Import Project="monkeymoore_Win32.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\library\libraries_x64.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.&#xD;&#xA;')" Label="LocalAppDataPlatform" />
+    <Import Project="monkeymoore_x64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\trunk\library\libraries.props" />
+    <Import Project="monkeymoore_Win32.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\library\libraries_x64.props" />
+    <Import Project="monkeymoore_x64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -82,7 +82,6 @@
     <TargetName>mmoored64</TargetName>
     <OutDir>monkeymoore_debug_x64\</OutDir>
     <IntDir>monkeymoore_debug_x64\</IntDir>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -95,7 +94,6 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>monkeymoore_x64\</OutDir>
     <IntDir>monkeymoore_x64\</IntDir>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,7 +116,9 @@
       <Path>monkeymoore_debug\$(MSBuildProjectName).log</Path>
     </BuildLog>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(ProjectDir)..\..\</Command>
+      <Command>robocopy ..\..\resources\language ..\..\bin\language\ *.* /S /NJH /NJS
+robocopy ..\..\resources\images ..\..\bin\images\ *.* /S /NJH /NJS</Command>
+      <Message>Copying resource files necessary to run the application into the working directory...</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,7 +142,9 @@
       <Path>monkeymoore_debug_x64\$(MSBuildProjectName).log</Path>
     </BuildLog>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(ProjectDir)..\..\</Command>
+      <Command>robocopy ..\..\resources\language ..\..\bin\language\ *.* /S /NJH /NJS
+robocopy ..\..\resources\images ..\..\bin\images\ *.* /S /NJH /NJS</Command>
+      <Message>Copying resource files necessary to run the application into the working directory...</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -166,8 +168,15 @@
       <Path>monkeymoore_release\$(MSBuildProjectName).log</Path>
     </BuildLog>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(ProjectDir)..\..\</Command>
+      <Command>copy $(TargetPath) ..\..\bin\
+robocopy ..\..\resources\language ..\..\bin\language\ *.* /S /NJH /NJS
+robocopy ..\..\resources\images ..\..\bin\images\ *.* /S /NJH /NJS</Command>
+      <Message>Moving compiled files and necessary resources to \bin...</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -190,7 +199,9 @@
       <Path>monkeymoore_x64\$(MSBuildProjectName).log</Path>
     </BuildLog>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(ProjectDir)..\..\</Command>
+      <Command>copy $(TargetPath) ..\..\bin\
+robocopy ..\..\resources\language ..\..\bin\language\ *.* /S /NJH /NJS
+robocopy ..\..\resources\images ..\..\bin\images\ *.* /S /NJH /NJS</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -214,7 +225,7 @@
     <ClCompile Include="..\..\src\monkey_prefs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="monkey_res.rc" />
+    <ResourceCompile Include="..\..\resources\msw\monkey_res.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

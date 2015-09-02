@@ -1,0 +1,16 @@
+# Ignored
+bin/*
+build/msw/*/
+lib/*
+include/*
+
+*.suo
+*.opensdf
+*.sdf
+*.aps
+
+*.db
+
+# Keeping empty folders
+!.gitkeep
+
