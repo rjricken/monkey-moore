@@ -36,6 +36,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <algorithm>
 #include <vector>
 #include <limits>
 
@@ -128,10 +129,10 @@ private:
    */
    void preprocess ()
    {
-      bool wildcards = count(key, key + klen, card) > 0;
+      bool wildcards = std::count(key, key + klen, card) > 0;
 
       if (!cplen && type != value_scan)
-         case_change = count_if(key, key + klen, is_upper) && count_if(key, key + klen, is_lower);
+         case_change = std::count_if(key, key + klen, is_upper) && std::count_if(key, key + klen, is_lower);
 
       if (type != value_scan)
          type = wildcards || case_change ? wildcard_relative : simple_relative;
@@ -149,7 +150,7 @@ private:
          !cplen ? calc_reltable(key, key_tbl, klen) : calc_reltable_cp(key, key_tbl, klen);
 
          // prepares the jump table
-         fill(skip, skip + sklen, static_cast <char> (klen - 1));
+         std::fill(skip, skip + sklen, static_cast <char> (klen - 1));
 
          // negative indices are mapped on positions 0-255, and positive ones on 256-511
          for (int i = klen - 1; i > 0; i--)
@@ -163,22 +164,22 @@ private:
       else // type == wildcard_relative
       {
          mdkey = new wxChar[klen];
-         copy(key, key + klen, mdkey);
+         std::copy(key, key + klen, mdkey);
 
          if (!cplen)
          {
             // determines if the majority of characters is upper or lower.
             // therefore, if the majority is lower, the uppers are replaced with
             // wildcards and found later by comparison.
-            int n_upper = static_cast <int> (count_if(key, key + klen, is_upper));
-            int n_lower = static_cast <int> (count_if(key, key + klen, is_lower));
+            int n_upper = static_cast <int> (std::count_if(key, key + klen, is_upper));
+            int n_lower = static_cast <int> (std::count_if(key, key + klen, is_lower));
             lower = n_lower > n_upper;
 
             if (n_upper && n_lower)
             {
                n_upper > n_lower ?
-                  replace_if(mdkey, mdkey + klen, is_lower, card) :
-                  replace_if(mdkey, mdkey + klen, is_upper, card);
+                  std::replace_if(mdkey, mdkey + klen, is_lower, card) :
+                  std::replace_if(mdkey, mdkey + klen, is_upper, card);
             }
          }
 
@@ -191,7 +192,7 @@ private:
 
 
          // --- builds the relative difference table
-         n_wildcards = static_cast <int> (count(mdkey, mdkey + klen, card));
+         n_wildcards = static_cast <int> (std::count(mdkey, mdkey + klen, card));
          wxChar *mdkey_pure = new wxChar[klen - n_wildcards];
 
          for (int i = 0, j = 0; i < klen; i++)
@@ -209,7 +210,7 @@ private:
             key_tbl[i] = wc_pos[i] ? key_tbl_tmp[j--] : 0;
 
          // --- builds the jump table
-         fill(skip, skip + sklen, static_cast<char> (klen - 1));
+         std::fill(skip, skip + sklen, static_cast<char> (klen - 1));
 
          // negative indices are mapped on positions 0-255, and positive ones on 256-511
          for (int i = klen - 1; i > 0; i--)
@@ -217,14 +218,14 @@ private:
             int index = key_tbl[i] > 0 ? (sklen / 2) + key_tbl[i] : -key_tbl[i];
 
             if (skip[index] == klen - 1)
-               skip[index] = static_cast <char> (klen - count(mdkey + i + 1, mdkey + klen, card) - i - 1);
+               skip[index] = static_cast <char> (klen - std::count(mdkey + i + 1, mdkey + klen, card) - i - 1);
          }
 
          // --- builds the wildcard jump table
          cards = new u8[klen];
 
          for (int i = klen - 1; i >= 0; i--)
-            cards[i] = mdkey[i] == card ? 1 : static_cast <u8> (max<int>(i - find_last(mdkey, mdkey + i, card) - 1, 1));
+            cards[i] = mdkey[i] == card ? 1 : static_cast <u8> (std::max<int>(i - find_last(mdkey, mdkey + i, card) - 1, 1));
 
          // --- clean up
          delete [] mdkey_pure;
@@ -250,13 +251,13 @@ private:
 
       klen = ksz;
       key = new wxChar[klen];
-      copy(kw, kw + klen, key);
+      std::copy(kw, kw + klen, key);
 
       if (wxStrlen(cp))
       {
          cplen = wxStrlen(cp);
          char_pattern = new wxChar[cplen];
-         copy(cp, cp + cplen, char_pattern);
+         std::copy(cp, cp + cplen, char_pattern);
       }
 
       sklen = std::numeric_limits<Ty>::max() * 2;
@@ -273,7 +274,7 @@ private:
    */
    std::vector <relative_type> monkey_moore (const Ty *data, long hlen)
    {
-      vector <relative_type> results;
+      std::vector <relative_type> results;
 
       const Ty *hpos_end = data + klen;
       const Ty *hpos_start = data;
@@ -314,7 +315,7 @@ private:
                }
             }
 
-            results.push_back(make_pair(static_cast <long> (distance(data, hpos_start)), eq));
+            results.push_back(make_pair(static_cast <long> (std::distance(data, hpos_start)), eq));
 
             hpos_end += klen - 1;
             hpos_start += klen - 1;
@@ -324,7 +325,7 @@ private:
             // key didn't fully match, so we must figure out how many bytes to jump over
 
             int &elem = tmp_tbl[klen - hits - 1];
-            int jump = max<char>(skip[elem > 0 ? (sklen / 2) + elem : -elem], 1);
+            int jump = std::max<char>(skip[elem > 0 ? (sklen / 2) + elem : -elem], 1);
 
             hpos_end += jump;
             hpos_start += jump;
@@ -345,7 +346,7 @@ private:
    */
    std::vector <relative_type> monkey_moore_wc (const Ty *data, long hlen)
    {
-      vector <relative_type> results;
+      std::vector <relative_type> results;
 
       const Ty *hpos_end = data + klen;
       const Ty *hpos_start = data;
@@ -418,7 +419,7 @@ private:
                   eq[char_pattern[i]] = static_cast <Ty> (cp_pos[char_pattern[i]] + base_diff);
             }
 
-            results.push_back(make_pair(static_cast <long> (distance(data, hpos_start)), eq));
+            results.push_back(std::make_pair(static_cast <long> (std::distance(data, hpos_start)), eq));
 
             int nw = count_begin(mdkey, mdkey + klen, card);
             hpos_end += klen - 1 - nw;
@@ -429,7 +430,7 @@ private:
             // key didn't fully match, so we must figure out how many bytes to jump over
 
             int &elem = tmp_tbl[klen - hits - 1];
-            int jump = min<u8>(cards[klen - hits - 1], max<char>(skip[elem > 0 ? (sklen / 2) + elem : -elem], 1));
+            int jump = std::min<u8>(cards[klen - hits - 1], std::max<char>(skip[elem > 0 ? (sklen / 2) + elem : -elem], 1));
 
             hpos_end += jump;
             hpos_start += jump;

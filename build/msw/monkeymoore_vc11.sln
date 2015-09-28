@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Monkey-Moore", "monkeymoore_vc11.vcxproj", "{58073D97-6DDA-4E66-BC5F-E88BA30881AD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MonkeyMooreTests", "..\..\test\MonkeyMooreTests\MonkeyMooreTests.vcxproj", "{C50989E8-4990-4CBC-A629-81B9614279EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,12 @@ Global
 		{58073D97-6DDA-4E66-BC5F-E88BA30881AD}.Release|Win32.Build.0 = Release|Win32
 		{58073D97-6DDA-4E66-BC5F-E88BA30881AD}.Release|x64.ActiveCfg = Release|x64
 		{58073D97-6DDA-4E66-BC5F-E88BA30881AD}.Release|x64.Build.0 = Release|x64
+		{C50989E8-4990-4CBC-A629-81B9614279EC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C50989E8-4990-4CBC-A629-81B9614279EC}.Debug|Win32.Build.0 = Debug|Win32
+		{C50989E8-4990-4CBC-A629-81B9614279EC}.Debug|x64.ActiveCfg = Debug|Win32
+		{C50989E8-4990-4CBC-A629-81B9614279EC}.Release|Win32.ActiveCfg = Release|Win32
+		{C50989E8-4990-4CBC-A629-81B9614279EC}.Release|Win32.Build.0 = Release|Win32
+		{C50989E8-4990-4CBC-A629-81B9614279EC}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

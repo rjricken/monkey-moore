@@ -8,6 +8,10 @@ include/*
 *.opensdf
 *.sdf
 *.aps
+*.lib
+*.exp
+*.pdb
+*.dll
 
 *.db
 

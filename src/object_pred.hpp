@@ -19,6 +19,16 @@
 #ifndef OBJECT_PRED_HPP
 #define OBJECT_PRED_HPP
 
+#include <wx/wxprec.h>
+
+#ifdef __BORLANDC__
+   #pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
 #include <string>
 #include <functional>
 
