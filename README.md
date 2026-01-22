@@ -1,31 +1,36 @@
 # Monkey-Moore
 
-Monkey-Moore is a powerful relative searcher for datahacking purposes. The core algorithm is based on the Boyer-Moore string search algorithm and it builds on top of it to perform fast searches over large files, supporting a wide range of options to further enhance the chances of finding what is being looked for.
+Monkey-Moore is a high-performance relative search utility designed for data hacking and reverse engineering. By leveraging an optimized version of the Boyer-Moore string search algorithm, it performs rapid pattern matching across large files. The tool offers a wide range of configuration options to maximize the success of finding data in unknown or proprietary encodings.
 
 ## Overview
 
-A relative search is a method used to find data that can't be found with regular methods. The difference is that a relative search matches data based on its pattern rather than based solely on its value. That means data can be found regarless of how it's encoded, as long as it maintains a pattern that can be observed.
+Relative searching is a specialized method used to discover data that cannot be found through standard hex or text searches. Unlike traditional methods that look for exact byte values, a relative search identifies data based on its internal pattern. This allows you to find text or data regardless of how it is encoded, as long as the mathematical relationship between the values remains consistent.
 
-A simple example would be of a sequence of characters encoded in a variation of the ASCII character set, where every character has its value decreased in 2. The word "code" would now look like "ambc", but Monkey-Moore would find it just fine by comparing the differences between each character instead of each character's value.
+### Example
 
-Monkey-Moore supports wildcards to further increase the flexibility of finding possible matches, and automatically optimizes textual searches containing only alphabetical characters.
+Imagine a sequence of characters encoded in a non-standard variation of ASCII where every character's value has been decreased by 2. The word `"code"` would appear in the file as `"ambc"`.
 
-Other features included:
-* 8 and 16-bit searches
-* Endianess selector
-* Value scan relative searching
-* Custom character sequences
+A standard search for "code" would fail, but Monkey-Moore would successfully locate it by analyzing the relative differences between the characters rather than the values themselves.
+
+## Key Features
+- **Pattern Flexibility**: Full support for wildcards to increase the chances of matching longer text sequences.
+- **8 and 16-bit Support**: Capability to search across different character widths.
+- **Endianness Selector**: Toggle between Big-Endian and Little-Endian formats for 16-bit searches.
+- **Value Scan**: Perform relative searches by providing raw numerical sequences; the tool automatically infers the underlying relative differences to locate matching patterns.
+- **Custom Character Sequences**: Define your own sequences to target specific languages sucb as Japanese.
 
 ## Performance
 
-The core search algorithm is based on Boyer-Moore, which makes use of preprocessing step on the search pattern to create static data about it to be later used to speed the search by skipping parts of the target file.
+The core of Monkey-Moore is built for speed:
+- **Boyer-Moore Algorithm**: The search engine uses a preprocessing step to analyze the search pattern and create a skip-table. This allows the tool to bypass large sections of the target file that cannot possibly contain a match, significantly outperforming brute-force search methods.
+- **Multi-Threading**: Monkey-Moore is designed for modern hardware. It utilizes multi-threading to distribute the workload across every available CPU core. This parallel processing drastically reduces the time required to scan large ROMs or binary blobs.
 
-Monkey-Moore also makes use of multi-threading to split the search among multiple CPU cores and thus cut the time needed to perform a search, specially in larger files, but as many cores as there are available in the machine it's running on.
+## Compatibility & Prerequisites
 
-## Prerequisites
+Monkey-Moore is a cross-platform application built using the wxWidgets GUI framework. It is currently optimized and supported for Windows and Linux environments.
 
-Monkey-Moore is a multiplatform application built on top of the wxWidgets GUI toolset. Currently, only Windows and Linux are supported.
+### Dependencies
 
-The dependencies are:
-* [wxWidgets](https://github.com/wxWidgets/wxWidgets) 3.0+
-* [XML Parser](http://www.applied-mathematics.net/tools/xmlParser.html) 2.40+
+To build or run the project from source, the following libraries are required:
+* [wxWidgets](https://github.com/wxWidgets/wxWidgets) 3.0+: Used for the cross-platform native graphical user interface.
+* [XML Parser](http://www.applied-mathematics.net/tools/xmlParser.html) 2.40+: Handles user configuration and customization files.
