@@ -187,7 +187,7 @@ public:
       uint32_t numBytes = static_cast<uint32_t>(sizeof(_Type)) * 2;
       wxString bytefmt = wxString::Format(wxT("%%0%dX"), numBytes);
 
-      for (MonkeyMoore<_Type>::equivalency_type::const_iterator i = d.begin(); i != d.end(); i++)
+      for (auto i = d.begin(); i != d.end(); i++)
       {
          // when dealing with ASCII searches, we must generate the missing characters
          if (i->first == wxT('A') || i->first == wxT('a'))

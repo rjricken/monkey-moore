@@ -44,7 +44,7 @@ bool MonkeyApp::OnInit ()
    wxString dataDir = stdPaths.GetUserDataDir();
 
    if (!wxDirExists(dataDir))
-      wxMkDir(dataDir);
+      wxFileName::Mkdir(dataDir, 0777, wxPATH_MKDIR_FULL);
 
    // generate an OS-native file path for the config file
    wxFileName configFile(dataDir, MM_CONFIG_FILE);

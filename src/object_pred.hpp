@@ -30,7 +30,6 @@
 #endif
 
 #include <string>
-#include <functional>
 
 /**
 * The find_last() function searches for the element denoted by v. If such
@@ -92,35 +91,5 @@ inline bool is_lower (const wxChar &c)
 */
 inline bool is_digit (const wxChar &c)
 { return isdigit(c) ? true : false; }
-
-/**
-* Functor used to say whether a character is punctuation or not.
-*/
-struct is_punct : public std::unary_function <wxChar, bool>
-{
-   /**
-   * Functor operator.
-   * @param c character to be tested
-   * @return True if it's a punctuation character.
-   */
-   bool operator() (const wxChar &c) const {
-      return ispunct(c) ? true : false;
-   }
-};
-
-/**
-* Functor used to say wheter a character is a letter or not.
-*/
-struct is_alpha : public std::unary_function <wxChar, bool>
-{
-   /**
-   * Functor operator.
-   * @param c character to be tested
-   * @return True if it's a letter.
-   */
-   bool operator() (const wxChar &c) const {
-      return isalpha(c) ? true : false;
-   }
-};
 
 #endif //~OBJECT_PRED_HPP

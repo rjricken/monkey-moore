@@ -403,8 +403,6 @@ private:
          wxLogDebug("Preview generation offset alignment mismatch");
       }
 
-
-
       unique_ptr<_Type[]> raw_data(new _Type[width]);
 
       m_info.m_file->Seek(read_offset, wxFromStart);
@@ -424,7 +422,7 @@ private:
          map <_Type, wxChar> cur_table;
 
          // generates the table
-         for (MonkeyMoore<_Type>::equivalency_type::const_iterator i = table.begin(); i != table.end(); i++)
+         for (auto i = table.begin(); i != table.end(); i++)
          {
             if (!m_info.pattern.length() && (i->first == wxT('A') || i->first == wxT('a')))
                for (int j = 0; j < 26; j++)

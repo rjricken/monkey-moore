@@ -144,7 +144,7 @@ void MonkeyPrefs::save (const wxString &configFile, bool recreate)
 
       if (regex_match(i->first.ToStdWstring(), match, pattern))
       {
-         wxString name = match[1];
+         wxString name = match[1].str();
 
          if (!nodes.count(name))
             nodes[name] = root.addChild(name);

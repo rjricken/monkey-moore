@@ -98,7 +98,7 @@ searchmode_8bits(true), byteorder_little(true)
 
    wxStaticBoxSizer *filebox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("File")), wxHORIZONTAL);
    filebox_sz->Add(fname, wxSizerFlags(1).Left().Expand().Border(wxALL, 5).FixedMinSize());
-   filebox_sz->Add(browse, wxSizerFlags().Right().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
+   filebox_sz->Add(browse, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
     
    // _________________________________________________________________________
    // Search Parameters 
@@ -121,8 +121,8 @@ searchmode_8bits(true), byteorder_little(true)
    search->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_SearchGrayed));
 
    wxBoxSizer *searchinput_sz = new wxBoxSizer(wxHORIZONTAL);
-   searchinput_sz->Add(kword, wxSizerFlags(1).Left().Expand().Border(wxALL, 5).FixedMinSize());
-   searchinput_sz->Add(search, wxSizerFlags().Right().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
+   searchinput_sz->Add(kword, wxSizerFlags(1).Expand().Border(wxALL, 5).FixedMinSize());
+   searchinput_sz->Add(search, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
 
    // -- search options (controls below the keyword input)
    wxButton *advanced = new wxButton(this, MonkeyMoore_Advanced, _("Advanced"), wxDefaultPosition, wxSize(24, 23), wxBU_NOTEXT | wxBU_EXACTFIT);
@@ -140,9 +140,9 @@ searchmode_8bits(true), byteorder_little(true)
    searchopt_sz->Add(use_wc, wxSizerFlags().Border(wxLEFT, 6).Align(wxALIGN_CENTER_VERTICAL));
    searchopt_sz->Add(wildcard, wxSizerFlags().Border(wxTOP | wxBOTTOM, 2).Align(wxALIGN_CENTER_VERTICAL));
    searchopt_sz->AddStretchSpacer(1);
-   searchopt_sz->Add(searchmode_8bit, wxSizerFlags().Right().Border(wxRIGHT, 4).Align(wxALIGN_CENTER_VERTICAL));
-   searchopt_sz->Add(searchmode_16bit, wxSizerFlags().Right().Border(wxRIGHT, 4).Align(wxALIGN_CENTER_VERTICAL));
-   searchopt_sz->Add(advanced, wxSizerFlags().Right().Expand().Shaped().FixedMinSize());
+   searchopt_sz->Add(searchmode_8bit, wxSizerFlags().Border(wxRIGHT, 4).Align(wxALIGN_CENTER_VERTICAL));
+   searchopt_sz->Add(searchmode_16bit, wxSizerFlags().Border(wxRIGHT, 4).Align(wxALIGN_CENTER_VERTICAL));
+   searchopt_sz->Add(advanced, wxSizerFlags().Expand().Shaped().FixedMinSize());
 
    // -- search box
    wxStaticBoxSizer *searchbox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Search Parameters")), wxVERTICAL);
@@ -170,7 +170,7 @@ searchmode_8bits(true), byteorder_little(true)
    advancedopt_sz->Add(adv_enablepat, wxSizerFlags().Border(wxRIGHT, 5).Align(wxALIGN_CENTER_VERTICAL));
    advancedopt_sz->Add(char_pattern, wxSizerFlags(1).FixedMinSize().Border(wxALL, 1));
    advancedopt_sz->AddSpacer(8);
-   advancedopt_sz->Add(charset_list, wxSizerFlags().Right().Expand().Shaped().FixedMinSize());
+   advancedopt_sz->Add(charset_list, wxSizerFlags().Expand().Shaped().FixedMinSize());
    advancedopt_sz->AddSpacer(2);
 
    // -- byte order row
@@ -210,8 +210,8 @@ searchmode_8bits(true), byteorder_little(true)
    wxBoxSizer *resultopt_sz = new wxBoxSizer(wxHORIZONTAL);
    resultopt_sz->Add(createtbl, wxSizerFlags().Border(wxALL, 4).Left());
    resultopt_sz->Add(clear, wxSizerFlags().Border(wxALL, 4).Left());
-   resultopt_sz->Add(options, wxSizerFlags().Left().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
-   resultopt_sz->Add(about, wxSizerFlags().Left().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
+   resultopt_sz->Add(options, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
+   resultopt_sz->Add(about, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
    resultopt_sz->AddStretchSpacer(1);
    resultopt_sz->Add(count_txt, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
    resultopt_sz->Add(counter, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
@@ -227,7 +227,7 @@ searchmode_8bits(true), byteorder_little(true)
 
    wxStaticBoxSizer *resultbox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Results")), wxVERTICAL);
    resultbox_sz->Add(show_all, wxSizerFlags().Left().Border(wxLEFT, 5));
-   resultbox_sz->Add(results, wxSizerFlags(1).Top().Border(wxALL, 4).Expand());
+   resultbox_sz->Add(results, wxSizerFlags(1).Border(wxALL, 4).Expand());
    resultbox_sz->Add(resultopt_sz, wxSizerFlags().Border(wxALL, 2).Expand());
 
    // _________________________________________________________________________
@@ -240,7 +240,7 @@ searchmode_8bits(true), byteorder_little(true)
    cancel_search->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_CancelGrayed));
    
    wxBoxSizer * progressinfo_sz = new wxBoxSizer(wxHORIZONTAL);
-   progressinfo_sz->Add(elapsed_time, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxTOP | wxLEFT, 4).Left().Expand());
+   progressinfo_sz->Add(elapsed_time, wxSizerFlags().Border(wxTOP | wxLEFT, 4).Left().Expand());
    progressinfo_sz->AddStretchSpacer(1);
    progressinfo_sz->Add(cancel_search, wxSizerFlags().Right().Align(wxALIGN_CENTER_VERTICAL));
 
@@ -298,8 +298,10 @@ searchmode_8bits(true), byteorder_little(true)
       wildcard->SetValue(wxString::Format(wxT("%c"), prefs.get(wxT("ui-state/wildcard")).GetChar(0)));
       show_all->SetValue(prefs.getBool(wxT("ui-state/show-all-results")));
 
-      if (prefs.getBool(wxT("ui-state/advanced-shown")))
-         OnAdvanced(wxCommandEvent());
+      if (prefs.getBool(wxT("ui-state/advanced-shown"))) {
+         auto dummyEvent = wxCommandEvent();
+         OnAdvanced(dummyEvent);
+      }     
    }
 
    vector <pair <wxString, wxString>> &charsets = prefs.getCommonCharsetList();
@@ -717,7 +719,7 @@ void MonkeyFrame::OnOptions (wxCommandEvent &WXUNUSED(event))
 */
 void MonkeyFrame::OnAbout (wxCommandEvent &WXUNUSED(event))
 {
-   MonkeyAbout about(this, _("About Monkey-Moore"), wxSize(370, 300));
+   MonkeyAbout about(this, _("About Monkey-Moore"), wxSize(400, 400));
    about.ShowModal();
 }
 
@@ -940,9 +942,9 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
 
    // ASCII printable characters are in the 0x20 - 0x7A range.
    bool ascii_input =
-      count_if(kw.begin(), kw.end(), bind2nd(less <wxChar>(), 0x20)) == 0 &&
-      count_if(kw.begin(), kw.end(), bind2nd(greater <wxChar>(), 0x7A)) == 0;
-
+      std::count_if(kw.begin(), kw.end(), [](wxChar c) { return c < 0x20; }) == 0 &&
+      std::count_if(kw.begin(), kw.end(), [](wxChar c) { return c > 0x7A; }) == 0;
+      
    int n_wildcards = count(kw.begin(), kw.end(), wc);
 
    // we need 3 or more characters
@@ -968,7 +970,11 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
       }
       else
       {
-         int n_letters = static_cast <int> (count_if(kw.begin(), kw.end(), is_alpha()));
+         int n_letters = static_cast <int>(std::count_if(
+            kw.begin(), 
+            kw.end(), [](wxChar c) { 
+               return std::isalpha(c); 
+            }));
 
          // we still need 3 or more characters, not counting wildcards
          if (n_letters < 3)
@@ -979,7 +985,14 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
       }
 
       // checks if we have only valid characters (letters and wildcards)
-      if (count_if(kw.begin(), kw.end(), not1(is_alpha())) > n_wildcards)
+      auto count_non_alpha_chars = static_cast<int>(std::count_if(
+         kw.begin(), 
+         kw.end(), 
+         [](wxChar c) { 
+            return !(std::isalpha(c) ? true : false); 
+         }));
+
+      if (count_non_alpha_chars > n_wildcards)
       {
          ShowWarning(MM_WARNING_KWORDINVALIDCHARS);
          return false;
@@ -1112,7 +1125,7 @@ void MonkeyFrame::ShowResults (bool showAll)
    uint32_t numBytes = static_cast<uint32_t>(sizeof(_DataType)) * 2;
    wxString hexValueFmt = wxString::Format(wxT("%%c=%%0%uX "), numBytes);
 
-   vector<MonkeyMoore<_DataType>::equivalency_type> unique;
+   std::vector<typename MonkeyMoore<_DataType>::equivalency_type> unique;
    auto r = lastResults<_DataType>();
 
    // index of the element being inserted in the wxListCtrl
@@ -1127,7 +1140,7 @@ void MonkeyFrame::ShowResults (bool showAll)
 
       for (uint32_t i = 0; i < r.size(); i++)
       {
-         MonkeyMoore<_DataType>::equivalency_type &t = get<1>(r[i]);
+         auto &t = std::get<1>(r[i]);
 
          // if another result with the same values was already inserted in the list, don't insert
          if (!count(unique.begin(), unique.end(), t))
@@ -1142,9 +1155,9 @@ void MonkeyFrame::ShowResults (bool showAll)
             result_box->SetItemData(curListIndex, i);
 
             wxString values;
-            const MonkeyMoore<_DataType>::equivalency_type &ref = get<1>(r[i]);
+            auto &ref = std::get<1>(r[i]);
 
-            for (MonkeyMoore<_DataType>::equivalency_type::const_iterator j = ref.cbegin(); j != ref.cend(); j++)
+            for (auto j = ref.cbegin(); j != ref.cend(); j++)
             {
                // swap bytes acording to the endianness the search was performed on
                _DataType value = byteorder_little ?

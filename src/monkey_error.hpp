@@ -29,7 +29,7 @@
    #include <wx/wx.h>
 #endif
 
-#include <exception>
+#include <stdexcept>
 
 enum
 {
@@ -40,11 +40,11 @@ enum
    MMError_SequencesFileWriteError
 };
 
-class monkeymoore_error : public std::exception
+class monkeymoore_error : public std::runtime_error
 {
 public:
    monkeymoore_error (const wxString &msg, int errorId) :
-      std::exception(msg.c_str()), m_errorId(errorId) { }
+      std::runtime_error(msg.c_str()), m_errorId(errorId) { }
 
    int code () const { return m_errorId; }
 
