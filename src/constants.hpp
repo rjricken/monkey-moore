@@ -27,7 +27,7 @@
 
 #define MM_CONFIG_FILE wxT("config.xml")
 #define MM_CUSTOMSEQS_FILE wxT("customseqs.xml")
-#define MM_PROJECT_URL wxT("http://www.romhacking.trd.br/index.php?topic=1878.0")
+#define MM_GITHUB_REPO_URL wxT("https://github.com/rjricken/monkey-moore")
 
 #define MM_ERRORCAPTION _("Monkey-Moore - Error")
 

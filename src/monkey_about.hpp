@@ -45,9 +45,8 @@ public:
       wxSize clientSz = GetClientSize();
       new wxButton(this, wxID_OK, _("&Close"), wxPoint(clientSz.x - 135, clientSz.y - 30), wxSize(130, 25));
 
-      wxHyperlinkCtrl *url = new wxHyperlinkCtrl(this, wxID_ANY, _("Project's Website"), MM_PROJECT_URL);
+      wxHyperlinkCtrl *url = new wxHyperlinkCtrl(this, wxID_ANY, _("GitHub page"), MM_GITHUB_REPO_URL);
       url->SetPosition(wxPoint(192, 195));
-      url->SetToolTip(_("Visit project homepage, at F.U.T."));
 
       doc_moore = new wxImage(212, 269);
       doc_moore->LoadFile(wxT("images/doctor_moore.png"), wxBITMAP_TYPE_PNG);
