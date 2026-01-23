@@ -106,8 +106,8 @@ public:
       wxButton *ok = new wxButton(this, wxID_OK, _("Ok"));
       wxButton *cancel = new wxButton(this, wxID_CANCEL, _("Cancel"));
       buttons_sz->AddStretchSpacer(1);
-      buttons_sz->Add(ok, wxSizerFlags().Right().Border(wxALL, 2));
-      buttons_sz->Add(cancel, wxSizerFlags().Right().Border(wxALL, 2));
+      buttons_sz->Add(ok, wxSizerFlags().Border(wxALL, 2));
+      buttons_sz->Add(cancel, wxSizerFlags().Border(wxALL, 2));
 
       wxBoxSizer *global_sz = new wxBoxSizer(wxVERTICAL);
       global_sz->Add(general_sz, wxSizerFlags().Expand().Border(wxTOP | wxLEFT | wxRIGHT, 6));

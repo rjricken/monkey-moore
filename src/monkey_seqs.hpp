@@ -71,9 +71,9 @@ public:
       buttons_sz->AddSpacer(5);
       buttons_sz->Add(removeBtn, wxSizerFlags().Left().Expand().Shaped());
       buttons_sz->AddStretchSpacer(1);
-      buttons_sz->Add(saveBtn, wxSizerFlags().Right().Expand().Shaped());
+      buttons_sz->Add(saveBtn, wxSizerFlags().Expand().Shaped());
       buttons_sz->AddSpacer(5);
-      buttons_sz->Add(cancelBtn, wxSizerFlags().Right());
+      buttons_sz->Add(cancelBtn, wxSizerFlags());
 
       global_sz->Add(header, wxSizerFlags().Border(wxTOP | wxLEFT | wxRIGHT, 10));
       global_sz->Add(datavw, wxSizerFlags(1).Expand().Border(wxALL, 10));
