@@ -1,6 +1,7 @@
 # Ignored
 bin/*
 build/msw/*/
+build/linux/*
 lib/*
 include/*
 
