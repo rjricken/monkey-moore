@@ -1,20 +1,4 @@
-/*
- * Monkey-Moore - A simple and powerful relative search tool
- * Copyright (C) 2007 Ricardo J. Ricken (Darkl0rd)
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef MONKEY_FRAME_HPP
 #define MONKEY_FRAME_HPP
@@ -31,7 +15,7 @@
 
 #include "constants.hpp"
 #include "byteswap.hpp"
-#include "monkey_moore.hpp"
+#include "mmoore/monkey_moore.hpp"
 #include "monkey_prefs.hpp"
 
 #include <wx/imaglist.h>
@@ -41,8 +25,8 @@
 #include <mutex>
 
 // typedefs to prevent lenghty code
-typedef std::tuple<wxFileOffset, MonkeyMoore<uint8_t>::equivalency_type, wxString> result_type8;
-typedef std::tuple<wxFileOffset, MonkeyMoore<uint16_t>::equivalency_type, wxString> result_type16;
+typedef std::tuple<wxFileOffset, MonkeyMoore<uint8_t>::equivalency_map, wxString> result_type8;
+typedef std::tuple<wxFileOffset, MonkeyMoore<uint16_t>::equivalency_map, wxString> result_type16;
 
 struct SearchParameters;
 
@@ -157,7 +141,7 @@ private:
    */
    template <typename _DataType>
       std::vector<std::tuple<wxFileOffset,
-         typename MonkeyMoore<_DataType>::equivalency_type, wxString>> &lastResults();
+         typename MonkeyMoore<_DataType>::equivalency_map, wxString>> &lastResults();
 
    int progressBoxHeight;                     /**< Height of the progress box in pixels */
 

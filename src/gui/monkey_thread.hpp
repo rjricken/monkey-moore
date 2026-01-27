@@ -1,20 +1,4 @@
-/*
- * Monkey-Moore - A simple and powerful relative search tool
- * Copyright (C) 2007 Ricardo J. Ricken (Darkl0rd)
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef MONKEY_THREAD_HPP
 #define MONKEY_THREAD_HPP
@@ -40,7 +24,7 @@
 
 #include "constants.hpp"
 #include "byteswap.hpp"
-#include "monkey_moore.hpp"
+#include "mmoore/monkey_moore.hpp"
 
 using namespace std;
 
@@ -108,7 +92,7 @@ template <typename _Type>
 class SearchThread : public wxThread
 {
 public:
-   typedef tuple<wxFileOffset, typename MonkeyMoore<_Type>::equivalency_type, wxString> result_type;
+   typedef tuple<wxFileOffset, typename MonkeyMoore<_Type>::equivalency_map, wxString> result_type;
    typedef pair<wxFileOffset, unsigned int> datablock_type;
 
    SearchThread (SearchParameters p, vector<result_type> &results, MonkeyPrefs &mp, MonkeyFrame *mf) :
@@ -116,6 +100,17 @@ public:
    {
       wxASSERT(m_frame != 0);
       m_multiByteSearch = sizeof(_Type) > 1;
+   }
+
+   std::vector<CharType> convert_to_vector_array(const wxString &from) {
+      std::vector<CharType> result;
+      result.reserve(from.length());
+
+      for (const auto &ch : from) {
+         result.push_back(static_cast<CharType>(ch.GetValue()));
+      }
+
+      return result;
    }
 
    /**
@@ -126,10 +121,13 @@ public:
    {
       NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, _("Initializing..."));
 
+      std::vector<CharType> keyword_array = convert_to_vector_array(m_info.keyword);
+      std::vector<CharType> char_seq_array = convert_to_vector_array(m_info.pattern);
+
       // creates a monkey-moore instance based on which type of search will be performed
       unique_ptr<MonkeyMoore<_Type>> moore(
          m_info.search_type == SearchParameters::relative ?
-            new MonkeyMoore<_Type>(m_info.keyword, m_info.wildcard, m_info.pattern) :
+            new MonkeyMoore<_Type>(keyword_array, static_cast<char32_t>(m_info.wildcard), char_seq_array) :
             new MonkeyMoore<_Type>(m_info.values)
       );
 
@@ -164,15 +162,6 @@ public:
          blocks.push_back(make_pair(thisBlockOffset, thisBlockSize));
       }
 
-
-
-      
-
-
-
-
-
-
       // keeps track of progress
       const float progressInc = 100.0f / numBlocks;
       float totalProgress = 0.0f;
@@ -197,7 +186,7 @@ public:
          {
             threadCountLock.unlock();
 
-            shared_ptr<u8> blockData(new u8[nextBlock->second], default_delete<u8[]>());
+            shared_ptr<uint8_t> blockData(new uint8_t[nextBlock->second], default_delete<uint8_t[]>());
 
             m_info.m_file->Seek(nextBlock->first, wxFromStart);
             m_info.m_file->Read(blockData.get(), nextBlock->second);
@@ -205,7 +194,7 @@ public:
             // _______________________________________________________________________________________
             // this lambda is responsible for running the appropriate search algorithm,
             // adjusting the offset of each result and appending them to the results pool.
-            auto search = [&, this] (shared_ptr<u8> data, wxFileOffset offset, uint32_t size, uint32_t blockNumber)
+            auto search = [&, this] (shared_ptr<uint8_t> data, wxFileOffset offset, uint32_t size, uint32_t blockNumber)
             {
                wxString dbgOutput =
                   wxString::Format("  thread launched for #%u block: [%I64d-%I64d]\n",
@@ -371,7 +360,7 @@ private:
    * @param table equivalency table
    * @return Result preview.
    */
-   wxString GeneratePreview (const wxFileOffset offset, const typename MonkeyMoore<_Type>::equivalency_type &table)
+   wxString GeneratePreview (const wxFileOffset offset, const typename MonkeyMoore<_Type>::equivalency_map &table)
    {
       const int width = m_prefs.getInt(wxT("settings/display-preview-width"));
 
@@ -389,8 +378,8 @@ private:
 
       //read_offset += offset % sizeof(_Type) ? 1 : 0
 
-      wxLogDebug("Generating preview at 0x%I64X: width(%i) kwAlignWdth(%u) offsetDelta(%I64d) readOffset(0x%I64X)",
-         offset, width, kwAlignWidth, offsetDelta, read_offset);
+      //wxLogDebug("Generating preview at 0x%I64X: width(%i) kwAlignWdth(%u) offsetDelta(%I64d) readOffset(0x%I64X)",
+      //   offset, width, kwAlignWidth, offsetDelta, read_offset);
 
 
 

@@ -1,20 +1,4 @@
-/*
- * Monkey-Moore - A simple and powerful relative search tool
- * Copyright (C) 2007 Ricardo J. Ricken (Darkl0rd)
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "monkey_frame.hpp"
 #include "monkey_about.hpp"
@@ -22,6 +6,7 @@
 #include "monkey_table.hpp"
 #include "monkey_seqs.hpp"
 #include "monkey_thread.hpp"
+#include "filesystem_utils.hpp"
 
 #include <wx/file.h>
 #include <wx/tokenzr.h>
@@ -80,7 +65,7 @@ searchmode_8bits(true), byteorder_little(true)
    SetIcon(wxICON(mmoore));
    wxValidator::SuppressBellOnError();
 
-   wxImage buttonset(wxT("images/buttons.png"), wxBITMAP_TYPE_PNG);
+   wxImage buttonset(getResourcePath(wxT("images/buttons.png")), wxBITMAP_TYPE_PNG);
    const int num_images = buttonset.GetWidth() / 18;
 
    images.Create(18, 15, true, num_images);
@@ -473,14 +458,14 @@ void MonkeyFrame::OnSearch (wxCommandEvent &WXUNUSED(event))
       SearchParameters(file, values);
 
    if (searchmode_8bits)
-      StartSearchThread<u8>(p);
+      StartSearchThread<uint8_t>(p);
    else
    {
       p.setEndianness(byteorder_little ?
          SearchParameters::little_endian :
          SearchParameters::big_endian);
 
-      StartSearchThread<u16>(p);
+      StartSearchThread<uint16_t>(p);
    }
 }
 
@@ -956,8 +941,14 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
 
    if (!custom_cp && ascii_input)
    {
-      int n_lower = static_cast <int> (count_if(kw.begin(), kw.end(), is_lower));
-      int n_upper = static_cast <int> (count_if(kw.begin(), kw.end(), is_upper));
+      //int n_lower = static_cast <int> (count_if(kw.begin(), kw.end(), is_lower));
+      int n_lower = static_cast<int>(count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
+         return is_lower(static_cast<char32_t>(c.GetValue()));
+      }));
+      //int n_upper = static_cast <int> (count_if(kw.begin(), kw.end(), is_upper));
+      int n_upper = static_cast <int> (count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
+         return is_upper(static_cast<char32_t>(c.GetValue()));
+      }));
 
       // we need 3 or more characters with the SAME capitalization
       if (n_lower && n_upper)
@@ -1125,7 +1116,7 @@ void MonkeyFrame::ShowResults (bool showAll)
    uint32_t numBytes = static_cast<uint32_t>(sizeof(_DataType)) * 2;
    wxString hexValueFmt = wxString::Format(wxT("%%c=%%0%uX "), numBytes);
 
-   std::vector<typename MonkeyMoore<_DataType>::equivalency_type> unique;
+   std::vector<typename MonkeyMoore<_DataType>::equivalency_map> unique;
    auto r = lastResults<_DataType>();
 
    // index of the element being inserted in the wxListCtrl
@@ -1164,7 +1155,7 @@ void MonkeyFrame::ShowResults (bool showAll)
                   swap_on_le<_DataType>(j->second) :
                   swap_on_be<_DataType>(j->second);
 
-               values += wxString::Format(hexValueFmt, (*j).first, value);
+               values += wxString::Format(hexValueFmt, static_cast<int>((*j).first), value);
             }
 
             result_box->SetItem(curListIndex, 1, values);

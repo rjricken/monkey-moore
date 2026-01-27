@@ -1,24 +1,9 @@
-/*
- * Monkey-Moore - A simple and powerful relative search tool
- * Copyright (C) 2007 Ricardo J. Ricken (Darkl0rd)
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "monkey_app.hpp"
 #include "monkey_frame.hpp"
 #include "monkey_error.hpp"
+#include "filesystem_utils.hpp"
 #include "constants.hpp"
 
 #include <wx/file.h>
@@ -36,7 +21,7 @@ bool MonkeyApp::OnInit ()
 
    // set up language selection system
    m_loc.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT);
-   wxLocale::AddCatalogLookupPathPrefix(wxT("./language"));
+   wxLocale::AddCatalogLookupPathPrefix(getResourcePath(wxT("./language")));
    m_loc.AddCatalog(wxT("monkeymoore"));
 
    // retrieve the OS specific data directory for our application

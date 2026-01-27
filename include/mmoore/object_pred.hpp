@@ -1,35 +1,10 @@
-/*
- * Monkey-Moore - A simple and powerful relative search tool
- * Copyright (C) 2007 Ricardo J. Ricken (Darkl0rd)
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef OBJECT_PRED_HPP
 #define OBJECT_PRED_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-   #pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
-#include <string>
+#include <cctype>
+#include <iterator>
 
 /**
 * The find_last() function searches for the element denoted by v. If such
@@ -73,23 +48,26 @@ inline int count_begin (FwdIt start, const FwdIt end, const T &v)
 * @param c character to be tested
 * @return True if it's a uppercase character.
 */
-inline bool is_upper (const wxChar &c)
-{ return isupper(c) ? true : false; }
+inline bool is_upper (const char32_t &c) { 
+   return (c < 128) && std::isupper(static_cast<unsigned char>(c)); 
+}
 
 /**
 * Unary predicate used to say wheter a character is lowercase or not.
 * @param c character to be tested
 * @return True if it's a lowercase character.
 */
-inline bool is_lower (const wxChar &c)
-{ return islower(c) ? true : false; }
+inline bool is_lower (const char32_t &c) { 
+   return (c < 128) && std::islower(static_cast<unsigned char>(c)); 
+}
 
 /**
 * Unary predicate used to say whether a character is a digit or not.
 * @param c character to be tested
 * @return True if it's a digit.
 */
-inline bool is_digit (const wxChar &c)
-{ return isdigit(c) ? true : false; }
+inline bool is_digit (const char32_t &c) { 
+   return (c < 128) && isdigit(static_cast<unsigned char>(c)); 
+}
 
 #endif //~OBJECT_PRED_HPP
