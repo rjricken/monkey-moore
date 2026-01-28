@@ -381,10 +381,10 @@ void shift_alpha_values(std::vector<DataType> &sequence, int lower_shift, int up
       sequence.begin(), 
       [&](DataType &i) { 
          if (is_lower(i)) {
-            return static_cast<Ty>(i + lower_shift);
+            return static_cast<DataType>(i + lower_shift);
          }
          else if (is_upper(i)) {
-            return static_cast<Ty>(i + upper_shift);
+            return static_cast<DataType>(i + upper_shift);
          }
 
          return i;
