@@ -3,25 +3,32 @@
 #include "mmoore/object_pred.hpp"
 
 #include <array>
+#include <numeric>
 #include <codecvt>
 
+std::vector<uint8_t> to_vector(const std::string &from);
+std::vector<uint16_t> to_vector(const std::u16string &from);
 std::vector<CharType> to_vector(const std::u32string &from);
 
+template <class DataType>
 void assert_char_seq_result(
-   const std::map<CharType, uint8_t> &result, 
-   const std::string &expected_values
+   const std::vector<CharType> &char_seq,
+   const std::map<CharType, DataType> &result, 
+   const std::vector<DataType> &expected_values
 );
+
+template <typename Ty>
+void shift_data_values(std::vector<Ty> &sequence, int shift_amount);
+
+const auto hiragana_seq = 
+   U"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをゃっゅょ";
 
 TEST_CASE("Monkey-Moore core algorithm wih no wildcard support", "[core]") {
    SECTION("8-bit data type") {
       SECTION("ASCII keyword") {
          std::vector<uint8_t> data = {'d', 'd', 'd', 'c', 'c', 'a', 'c', 'a', 't', 'c', 'h', 'a', 'a', 't'};
-         std::transform(
-            data.begin(), 
-            data.end(), 
-            data.begin(), 
-            [](uint8_t &i) { return i + 3; });
-            
+         shift_data_values(data, 3);
+
          SECTION("Returns correct offset and equivalency map for matching result") {
             std::vector<CharType> keyword = to_vector(U"catch");
             MonkeyMoore<uint8_t> searcher(keyword);
@@ -53,7 +60,8 @@ TEST_CASE("Monkey-Moore core algorithm wih no wildcard support", "[core]") {
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 1);
             REQUIRE(results[0].first == 8);
-            assert_char_seq_result(results[0].second, "afghdijkblmnopeqrstucvwxyz");
+
+            assert_char_seq_result(custom_seq, results[0].second, to_vector("abcdefghijklmnopqrstuvwxyz"));
          }
       }
    }
@@ -64,13 +72,8 @@ TEST_CASE("Monkey-Moore core algorithm wih no wildcard support", "[core]") {
             'q', 'u', 'e', 's', 't', 'i', 'o', 'n', ' ', 'o', 'f', ' ', 'p', 'r', 'i', 'c', 
             'e',  0 , 't', 'h', 'e', ' ', 'l', 'a', 's', 't', ' ', 'w', 'i', 's', 'h',  0
          };
+         shift_data_values(data, -16);
 
-         std::transform(
-            data.begin(), 
-            data.end(), 
-            data.begin(), 
-            [](uint16_t &i) { return i - 16; });
-            
          SECTION("Returns correct offset and equivalency map for matching result") {
             std::vector<CharType> keyword = to_vector(U"price");
             MonkeyMoore<uint16_t> searcher(keyword);
@@ -88,6 +91,29 @@ TEST_CASE("Monkey-Moore core algorithm wih no wildcard support", "[core]") {
 
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 0);
+         }
+      }
+
+      SECTION("Custom character sequence keyword") {
+         std::vector<CharType> custom_seq = to_vector(hiragana_seq);
+
+         // data is just あした、わたしたちは、にわに、はなを、まきます 
+         // converted to 1-based indices corresponding to the character sequence 
+         std::vector<uint16_t> data = {
+            1, 12, 16, 110, 44, 16, 12, 16, 17, 26, 110, 22, 44, 22, 110, 26, 21, 45, 110, 31, 7, 31, 13 
+         };
+
+         SECTION("Returns correct values for matching result") {
+            std::vector<CharType> keyword = to_vector(U"わたしたちは");
+            MonkeyMoore<uint16_t> searcher(keyword, 0, custom_seq);
+            
+            auto results = searcher.search(data.data(), data.size());
+            REQUIRE(results.size() == 1);
+            REQUIRE(results[0].first == 4);
+
+            std::vector<uint16_t> expected_values(49);
+            std::iota(expected_values.begin(), expected_values.end(), 1);
+            assert_char_seq_result(custom_seq, results[0].second, expected_values);
          }
       }
    }
@@ -152,24 +178,39 @@ std::vector<CharType> to_vector(const std::u32string &from) {
    return std::vector<CharType>(from.begin(), from.end());
 }
 
+std::vector<uint8_t> to_vector(const std::string &from) {
+   return std::vector<uint8_t>(from.begin(), from.end());
+}
+
+template <class DataType>
 void assert_char_seq_result(
-   const std::map<CharType, uint8_t> &result, 
-   const std::string &expected_values
+   const std::vector<CharType> &char_seq,
+   const std::map<CharType, DataType> &result, 
+   const std::vector<DataType> &expected_values
 ) {
    size_t index = 0;
 
-   for (const auto &entry : result) {
+   for (const auto &seq_element : char_seq) {
       if (index >= expected_values.size()) {
-         FAIL("Map size exceeds expected length");
+         FAIL("Character sequence size exceeds expected length");
       }
 
-      uint8_t actual_char = entry.second;
-      uint8_t expected_char = static_cast<uint8_t>(expected_values[index]);
+      DataType actual_char = result.at(seq_element);
+      DataType expected_char = expected_values[index];
 
-      CAPTURE(entry.first);
+      CAPTURE(seq_element);
       CAPTURE(index);
 
       REQUIRE(actual_char == expected_char);
       index++;
    }
+}
+
+template <typename Ty>
+void shift_data_values(std::vector<Ty> &sequence, int shift_amount) {
+   std::transform(
+      sequence.begin(), 
+      sequence.end(), 
+      sequence.begin(), 
+      [&](Ty &i) { return i + shift_amount; });
 }
