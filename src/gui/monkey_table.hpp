@@ -72,8 +72,8 @@ public:
       tblopt_sz->Add(flfmthd, wxSizerFlags().Border(wxRIGHT, 5).Border(wxTOP, 4));
       tblopt_sz->Add(flfmt, wxSizerFlags().Border(wxRIGHT, 5));
       tblopt_sz->AddStretchSpacer(1);
-      tblopt_sz->Add(flenchd, wxSizerFlags().Border(wxRIGHT, 5).Border(wxTOP, 4).Right());
-      tblopt_sz->Add(flenc, wxSizerFlags().Right());
+      tblopt_sz->Add(flenchd, wxSizerFlags().Border(wxRIGHT, 5).Border(wxTOP, 4));
+      tblopt_sz->Add(flenc);
 
       global_sz->Add(header, wxSizerFlags().Border(wxTOP | wxLEFT | wxRIGHT, 10));
       global_sz->Add(datavw, wxSizerFlags(1).Expand().Border(wxALL, 10));
