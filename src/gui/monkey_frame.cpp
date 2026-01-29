@@ -257,7 +257,7 @@ searchmode_8bits(true), byteorder_little(true)
    global_sizer->Show(progress_sz, false);
    global_sizer->Show(advancedbox_sz, false);
 
-   // tooltips for widgets which meaning may not be obvious.
+   // tooltips for widgets whose meaning may not be obvious.
    advanced->SetToolTip(_("Advanced options"));
    options->SetToolTip(_("Settings panel"));
    about->SetToolTip(_("About Monkey-Moore"));
@@ -269,7 +269,10 @@ searchmode_8bits(true), byteorder_little(true)
    adv_enablepat->SetToolTip(_("Specify a custom sequence of characters\n"
                                "which the relative search will be based upon"));
 
-   browse->SetFocus();   
+   browse->SetFocus();
+
+   wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, MonkeyMoore_8bitMode);
+   OnSearchMode(evt);
 
    // restores previous UI state
    if (prefs.getBool(wxT("settings/ui-remember-state")))
@@ -571,7 +574,7 @@ void MonkeyFrame::OnCreateTbl (wxCommandEvent &WXUNUSED(event))
       result_box->GetItem(sel_item);
       wxASSERT(sel_item.GetData() < results.size());
 
-      MonkeyTable tbldiag(this, _("Create table file"), prefs, images, wxSize(400, 340));
+      MonkeyTable tbldiag(this, _("Create table file"), prefs, images, wxSize(500, 440));
 
       tbldiag.InitTableData<_DataType>(get<1>(results.at(sel_item.GetData())), byteorder_little);
       tbldiag.CenterOnParent();
