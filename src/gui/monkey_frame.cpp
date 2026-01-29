@@ -75,15 +75,15 @@ searchmode_8bits(true), byteorder_little(true)
 
    // _________________________________________________________________________
    // File
-   wxTextCtrl *fname = new wxTextCtrl(this, MonkeyMoore_FName, wxEmptyString, wxDefaultPosition, wxSize(-1, 23), wxBORDER_DEFAULT);
-   wxButton *browse = new wxButton(this, MonkeyMoore_Browse, _("Browse"), wxDefaultPosition, wxSize(24, 23), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxTextCtrl *fname = new wxTextCtrl(this, MonkeyMoore_FName, wxEmptyString, wxDefaultPosition, wxSize(-1, 28), wxBORDER_DEFAULT);
+   wxButton *browse = new wxButton(this, MonkeyMoore_Browse, _("Browse"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
 
    browse->SetBitmap(images.GetBitmap(MonkeyBmp_OpenFile));
    browse->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_OpenFileGrayed));
 
    wxStaticBoxSizer *filebox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("File")), wxHORIZONTAL);
-   filebox_sz->Add(fname, wxSizerFlags(1).Left().Expand().Border(wxALL, 5).FixedMinSize());
-   filebox_sz->Add(browse, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
+   filebox_sz->Add(fname, wxSizerFlags(1).Expand().Border().FixedMinSize());
+   filebox_sz->Add(browse, wxSizerFlags().Border(wxALL ^ wxLEFT).Expand());
     
    // _________________________________________________________________________
    // Search Parameters 
@@ -95,24 +95,24 @@ searchmode_8bits(true), byteorder_little(true)
    searchtype_rs->SetValue(true);
 
    wxBoxSizer *searchtype_sz = new wxBoxSizer(wxHORIZONTAL);
-   searchtype_sz->Add(searchtype_rs, wxSizerFlags().Left().Border(wxLEFT | wxRIGHT | wxTOP, 4));
-   searchtype_sz->Add(searchtype_vsr, wxSizerFlags().Left().Border(wxLEFT | wxRIGHT | wxTOP, 4));
+   searchtype_sz->Add(searchtype_rs, wxSizerFlags().Border(wxRIGHT));
+   searchtype_sz->Add(searchtype_vsr);
 
    // -- search keyword textinput
-   wxTextCtrl *kword = new wxTextCtrl(this, MonkeyMoore_KWord, wxT(""), wxDefaultPosition, wxSize(-1, 23), wxTE_PROCESS_ENTER);
-   wxButton *search = new wxButton(this, MonkeyMoore_Search, _("Search"), wxDefaultPosition, wxSize(24, 23), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxTextCtrl *kword = new wxTextCtrl(this, MonkeyMoore_KWord, wxT(""), wxDefaultPosition, wxSize(-1, 28), wxTE_PROCESS_ENTER);
+   wxButton *search = new wxButton(this, MonkeyMoore_Search, _("Search"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
 
    search->SetBitmap(images.GetBitmap(MonkeyBmp_Search));
    search->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_SearchGrayed));
 
    wxBoxSizer *searchinput_sz = new wxBoxSizer(wxHORIZONTAL);
-   searchinput_sz->Add(kword, wxSizerFlags(1).Expand().Border(wxALL, 5).FixedMinSize());
-   searchinput_sz->Add(search, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
+   searchinput_sz->Add(kword, wxSizerFlags(1).Border(wxRIGHT).Expand().FixedMinSize());
+   searchinput_sz->Add(search, wxSizerFlags().Expand());
 
    // -- search options (controls below the keyword input)
-   wxButton *advanced = new wxButton(this, MonkeyMoore_Advanced, _("Advanced"), wxDefaultPosition, wxSize(24, 23), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxButton *advanced = new wxButton(this, MonkeyMoore_Advanced, _("Advanced"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
    wxCheckBox *use_wc = new wxCheckBox(this, MonkeyMoore_UseWC, _(" Enable Wildcards"));
-   wxTextCtrl *wildcard = new wxTextCtrl(this, MonkeyMoore_Wildcard, wxEmptyString, wxDefaultPosition, wxSize(20, 21));
+   wxTextCtrl *wildcard = new wxTextCtrl(this, MonkeyMoore_Wildcard, wxEmptyString, wxDefaultPosition, wxSize(30, 28));
    wxRadioButton *searchmode_8bit = new wxRadioButton(this, MonkeyMoore_8bitMode, _(" 8-bit"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
    wxRadioButton *searchmode_16bit = new wxRadioButton(this, MonkeyMoore_16bitMode, _(" 16-bit"));
 
@@ -122,18 +122,18 @@ searchmode_8bits(true), byteorder_little(true)
    wildcard->Disable();
 
    wxBoxSizer *searchopt_sz = new wxBoxSizer(wxHORIZONTAL);
-   searchopt_sz->Add(use_wc, wxSizerFlags().Border(wxLEFT, 6).Align(wxALIGN_CENTER_VERTICAL));
-   searchopt_sz->Add(wildcard, wxSizerFlags().Border(wxTOP | wxBOTTOM, 2).Align(wxALIGN_CENTER_VERTICAL));
+   searchopt_sz->Add(use_wc, wxSizerFlags().Border(wxRIGHT).Center());
+   searchopt_sz->Add(wildcard, wxSizerFlags().Border(wxRIGHT).Center());
    searchopt_sz->AddStretchSpacer(1);
-   searchopt_sz->Add(searchmode_8bit, wxSizerFlags().Border(wxRIGHT, 4).Align(wxALIGN_CENTER_VERTICAL));
-   searchopt_sz->Add(searchmode_16bit, wxSizerFlags().Border(wxRIGHT, 4).Align(wxALIGN_CENTER_VERTICAL));
-   searchopt_sz->Add(advanced, wxSizerFlags().Expand().Shaped().FixedMinSize());
+   searchopt_sz->Add(searchmode_8bit, wxSizerFlags().Border(wxRIGHT).Center());
+   searchopt_sz->Add(searchmode_16bit, wxSizerFlags().Border(wxRIGHT).Center());
+   searchopt_sz->Add(advanced, wxSizerFlags().Expand());
 
    // -- search box
    wxStaticBoxSizer *searchbox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Search Parameters")), wxVERTICAL);
-   searchbox_sz->Add(searchtype_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT, 2));
-   searchbox_sz->Add(searchinput_sz, wxSizerFlags().Border(wxTOP, 1).Border(wxBOTTOM, -1).Expand());
-   searchbox_sz->Add(searchopt_sz, wxSizerFlags(1).Border(wxRIGHT, 4).Expand());
+   searchbox_sz->Add(searchtype_sz, wxSizerFlags().Border(wxLEFT | wxTOP | wxRIGHT));
+   searchbox_sz->Add(searchinput_sz, wxSizerFlags().Border().Expand());
+   searchbox_sz->Add(searchopt_sz, wxSizerFlags(1).Border(wxLEFT | wxBOTTOM | wxRIGHT).Expand());
    searchbox_sz->AddSpacer(4);
 
    // _________________________________________________________________________
@@ -141,8 +141,8 @@ searchmode_8bits(true), byteorder_little(true)
 
    // -- custom character pattern row
    wxCheckBox *adv_enablepat = new wxCheckBox(this, MonkeyMoore_EnableCP, _(" Character sequence:"));
-   wxTextCtrl *char_pattern = new wxTextCtrl(this, MonkeyMoore_CharPattern, wxEmptyString, wxDefaultPosition, wxSize(-1, 23));
-   wxButton *charset_list = new wxButton(this, MonkeyMoore_CharsetList, _("Sequences List"), wxDefaultPosition, wxSize(24, 23), wxBU_NOTEXT);
+   wxTextCtrl *char_pattern = new wxTextCtrl(this, MonkeyMoore_CharPattern, wxEmptyString, wxDefaultPosition, wxSize(-1, 28));
+   wxButton *charset_list = new wxButton(this, MonkeyMoore_CharsetList, _("Sequences List"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
 
    // disabled at startup
    char_pattern->Disable();
@@ -151,12 +151,10 @@ searchmode_8bits(true), byteorder_little(true)
    charset_list->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_SequencesGrayed));
 
    wxBoxSizer *advancedopt_sz = new wxBoxSizer(wxHORIZONTAL);
-   advancedopt_sz->AddSpacer(4);
-   advancedopt_sz->Add(adv_enablepat, wxSizerFlags().Border(wxRIGHT, 5).Align(wxALIGN_CENTER_VERTICAL));
-   advancedopt_sz->Add(char_pattern, wxSizerFlags(1).FixedMinSize().Border(wxALL, 1));
-   advancedopt_sz->AddSpacer(8);
-   advancedopt_sz->Add(charset_list, wxSizerFlags().Expand().Shaped().FixedMinSize());
-   advancedopt_sz->AddSpacer(2);
+
+   advancedopt_sz->Add(adv_enablepat, wxSizerFlags().Border(wxRIGHT).Center());
+   advancedopt_sz->Add(char_pattern, wxSizerFlags(1).Border(wxRIGHT).Expand());
+   advancedopt_sz->Add(charset_list, wxSizerFlags().Expand());
 
    // -- byte order row
    wxCheckBox *byteorder_enable = new wxCheckBox(this, MonkeyMoore_EnableByteOrder, _(" Byte order:"));
@@ -166,14 +164,14 @@ searchmode_8bits(true), byteorder_little(true)
    byteorder_enable->SetValue(true);
 
    wxBoxSizer *advbyteorder_sz = new wxBoxSizer(wxHORIZONTAL);
-   advbyteorder_sz->Add(byteorder_enable, wxSizerFlags().Border(wxLEFT, 6));
-   advbyteorder_sz->Add(byteorder_le, wxSizerFlags().Border(wxLEFT | wxRIGHT, 4));
-   advbyteorder_sz->Add(byteorder_be, wxSizerFlags().Border(wxRIGHT, 4));
+   advbyteorder_sz->Add(byteorder_enable, wxSizerFlags().Border(wxRIGHT));
+   advbyteorder_sz->Add(byteorder_le, wxSizerFlags().Border(wxRIGHT));
+   advbyteorder_sz->Add(byteorder_be, wxSizerFlags().Border(wxRIGHT));
 
    // -- advanced box
    wxStaticBoxSizer *advancedbox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Advanced")), wxVERTICAL);
-   advancedbox_sz->Add(advancedopt_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT, 2).Expand());
-   advancedbox_sz->Add(advbyteorder_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT, 2).Border(wxTOP | wxBOTTOM, 5));
+   advancedbox_sz->Add(advancedopt_sz, wxSizerFlags().Border(wxLEFT | wxTOP | wxRIGHT).Expand());
+   advancedbox_sz->Add(advbyteorder_sz, wxSizerFlags().Border());
 
    // _________________________________________________________________________
    // Results
@@ -193,7 +191,7 @@ searchmode_8bits(true), byteorder_little(true)
    about->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_AboutGrayed));
 
    wxBoxSizer *resultopt_sz = new wxBoxSizer(wxHORIZONTAL);
-   resultopt_sz->Add(createtbl, wxSizerFlags().Border(wxALL, 4).Left());
+   resultopt_sz->Add(createtbl, wxSizerFlags().Border(wxRIGHT).Center());
    resultopt_sz->Add(clear, wxSizerFlags().Border(wxALL, 4).Left());
    resultopt_sz->Add(options, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
    resultopt_sz->Add(about, wxSizerFlags().Expand().Shaped().Border(wxALL, 4).FixedMinSize());
@@ -211,9 +209,9 @@ searchmode_8bits(true), byteorder_little(true)
    results->InsertColumn(2, _("Preview"), wxLIST_FORMAT_LEFT, ResultListCol_Preview);
 
    wxStaticBoxSizer *resultbox_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Results")), wxVERTICAL);
-   resultbox_sz->Add(show_all, wxSizerFlags().Left().Border(wxLEFT, 5));
-   resultbox_sz->Add(results, wxSizerFlags(1).Border(wxALL, 4).Expand());
-   resultbox_sz->Add(resultopt_sz, wxSizerFlags().Border(wxALL, 2).Expand());
+   resultbox_sz->Add(show_all, wxSizerFlags().Left().Border());
+   resultbox_sz->Add(results, wxSizerFlags(1).Border(wxLEFT | wxRIGHT).Expand());
+   resultbox_sz->Add(resultopt_sz, wxSizerFlags().Border().Expand());
 
    // _________________________________________________________________________
    // Search Progress
@@ -225,28 +223,28 @@ searchmode_8bits(true), byteorder_little(true)
    cancel_search->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_CancelGrayed));
    
    wxBoxSizer * progressinfo_sz = new wxBoxSizer(wxHORIZONTAL);
-   progressinfo_sz->Add(elapsed_time, wxSizerFlags().Border(wxTOP | wxLEFT, 4).Left().Expand());
+   progressinfo_sz->Add(elapsed_time, wxSizerFlags().Center());
    progressinfo_sz->AddStretchSpacer(1);
-   progressinfo_sz->Add(cancel_search, wxSizerFlags().Right().Align(wxALIGN_CENTER_VERTICAL));
+   progressinfo_sz->Add(cancel_search, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 
-   wxGauge *progress = new wxGauge(this, MonkeyMoore_Progress, 100, wxDefaultPosition, wxSize(300, 12));
+   wxGauge *progress = new wxGauge(this, MonkeyMoore_Progress, 100);
    
    wxStaticBoxSizer *progress_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Search Progress")), wxVERTICAL);
-   progress_sz->Add(progress, wxSizerFlags().Border(wxALL, 4).Expand());
-   progress_sz->Add(progressinfo_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT, 4).Expand());
+   progress_sz->Add(progress, wxSizerFlags().Border().Expand());
+   progress_sz->Add(progressinfo_sz, wxSizerFlags().Border().Expand());
 
    // _________________________________________________________________________
    // Final layout 
    wxBoxSizer *global_sizer = new wxBoxSizer(wxVERTICAL);
-   global_sizer->Add(filebox_sz, wxSizerFlags().Top().Border(wxLEFT | wxRIGHT | wxTOP, MM_BORDER).Expand());
+   global_sizer->Add(filebox_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT | wxTOP).Expand());
    global_sizer->AddSpacer(5);
-   global_sizer->Add(searchbox_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT, MM_BORDER).Expand());
+   global_sizer->Add(searchbox_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT).Expand());
    global_sizer->AddSpacer(5);
-   global_sizer->Add(advancedbox_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT, MM_BORDER).Expand());
+   global_sizer->Add(advancedbox_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT).Expand());
    global_sizer->AddSpacer(5);
-   global_sizer->Add(resultbox_sz, wxSizerFlags(1).Border(wxLEFT | wxRIGHT, MM_BORDER).Expand());
+   global_sizer->Add(resultbox_sz, wxSizerFlags(1).Border(wxLEFT | wxRIGHT).Expand());
    global_sizer->AddSpacer(5);
-   global_sizer->Add(progress_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT | wxBOTTOM, MM_BORDER).Expand());
+   global_sizer->Add(progress_sz, wxSizerFlags().Border(wxLEFT | wxRIGHT | wxBOTTOM).Expand());
 
    SetSizer(global_sizer);
    Layout();
