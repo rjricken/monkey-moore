@@ -34,57 +34,57 @@ public:
       wxCheckBox *remember_size = new wxCheckBox(this, MonkeyOptions_RememberSize, _(" Remember window size"));
       wxCheckBox *remember_pos = new wxCheckBox(this, MonkeyOptions_RememberPos, _(" Remember window position"));
       wxCheckBox *remember_ui = new wxCheckBox(this, MonkeyOptions_RememberUI, _(" Remember user interface options"));
-      general_sz->Add(always_center, wxSizerFlags().Left().Border(wxALL, 2));
-      general_sz->Add(remember_size, wxSizerFlags().Left().Border(wxALL, 2));
-      general_sz->Add(remember_pos, wxSizerFlags().Left().Border(wxALL, 2));
-      general_sz->Add(remember_ui, wxSizerFlags().Left().Border(wxALL, 2));
+      general_sz->Add(always_center, wxSizerFlags().Left().Border(wxALL ^ wxBOTTOM));
+      general_sz->Add(remember_size, wxSizerFlags().Left().Border(wxALL ^ wxBOTTOM));
+      general_sz->Add(remember_pos, wxSizerFlags().Left().Border(wxALL ^ wxBOTTOM));
+      general_sz->Add(remember_ui, wxSizerFlags().Left().Border());
 
       wxBoxSizer *offset_sz = new wxBoxSizer(wxHORIZONTAL);
       wxStaticText *off_label = new wxStaticText(this, wxID_ANY, _("Offset mode: "));
       wxRadioButton *off_hex = new wxRadioButton(this, MonkeyOptions_OffsetHex, _(" hex"));
       wxRadioButton *off_dec = new wxRadioButton(this, MonkeyOptions_OffsetDec, _(" decimal"));
-      offset_sz->Add(off_label, wxSizerFlags().Left().Border(wxTOP, 2));
-      offset_sz->Add(off_hex, wxSizerFlags().Left().Border(wxALL, 2));
-      offset_sz->Add(off_dec, wxSizerFlags().Left().Border(wxALL, 2));
+      offset_sz->Add(off_label, wxSizerFlags().Border(wxRIGHT).Center());
+      offset_sz->Add(off_hex, wxSizerFlags().Border(wxRIGHT).Center());
+      offset_sz->Add(off_dec, wxSizerFlags().Border(wxRIGHT).Center());
 
       wxBoxSizer *preview_sz = new wxBoxSizer(wxHORIZONTAL);
       wxStaticText *prvw_label = new wxStaticText(this, wxID_ANY, _("Preview width: "));
-      wxSpinCtrl *prvw_width = new wxSpinCtrl(this, MonkeyOptions_PreviewWidth, wxEmptyString, wxDefaultPosition, wxSize(50, 20));
+      wxSpinCtrl *prvw_width = new wxSpinCtrl(this, MonkeyOptions_PreviewWidth, wxEmptyString, wxDefaultPosition, wxSize(50, 24));
       wxStaticText *prvw_unit = new wxStaticText(this, wxID_ANY, _(" characters"));
-      preview_sz->Add(prvw_label, wxSizerFlags().Left().Border(wxTOP, 5));
-      preview_sz->Add(prvw_width, wxSizerFlags().Left().Border(wxALL, 2));
-      preview_sz->Add(prvw_unit, wxSizerFlags().Left().Border(wxTOP, 5));
+      preview_sz->Add(prvw_label, wxSizerFlags().Border(wxRIGHT).Center());
+      preview_sz->Add(prvw_width, wxSizerFlags().Border(wxRIGHT).Center());
+      preview_sz->Add(prvw_unit, wxSizerFlags().Border(wxRIGHT).Center());
 
       prvw_width->SetRange(20, 50);
 
       wxStaticBoxSizer *display_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Display")), wxVERTICAL);
-      display_sz->Add(preview_sz, wxSizerFlags().Border(wxLEFT, 2));
-      display_sz->Add(offset_sz, wxSizerFlags().Border(wxLEFT, 2));
+      display_sz->Add(preview_sz, wxSizerFlags().Border(wxALL ^ wxBOTTOM));
+      display_sz->Add(offset_sz, wxSizerFlags().Border());
 
       wxBoxSizer *searchbuf_sz = new wxBoxSizer(wxHORIZONTAL);
       wxStaticText *sb_label = new wxStaticText(this, wxID_ANY, _("Memory pool: "));
-      wxSpinCtrl *sb_size = new wxSpinCtrl(this, MonkeyOptions_MemoryPool, wxEmptyString, wxDefaultPosition, wxSize(50, 20));
+      wxSpinCtrl *sb_size = new wxSpinCtrl(this, MonkeyOptions_MemoryPool, wxEmptyString, wxDefaultPosition, wxSize(50, 24));
       wxStaticText *sb_unit = new wxStaticText(this, wxID_ANY, _(" MB"));
-      searchbuf_sz->Add(sb_label, wxSizerFlags().Left().Border(wxTOP, 5));
-      searchbuf_sz->Add(sb_size, wxSizerFlags().Left().Border(wxALL, 2));
-      searchbuf_sz->Add(sb_unit, wxSizerFlags().Left().Border(wxTOP, 5));
+      searchbuf_sz->Add(sb_label, wxSizerFlags().Border(wxRIGHT).Center());
+      searchbuf_sz->Add(sb_size, wxSizerFlags().Border(wxRIGHT).Center());
+      searchbuf_sz->Add(sb_unit, wxSizerFlags().Border(wxRIGHT).Center());
 
       sb_size->SetRange(8, 64);
 
       wxBoxSizer *smt_sz = new wxBoxSizer(wxHORIZONTAL);
       wxStaticText *smt_label = new wxStaticText(this, wxID_ANY, _("Search threads: "));
-      wxSpinCtrl *smt_numthreads = new wxSpinCtrl(this, MonkeyOptions_MaxNumThreads, wxEmptyString, wxDefaultPosition, wxSize(50, 20));
+      wxSpinCtrl *smt_numthreads = new wxSpinCtrl(this, MonkeyOptions_MaxNumThreads, wxEmptyString, wxDefaultPosition, wxSize(50, 24));
       wxStaticText *smt_units = new wxStaticText(this, wxID_ANY, _(" threads"));
-      smt_sz->Add(smt_label, wxSizerFlags().Left().Border(wxTOP, 5));
-      smt_sz->Add(smt_numthreads, wxSizerFlags().Left().Border(wxALL, 2));
-      smt_sz->Add(smt_units, wxSizerFlags().Left().Border(wxTOP, 5));
+      smt_sz->Add(smt_label, wxSizerFlags().Border(wxRIGHT).Center());
+      smt_sz->Add(smt_numthreads, wxSizerFlags().Border(wxRIGHT).Center());
+      smt_sz->Add(smt_units, wxSizerFlags().Border(wxRIGHT).Center());
 
       smt_numthreads->SetRange(1, 16);
       smt_numthreads->SetValue(std::min<uint16_t>(std::thread::hardware_concurrency(), 16));
 
       wxStaticBoxSizer *perf_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Performance")), wxVERTICAL);
-      perf_sz->Add(searchbuf_sz, wxSizerFlags().Border(wxLEFT, 2));
-      perf_sz->Add(smt_sz, wxSizerFlags().Border(wxLEFT, 2));
+      perf_sz->Add(searchbuf_sz, wxSizerFlags().Border(wxALL ^ wxBOTTOM));
+      perf_sz->Add(smt_sz, wxSizerFlags().Border());
 
       wxBoxSizer *buttons_sz = new wxBoxSizer(wxHORIZONTAL);
       wxButton *ok = new wxButton(this, wxID_OK, _("Ok"));
@@ -94,14 +94,14 @@ public:
       buttons_sz->Add(cancel, wxSizerFlags().Border(wxALL, 2));
 
       wxBoxSizer *global_sz = new wxBoxSizer(wxVERTICAL);
-      global_sz->Add(general_sz, wxSizerFlags().Expand().Border(wxTOP | wxLEFT | wxRIGHT, 6));
+      global_sz->Add(general_sz, wxSizerFlags().Expand().Border(wxALL ^ wxBOTTOM));
       global_sz->AddSpacer(5);
-      global_sz->Add(display_sz, wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT, 6));
+      global_sz->Add(display_sz, wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT));
       global_sz->AddSpacer(5);
-      global_sz->Add(perf_sz, wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT, 6));
+      global_sz->Add(perf_sz, wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT));
       global_sz->AddSpacer(5);
       global_sz->AddStretchSpacer(1);
-      global_sz->Add(buttons_sz, wxSizerFlags().Expand().Border(wxBOTTOM | wxLEFT | wxRIGHT, 6));
+      global_sz->Add(buttons_sz, wxSizerFlags().Expand().Border(wxALL ^ wxTOP));
 
       SetSizer(global_sz);
 
