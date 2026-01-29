@@ -1141,7 +1141,7 @@ void MonkeyFrame::ShowResults (bool showAll)
                unique.push_back(t);
 
             bool hex_offset = prefs.getBool(wxT("settings/display-offset-mode"), wxT("hex"));
-            wxString offset = wxString::Format(hex_offset ? wxT("0x%I64X") : wxT("%I64d"), get<0>(r[i]));
+            wxString offset = wxString::Format(hex_offset ? wxT("0x%llX") : wxT("%lld"), get<0>(r[i]));
 
             result_box->InsertItem(curListIndex, offset);
             result_box->SetItemData(curListIndex, i);
