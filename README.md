@@ -1,5 +1,9 @@
 # Monkey-Moore
 
+![CI Status](https://github.com/YourUsername/monkey-moore/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-GPLv3-blue)
+![C++ Standard](https://img.shields.io/badge/C%2B%2B-14-blue.svg)
+
 **Monkey-Moore** is a high-performance relative search utility designed specifically for ROM hacking, data mining, and reverse engineering.
 
 By leveraging an optimized, multi-threaded implementation of the **Boyer-Moore string search algorithm**, it performs rapid pattern matching across large binary files. Monkey-Moore offers extensive configuration options, making it the ideal tool for locating text or data in proprietary formats where the encoding is unknown.
