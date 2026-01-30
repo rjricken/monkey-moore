@@ -18,8 +18,6 @@
 #include <memory>
 #include <array>
 
-using namespace std;
-
 #if !defined(__WXMSW__) && !defined(__WXPM__)
    #include "../resources/mmoore.xpm"
 #endif
@@ -262,7 +260,7 @@ searchmode_8bits(true), byteorder_little(true)
    SetSizer(frame_sizer);
    Layout();
 
-   progressBoxHeight = progress_sz->GetSize().y + MM_BORDER;
+   progressBoxHeight = progress_sz->GetSize().y + 5;
    
    // hide progress box/advanced box
    global_sizer->Show(progress_sz, false);
@@ -303,7 +301,7 @@ searchmode_8bits(true), byteorder_little(true)
       }     
    }
 
-   vector <pair <wxString, wxString>> &charsets = prefs.getCommonCharsetList();
+   std::vector<std::pair<wxString, wxString>> &charsets = prefs.getCommonCharsetList();
    const int start = MonkeyMoore_CharsetBase;
    const int end = MonkeyMoore_CharsetBase + charsets.size();
 
@@ -319,8 +317,8 @@ MonkeyFrame::~MonkeyFrame ()
 }
 
 // template specializations to return a reference to the correct results vector
-template <> vector<result_type8> &MonkeyFrame::lastResults<uint8_t> () { return last_results8; }
-template <> vector<result_type16> &MonkeyFrame::lastResults<uint16_t> () { return last_results16; }
+template <> std::vector<result_type8> &MonkeyFrame::lastResults<uint8_t> () { return last_results8; }
+template <> std::vector<result_type16> &MonkeyFrame::lastResults<uint16_t> () { return last_results16; }
 
 /**
 * Method called when the browse button is pressed.
@@ -405,7 +403,7 @@ void MonkeyFrame::OnSearch (wxCommandEvent &WXUNUSED(event))
 
    wxChar card = 0;
    wxString charpattern = wxT("");
-   vector <short> values;
+   std::vector <short> values;
 
    bool relative_search = GetValue<bool, wxRadioButton>(MonkeyMoore_RelativeSearch);
 
@@ -462,7 +460,7 @@ void MonkeyFrame::OnSearch (wxCommandEvent &WXUNUSED(event))
    if (!wxFile::Access(filename, wxFile::read))
       return ShowWarning(MM_WARNING_FILECANTACCESS);
 
-   shared_ptr<wxFile> file(new wxFile(filename, wxFile::read));
+   std::shared_ptr<wxFile> file(new wxFile(filename, wxFile::read));
 
    if (!file->IsOpened())
       return ShowWarning(MM_WARNING_FILENOTFOUND);
@@ -512,8 +510,8 @@ void MonkeyFrame::OnCharsetList (wxCommandEvent &WXUNUSED(event))
 {
    bool enableCP = IsChecked(MonkeyMoore_EnableCP);
 
-   vector <pair <wxString, wxString>> &seqs = prefs.getCommonCharsetList();
-   vector <pair <wxString, wxString>>::iterator i;
+   std::vector<std::pair<wxString, wxString>> &seqs = prefs.getCommonCharsetList();
+   std::vector<std::pair<wxString, wxString>>::iterator i;
 
    wxMenu charset_menu(wxT(""));
    int index = 0;
@@ -587,7 +585,7 @@ void MonkeyFrame::OnCreateTbl (wxCommandEvent &WXUNUSED(event))
 
       MonkeyTable tbldiag(this, _("Create table file"), prefs, images, wxSize(500, 440));
 
-      tbldiag.InitTableData<_DataType>(get<1>(results.at(sel_item.GetData())), byteorder_little);
+      tbldiag.InitTableData<_DataType>(std::get<1>(results.at(sel_item.GetData())), byteorder_little);
       tbldiag.CenterOnParent();
       tbldiag.ShowModal();
    }
@@ -731,7 +729,7 @@ void MonkeyFrame::OnCancel (wxCommandEvent &WXUNUSED(event))
    if (search_in_progress)
    {
       {
-         lock_guard<mutex> lock(abortMutex);
+         std::lock_guard<std::mutex> lock(abortMutex);
          search_was_aborted = true;
       }
       
@@ -944,7 +942,7 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
       std::count_if(kw.begin(), kw.end(), [](wxChar c) { return c < 0x20; }) == 0 &&
       std::count_if(kw.begin(), kw.end(), [](wxChar c) { return c > 0x7A; }) == 0;
       
-   int n_wildcards = count(kw.begin(), kw.end(), wc);
+   int n_wildcards = std::count(kw.begin(), kw.end(), wc);
 
    // we need 3 or more characters
    if (!kw || kw.size() < 3)
@@ -955,12 +953,11 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
 
    if (!custom_cp && ascii_input)
    {
-      //int n_lower = static_cast <int> (count_if(kw.begin(), kw.end(), is_lower));
-      int n_lower = static_cast<int>(count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
+      int n_lower = static_cast<int>(std::count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
          return is_lower(static_cast<char32_t>(c.GetValue()));
       }));
-      //int n_upper = static_cast <int> (count_if(kw.begin(), kw.end(), is_upper));
-      int n_upper = static_cast <int> (count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
+
+      int n_upper = static_cast <int> (std::count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
          return is_upper(static_cast<char32_t>(c.GetValue()));
       }));
 
@@ -1015,7 +1012,7 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
 
       if (custom_cp)
       {
-         if (n_wildcards && count(cp.begin(), cp.end(), wc))
+         if (n_wildcards && std::count(cp.begin(), cp.end(), wc))
          {
             ShowWarning(MM_WARNING_CHARPATWILDCARD);
             return false;
@@ -1025,19 +1022,19 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
          // algorithms (like sort), so plain std::wstring is used instead.
          std::wstring sorted_kw(kw.c_str()), sorted_cp(cp.c_str());
 
-         sort(sorted_kw.begin(), sorted_kw.end());
-         sort(sorted_cp.begin(), sorted_cp.end());
+         std::sort(sorted_kw.begin(), sorted_kw.end());
+         std::sort(sorted_cp.begin(), sorted_cp.end());
 
-         if (unique(sorted_cp.begin(), sorted_cp.end()) != sorted_cp.end())
+         if (std::unique(sorted_cp.begin(), sorted_cp.end()) != sorted_cp.end())
          {
             ShowWarning(MM_WARNING_CHARPATDUPLICATED);
             return false;
          }
 
-         sorted_kw.erase(remove(sorted_kw.begin(), sorted_kw.end(), wc), sorted_kw.end());
-         sorted_kw.erase(unique(sorted_kw.begin(), sorted_kw.end()), sorted_kw.end());
+         sorted_kw.erase(std::remove(sorted_kw.begin(), sorted_kw.end(), wc), sorted_kw.end());
+         sorted_kw.erase(std::unique(sorted_kw.begin(), sorted_kw.end()), sorted_kw.end());
 
-         if (!includes(sorted_cp.begin(), sorted_cp.end(), sorted_kw.begin(), sorted_kw.end()))
+         if (!std::includes(sorted_cp.begin(), sorted_cp.end(), sorted_kw.begin(), sorted_kw.end()))
          {
             ShowWarning(MM_WARNING_KWORDCPMISMATCH);
             return false;
@@ -1058,7 +1055,7 @@ void MonkeyFrame::AdjustResultColumns (bool sizeToContents)
    if (sizeToContents && list->GetItemCount())
       list->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
-   array<int, 3> cols = {0};
+   std::array<int, 3> cols = {0};
    cols[0] = list->GetColumnWidth(0);
    cols[1] = list->GetColumnWidth(1);
 
@@ -1148,13 +1145,13 @@ void MonkeyFrame::ShowResults (bool showAll)
          auto &t = std::get<1>(r[i]);
 
          // if another result with the same values was already inserted in the list, don't insert
-         if (!count(unique.begin(), unique.end(), t))
+         if (!std::count(unique.begin(), unique.end(), t))
          {
             if (!showAll)
                unique.push_back(t);
 
             bool hex_offset = prefs.getBool(wxT("settings/display-offset-mode"), wxT("hex"));
-            wxString offset = wxString::Format(hex_offset ? wxT("0x%llX") : wxT("%lld"), get<0>(r[i]));
+            wxString offset = wxString::Format(hex_offset ? wxT("0x%llX") : wxT("%lld"), std::get<0>(r[i]));
 
             result_box->InsertItem(curListIndex, offset);
             result_box->SetItemData(curListIndex, i);
@@ -1173,7 +1170,7 @@ void MonkeyFrame::ShowResults (bool showAll)
             }
 
             result_box->SetItem(curListIndex, 1, values);
-            result_box->SetItem(curListIndex, search_relative ? 2 : 1, get<2>(r[i]));
+            result_box->SetItem(curListIndex, search_relative ? 2 : 1, std::get<2>(r[i]));
 
             curListIndex++;
          }
@@ -1228,7 +1225,7 @@ void MonkeyFrame::OnThreadCompleted (wxThreadEvent &WXUNUSED(event))
 template <typename _DataType>
 void MonkeyFrame::OnThreadAborted (wxThreadEvent &WXUNUSED(event))
 {
-   lock_guard<mutex> lock(abortMutex);
+   std::lock_guard<std::mutex> lock(abortMutex);
 
    search_in_progress = false;
    search_was_aborted = false;

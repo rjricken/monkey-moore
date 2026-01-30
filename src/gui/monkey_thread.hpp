@@ -26,8 +26,6 @@
 #include "byteswap.hpp"
 #include "mmoore/monkey_moore.hpp"
 
-using namespace std;
-
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_UPDATE, wxThreadEvent);
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_COMPLETED, wxThreadEvent);
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_ABORTED, wxThreadEvent);
@@ -43,7 +41,7 @@ struct SearchParameters
    * @param[in] file Pointer to a previously allocated wxFile object.
    * @param[in] keyw,pattern,wcard Parameters needed to perform the search.
    */
-   SearchParameters (shared_ptr<wxFile> &file, const wxString &keyw, const wxString &pattern, const wxChar wcard) :
+   SearchParameters (std::shared_ptr<wxFile> &file, const wxString &keyw, const wxString &pattern, const wxChar wcard) :
       m_file(move(file)), keyword(keyw), pattern(pattern), wildcard(wcard),
       search_type(relative), endianness(little_endian) { }
 
@@ -52,7 +50,7 @@ struct SearchParameters
    * @param[in] file Pointer to a previously allocated wxFile object.
    * @param[in] vals Vector of values needed for a value scan search.
    */
-   SearchParameters (shared_ptr<wxFile> &file, vector <short> vals) :
+   SearchParameters (std::shared_ptr<wxFile> &file, std::vector <short> vals) :
       m_file(move(file)), values(vals), search_type(value_scan), endianness(little_endian) { }
 
    /**
@@ -75,13 +73,13 @@ struct SearchParameters
    enum { relative, value_scan } search_type;
    enum { little_endian, big_endian } endianness;
 
-   shared_ptr<wxFile> m_file;
+   std::shared_ptr<wxFile> m_file;
 
    wxString keyword;   /**< Keyword, only valid for relative searches */
    wxString pattern;   /**< Custom character sequence, valid for relative searches */
    wxChar wildcard;    /**< Character used as wildcard on relative searches */
 
-   vector <short> values;  /**< Values used on value scan searches */
+   std::vector <short> values;  /**< Values used on value scan searches */
 };
 
 /**
@@ -92,10 +90,10 @@ template <typename _Type>
 class SearchThread : public wxThread
 {
 public:
-   typedef tuple<wxFileOffset, typename MonkeyMoore<_Type>::equivalency_map, wxString> result_type;
-   typedef pair<wxFileOffset, unsigned int> datablock_type;
+   using result_type = std::tuple<wxFileOffset, typename MonkeyMoore<_Type>::equivalency_map, wxString>;
+   using datablock_type = std::pair<wxFileOffset, unsigned int>;
 
-   SearchThread (SearchParameters p, vector<result_type> &results, MonkeyPrefs &mp, MonkeyFrame *mf) :
+   SearchThread (SearchParameters p, std::vector<result_type> &results, MonkeyPrefs &mp, MonkeyFrame *mf) :
    wxThread(), m_info(p), m_results(results), m_prefs(mp), m_frame(mf)
    {
       wxASSERT(m_frame != 0);
@@ -125,7 +123,7 @@ public:
       std::vector<CharType> char_seq_array = convert_to_vector_array(m_info.pattern);
 
       // creates a monkey-moore instance based on which type of search will be performed
-      unique_ptr<MonkeyMoore<_Type>> moore(
+      std::unique_ptr<MonkeyMoore<_Type>> moore(
          m_info.search_type == SearchParameters::relative ?
             new MonkeyMoore<_Type>(keyword_array, static_cast<char32_t>(m_info.wildcard), char_seq_array) :
             new MonkeyMoore<_Type>(m_info.values)
@@ -141,7 +139,7 @@ public:
       // number of blocks
       const uint32_t numBlocks = static_cast<uint32_t>(ceil(double(fileSize) / blockBaseSize));
 
-      vector<datablock_type> blocks;
+      std::vector<datablock_type> blocks;
 
 
       wxLogDebug("fileSize: %I64d", fileSize);
@@ -155,38 +153,38 @@ public:
          // each block has some extra overlapping bytes so we don't miss
          // a possible match split between two different blocks.
          wxFileOffset thisBlockOffset = i * blockBaseSize;
-         uint32_t thisBlockSize = min(blockSize, static_cast<uint32_t>(fileSize - thisBlockOffset));
+         uint32_t thisBlockSize = std::min(blockSize, static_cast<uint32_t>(fileSize - thisBlockOffset));
 
          wxLogDebug("block #%u: offset(%I64d) size(%u)", i, thisBlockOffset, thisBlockSize);
 
-         blocks.push_back(make_pair(thisBlockOffset, thisBlockSize));
+         blocks.push_back(std::make_pair(thisBlockOffset, thisBlockSize));
       }
 
       // keeps track of progress
       const float progressInc = 100.0f / numBlocks;
       float totalProgress = 0.0f;
 
-      int maxThreads = thread::hardware_concurrency();
+      int maxThreads = std::thread::hardware_concurrency();
       int threadsRunning = 0;
 
       // data access synchronization objects
-      mutex threadCountMutex;
-      mutex resultsMutex;
-      mutex progressMutex;
+      std::mutex threadCountMutex;
+      std::mutex resultsMutex;
+      std::mutex progressMutex;
 
       auto nextBlock = blocks.begin();
 
       // loops until the last block of data has been passed through to a new thread
       while (nextBlock != blocks.end())
       {
-         unique_lock<mutex> threadCountLock(threadCountMutex);
+         std::unique_lock<std::mutex> threadCountLock(threadCountMutex);
 
          // create a new thread if the max number of concurrent threads has not been reached
          if (threadsRunning < maxThreads)
          {
             threadCountLock.unlock();
 
-            shared_ptr<uint8_t> blockData(new uint8_t[nextBlock->second], default_delete<uint8_t[]>());
+            std::shared_ptr<uint8_t> blockData(new uint8_t[nextBlock->second], std::default_delete<uint8_t[]>());
 
             m_info.m_file->Seek(nextBlock->first, wxFromStart);
             m_info.m_file->Read(blockData.get(), nextBlock->second);
@@ -194,7 +192,7 @@ public:
             // _______________________________________________________________________________________
             // this lambda is responsible for running the appropriate search algorithm,
             // adjusting the offset of each result and appending them to the results pool.
-            auto search = [&, this] (shared_ptr<uint8_t> data, wxFileOffset offset, uint32_t size, uint32_t blockNumber)
+            auto search = [&, this] (std::shared_ptr<uint8_t> data, wxFileOffset offset, uint32_t size, uint32_t blockNumber)
             {
                wxString dbgOutput =
                   wxString::Format("  thread launched for #%u block: [%I64d-%I64d]\n",
@@ -220,19 +218,19 @@ public:
 
                   {
                      // prevent other threads from modifying the results while we're using it
-                     lock_guard<mutex> lock(resultsMutex);
+                     std::lock_guard<std::mutex> lock(resultsMutex);
                   
                      for (auto elem = localResults.begin(); elem != localResults.end(); ++elem)
                      {
                         // correct the offset for multibyte searches
                         wxFileOffset off = offset + elem->first * dataTypeSize + padding;
-                        m_results.push_back(make_tuple(off, elem->second, wxT("")));
+                        m_results.push_back(std::make_tuple(off, elem->second, wxT("")));
                      }
                   }
                }
 
                {
-                  lock_guard<mutex> lock(progressMutex);
+                  std::lock_guard<std::mutex> lock(progressMutex);
                   totalProgress += progressInc;
 
                   NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE,
@@ -240,7 +238,7 @@ public:
                }
                {
                   // frees a slot for a new thread to be spawned
-                  lock_guard<mutex> lock(threadCountMutex);
+                  std::lock_guard<std::mutex> lock(threadCountMutex);
                   --threadsRunning;
                }
 
@@ -248,14 +246,14 @@ public:
             };
             // _______________________________________________________________________________________
 
-            uint32_t curBlockNum = distance(blocks.begin(), nextBlock);
+            uint32_t curBlockNum = std::distance(blocks.begin(), nextBlock);
             wxLogDebug("Launching thread for #%u block", curBlockNum);
             
             //                                                                           v remove  v
-            async(launch::async, search, blockData, nextBlock->first, nextBlock->second, curBlockNum);
+            std::async(std::launch::async, search, blockData, nextBlock->first, nextBlock->second, curBlockNum);
 
             {
-               lock_guard<mutex> lock(threadCountMutex);
+               std::lock_guard<std::mutex> lock(threadCountMutex);
                ++threadsRunning;
             }
             ++nextBlock;
@@ -289,7 +287,7 @@ public:
 
       // generates previews
       for (auto i = m_results.begin(); i != m_results.end(); i++)
-         get<2>(*i) = GeneratePreview(get<0>(*i), get<1>(*i));
+         std::get<2>(*i) = GeneratePreview(std::get<0>(*i), std::get<1>(*i));
 
       NotifyMainThread(mmEVT_SEARCHTHREAD_COMPLETED);
 
@@ -312,7 +310,7 @@ private:
       // from the the endianness defined in the search options
       if ((sysLittleEndian && !littleEndian) || (!sysLittleEndian && littleEndian))
       {
-         transform(dataPtr, dataPtr + dataSize, dataPtr, [](_Type elem) -> _Type {
+         std::transform(dataPtr, dataPtr + dataSize, dataPtr, [](_Type elem) -> _Type {
             return swap_always<_Type>(elem);
          });
       }
@@ -325,12 +323,12 @@ private:
    * @param[in] threadCountMutex Synchronization object to the trhead count variable
    * @param[in] threadsRunning Number of threads running
    */
-   void WaitRunningThreads (mutex &threadCountMutex, const int &threadsRunning)
+   void WaitRunningThreads (std::mutex &threadCountMutex, const int &threadsRunning)
    {
       while (true)
       {
          {
-            lock_guard<mutex> lock(threadCountMutex);
+            std::lock_guard<std::mutex> lock(threadCountMutex);
             
             if (!threadsRunning)
                return;
@@ -380,10 +378,6 @@ private:
 
       //wxLogDebug("Generating preview at 0x%I64X: width(%i) kwAlignWdth(%u) offsetDelta(%I64d) readOffset(0x%I64X)",
       //   offset, width, kwAlignWidth, offsetDelta, read_offset);
-
-
-
-
       
       bool matchOffsetAligned = offset % sizeof(_Type) ? false : true;
       bool niceOffsetAligned = read_offset % sizeof(_Type) ? false : true;
@@ -392,7 +386,7 @@ private:
          wxLogDebug("Preview generation offset alignment mismatch");
       }
 
-      unique_ptr<_Type[]> raw_data(new _Type[width]);
+      std::unique_ptr<_Type[]> raw_data(new _Type[width]);
 
       m_info.m_file->Seek(read_offset, wxFromStart);
       m_info.m_file->Read(raw_data.get(), width * sizeof(_Type));
@@ -408,7 +402,7 @@ private:
       if (m_info.search_type == SearchParameters::relative)
       {
          // maps the table entries
-         map <_Type, wxChar> cur_table;
+         std::map<_Type, wxChar> cur_table;
 
          // generates the table
          for (auto i = table.begin(); i != table.end(); i++)
@@ -452,7 +446,7 @@ private:
    MonkeyFrame *m_frame;
    MonkeyPrefs &m_prefs;
 
-   vector <result_type> &m_results;
+   std::vector<result_type> &m_results;
 };
 
 #endif //~MONKEY_THREAD_HPP

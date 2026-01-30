@@ -12,8 +12,6 @@
 #include <exception>
 #include <regex>
 
-using namespace std;
-
 /**
 * Fills Monkey-Moore properties with the default (factory) values.
 */
@@ -119,12 +117,12 @@ void MonkeyPrefs::save (const wxString &configFile, bool recreate)
    XMLNode root = XMLNode::createXMLTopNode(wxT("monkey-moore-config"), false);
    root.addAttribute(wxT("version"), MM_VERSION);
 
-   map<wxString, XMLNode> nodes;
-   wregex pattern(wxT("([\\w-]+)/([\\w-]+)"));
+   std::map<wxString, XMLNode> nodes;
+   std::wregex pattern(wxT("([\\w-]+)/([\\w-]+)"));
 
    for (auto i = values.rbegin(); i != values.rend(); ++i)
    {
-      wsmatch match;
+      std::wsmatch match;
 
       if (regex_match(i->first.ToStdWstring(), match, pattern))
       {
@@ -151,8 +149,8 @@ void MonkeyPrefs::saveSequences (const wxString &fileName, bool recreate)
    if (recreate)
    {
       common_charsets.clear();
-      common_charsets.push_back(make_pair(wxT("Default Hiragana sequence"), MM_DEFAULT_HIRAGANA));
-      common_charsets.push_back(make_pair(wxT("Default Katakana sequence"), MM_DEFAULT_KATAKANA));
+      common_charsets.push_back(std::make_pair(wxT("Default Hiragana sequence"), MM_DEFAULT_HIRAGANA));
+      common_charsets.push_back(std::make_pair(wxT("Default Katakana sequence"), MM_DEFAULT_KATAKANA));
    }
 
    XMLNode root = XMLNode::createXMLTopNode(wxT("monkey-moore-sequences"), false);
