@@ -1,6 +1,6 @@
 # Monkey-Moore
 
-![CI Status](https://github.com/YourUsername/monkey-moore/actions/workflows/ci.yml/badge.svg)
+![CI Status](https://github.com/rjricken/monkey-moore/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-GPLv3-blue)
 ![C++ Standard](https://img.shields.io/badge/C%2B%2B-14-blue.svg)
 
