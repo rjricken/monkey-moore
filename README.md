@@ -38,43 +38,54 @@ Monkey-Moore is built for speed on modern hardware:
 
 ## Building from Source (Linux)
 
-Monkey-Moore uses **wxWidgets** for its cross-platform GUI. To build the project on Linux, you must satisfy the dependencies and use CMake.
+Monkey-Moore uses **CMake** for its build system and **wxWidgets** for the cross-platform GUI. A `Justfile` is included for convenience if you use the [Just command runner](https://github.com/casey/just).
 
 ### 1. Install Dependencies
-You will need a C++ compiler, CMake, and the wxWidgets 3.2 development libraries.
+You will need a C++14 compliant compiler, CMake (3.14+), and the wxWidgets development libraries.
 
 ```bash
 sudo apt-get install build-essential cmake libwxgtk3.2-dev
 ```
 
-### 2. Compile
+### 2. Compile & Run (using Just)
 
-Generate the Makefile and compile the application:
-
-```bash
-cd build
-cmake ..
-make
-```
-
-### 3. Running the application
-
-Once compiled, you can run the executable directly:
+If you have `just` installed, building is simple:
 
 ```bash
-./MonkeyMoore
+just configure
+just run
 ```
 
-## Linux Compatibility & Known Issues
+### 3. Compile (standard CMake)
 
-While the core search logic is fully functional on Linux, the GUI (originally designed for Windows) has some known visual quirks on modern Linux desktop environments:
-- **Dark Mode Conflicts**: The UI does not currently support system-wide dark modes, which may result in unreadable text.
-    - Workaround: Force the application to use a light theme by running it with the following environment variable:
+If you do not use `just`, you can build manually:
 
-        ```bash
-        GTK_THEME=Adwaita:light ./MonkeyMoore
-        ```
-- **UI Scaling**: Buttons may appear too small or have cropped icons on certain resolutions.
-- **Table Builder**: The Table Builder feature is currently non-functional on Linux.
+```bash
+# Create build directory
+mkdir -p build
 
-_These issues are being tracked and will be addressed in future updates._
+# Configure (Release mode recommended for performance)
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+#Compile
+cmake --build build
+```
+
+### 4. Running the Application
+
+The compiled binary is located in the `src/gui` subdirectory of your build folder:
+
+```bash
+./build/src/gui/monkey-moore-gui
+```
+## Unit Tests
+
+Monkey-Moore uses **Catch2** for unit testing the core search algorithms.
+
+```bash
+# Run tests via Just
+just test
+
+# Or manually via CTest
+ctest --test-dir build --output-on-failure
+```
