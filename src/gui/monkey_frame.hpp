@@ -152,6 +152,7 @@ private:
    bool search_in_progress;                   /**< Is the search in progress?           */
    bool search_was_aborted;                   /**< Was the search aborted?              */
 
+   wxPanel *main_panel;
    wxImageList images;                        /**< Images used in the UI                */
    std::mutex abortMutex;                     /**< Thread synchronization object        */
    wxStopWatch chronometer;                   /**< Times the search                     */

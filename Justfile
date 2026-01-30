@@ -10,4 +10,4 @@ test:
     ctest --test-dir build --output-on-failure
 
 run: build
-    GTK_THEME=Adwaita:light ./build/src/gui/monkey-moore-gui
+    ./build/src/gui/monkey-moore-gui
