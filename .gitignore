@@ -1,21 +1,15 @@
-# Ignored
-bin/*
-build/msw/*/
-build/linux/*
-lib/*
-include/*
 
-*.suo
-*.opensdf
-*.sdf
-*.aps
+build/
+cmake-build-debug/
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+
+*.a
 *.lib
-*.exp
-*.pdb
-*.dll
+*.exe
+*.o
+*.obj
 
-*.db
-
-# Keeping empty folders
-!.gitkeep
-
+.DS_Store
+Thumbs.db
