@@ -3,11 +3,8 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
-#define MM_VERSION wxT("1.0a")
+#define MM_VERSION wxT("1.0")
 #define MM_BUILD   __TDATE__
-
-// main frame outer border size in pixels
-#define MM_BORDER 8
 
 #define MM_CONFIG_FILE wxT("config.xml")
 #define MM_CUSTOMSEQS_FILE wxT("customseqs.xml")
