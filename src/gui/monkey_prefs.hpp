@@ -125,14 +125,6 @@ public:
    { setInt(id_x, value.x); setInt(id_y, value.y); }
 
 private:
-   /**
-   * Creates a new config file from scratch, using the default preference values.
-   * @param fileName config file name
-   * Return True on success, false on failure.
-   */
-   bool createConfigFile (const wxString &fileName);
-   bool createSequencesFile (const wxString &fileName);
-
    std::map<wxString, wxString> values;                         // preferences (name/value pair)
    std::vector<std::pair<wxString, wxString>> common_charsets;  // common-charsets
 };

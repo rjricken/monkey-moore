@@ -1,3 +1,13 @@
+include(FetchContent)
+
+FetchContent_Declare(
+    tinyxml2
+    GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
+    GIT_TAG 9.0.0
+)
+
+FetchContent_MakeAvailable(tinyxml2)
+
 find_package(wxWidgets REQUIRED COMPONENTS core base adv)
 
 set(GUI_SRCS
@@ -11,12 +21,11 @@ add_executable(monkey-moore-gui ${GUI_SRCS})
 target_link_libraries(monkey-moore-gui
    PRIVATE
    monkey-core
-   monkey-xml
+   tinyxml2::tinyxml2
    wxWidgets::wxWidgets
 )
 
 target_include_directories(monkey-moore-gui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-#file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
 
 add_custom_command(TARGET monkey-moore-gui POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E copy_directory

@@ -4,19 +4,18 @@
 #include "monkey_error.hpp"
 #include "constants.hpp"
 
-#include <wx/file.h>
-#include <xmlparser.h>
+#include <tinyxml2.h>
 #include <map>
-#include <utility>
 #include <vector>
-#include <exception>
-#include <regex>
+
+static wxString fromXml(const char *value) {
+   return value ? wxString::FromUTF8(value) : wxString();
+}
 
 /**
 * Fills Monkey-Moore properties with the default (factory) values.
 */
-void MonkeyPrefs::setDefaultValues ()
-{
+void MonkeyPrefs::setDefaultValues () {
    values[wxT("settings/ui-center-window")]      = wxT("true");
    values[wxT("settings/ui-remember-size")]      = wxT("true");
    values[wxT("settings/ui-remember-position")]  = wxT("false");
@@ -43,130 +42,175 @@ void MonkeyPrefs::setDefaultValues ()
    values[wxT("directories/save-table")]         = wxT("");
 }
 
-/**
-* Loads the preferences from a proper XML file.
-* @param configFile file name
-* @return True on success, false on failure.
-*/
-void MonkeyPrefs::load (const wxString &configFile)
-{
-   XMLResults pResults;
-   XMLNode root = XMLNode::parseFile(configFile, wxT("monkey-moore-config"), &pResults);
+void MonkeyPrefs::load (const wxString &config_file) {
+   tinyxml2::XMLDocument doc;
+   tinyxml2::XMLError err = doc.LoadFile(config_file.mb_str());
 
-   if (pResults.error)
+   if (err != tinyxml2::XML_SUCCESS) {
       throw monkeymoore_error(
-         wxString::Format(_("An error prevented user preferences from being loaded.\n%s, line %d column %d"),
-            configFile, pResults.nLine, pResults.nColumn),
+         wxString::Format(
+            _("An error prevented user preferences from being loaded. File: %s"), 
+            config_file
+         ),
          MMError_ConfigParseFailed
       );
+   }
 
-   if (!root.getAttribute(wxT("version")) || wxString(root.getAttribute(wxT("version"))) != MM_VERSION)
+   tinyxml2::XMLElement *root = doc.FirstChildElement("monkey-moore-config");
+   if (!root) {
+      throw monkeymoore_error(
+         _("Invalid configuration file: missing root node."),
+         MMError_ConfigParseFailed
+      );
+   }
+
+   const char *version = root->Attribute("version");
+   if (!version || wxString(version) != MM_VERSION) {
       throw monkeymoore_error(
          _("Monkey-Moore version is different from the version used in the user preferences file."),
          MMError_ConfigVersionMismatch
       );
-   
-   for (int catIdx = 0; catIdx < root.nChildNode(); ++catIdx)
-   {
-      XMLNode catNode = root.getChildNode(catIdx);
-      wxString catName(catNode.getName());
+   }
 
-      for (int propIdx = 0; propIdx < catNode.nChildNode(); ++propIdx)
-      {
-         XMLNode curNode = catNode.getChildNode(propIdx);
-         wxString name(curNode.getName());
-         wxString value(curNode.getAttribute(wxT("value")));
+   tinyxml2::XMLElement *category = root->FirstChildElement();
+   while (category) {
+      wxString cat_name = fromXml(category->Name());
 
-         values[wxString::Format(wxT("%s/%s"), catName, name)] = value;
+      tinyxml2::XMLElement *property = category->FirstChildElement();
+      while (property) {
+         wxString prop_name = fromXml(property->Name());
+         const char *value_attr = property->Attribute("value");
+
+         if (value_attr) {
+            values[cat_name + wxT("/") + prop_name] = fromXml(value_attr);
+         }
+
+         property = property->NextSiblingElement();
       }
+
+      category = category->NextSiblingElement();
    }
 }
 
-void MonkeyPrefs::loadSequences (const wxString &sequencesFile)
-{
-   XMLResults r;
-   XMLNode root = XMLNode::parseFile(sequencesFile, wxT("monkey-moore-sequences"), &r);
+void MonkeyPrefs::loadSequences (const wxString &sequences_file) {
+   tinyxml2::XMLDocument doc;
+   tinyxml2::XMLError err = doc.LoadFile(sequences_file.mb_str());
 
-   if (r.error)
-      throw monkeymoore_error(wxEmptyString, MMError_SequencesParseFailed);
+   if (err != tinyxml2::XML_SUCCESS) {
+      throw monkeymoore_error(
+         wxString::Format(
+            _("Error loading custom character sequences. File: %s"), 
+            sequences_file
+         ),
+         MMError_SequencesParseFailed
+      );
+   }
 
-   int n_charsets = root.nChildNode(wxT("sequence"));
+   tinyxml2::XMLElement *root = doc.FirstChildElement("monkey-moore-sequences");
+   if (!root) {
+      throw monkeymoore_error(
+         wxString::Format(
+            _("Invalid sequences file: missing root node. File: %s"), 
+            sequences_file
+         ),
+         MMError_SequencesParseFailed
+      );
+   }
 
-   for (int i = 0; i < n_charsets; i++)
-   {
-      XMLNode cnode = root.getChildNode(i);
+   tinyxml2::XMLElement *sequence = root->FirstChildElement("sequence");
 
-      wxString name = cnode.getAttribute(wxT("name"));
-      wxString content = cnode.getText();
+   while (sequence) {
+      wxString name = fromXml(sequence->Attribute("name"));
+      wxString content = fromXml(sequence->GetText());
 
       common_charsets.push_back(std::make_pair(name, content));
+      sequence = sequence->NextSiblingElement("sequence");
    }
 }
 
-/**
-* Saves the current set of preferences into the config file.
-* @param configFile file name
-* @param recreate true recreates the config file
-* @return True on success, false on failure.
-*/
-void MonkeyPrefs::save (const wxString &configFile, bool recreate)
-{
-   if (recreate)
+void MonkeyPrefs::save (const wxString &config_file, bool recreate) {
+   if (recreate) {
       setDefaultValues();
-
-   XMLNode root = XMLNode::createXMLTopNode(wxT("monkey-moore-config"), false);
-   root.addAttribute(wxT("version"), MM_VERSION);
-
-   std::map<wxString, XMLNode> nodes;
-   std::wregex pattern(wxT("([\\w-]+)/([\\w-]+)"));
-
-   for (auto i = values.rbegin(); i != values.rend(); ++i)
-   {
-      std::wsmatch match;
-
-      if (regex_match(i->first.ToStdWstring(), match, pattern))
-      {
-         wxString name = match[1].str();
-
-         if (!nodes.count(name))
-            nodes[name] = root.addChild(name);
-
-         nodes[name].addChild(wxString(match[2])).addAttribute(wxT("value"), i->second);
-      }
    }
 
-   auto error = root.writeToFile(configFile, "UTF-16", 1);
+   tinyxml2::XMLDocument doc;
 
-   if (error != XMLError::eXMLErrorNone)
+   tinyxml2::XMLDeclaration *declaration = doc.NewDeclaration();
+   doc.InsertEndChild(declaration);
+
+   tinyxml2::XMLElement *root = doc.NewElement("monkey-moore-config");
+   root->SetAttribute("version", wxString(MM_VERSION).ToUTF8());
+   doc.InsertEndChild(root);
+
+   std::map<wxString, tinyxml2::XMLElement *> category_nodes_map;
+
+   for (auto const &pair : values) {
+      wxString cat_name = pair.first.BeforeFirst(wxT('/'));
+      wxString prop_name = pair.first.AfterFirst(wxT('/'));
+
+      if (cat_name.IsEmpty() || prop_name.IsEmpty()) {
+         continue;
+      }
+
+      tinyxml2::XMLElement *cat_elem = nullptr;
+
+      if (category_nodes_map.find(cat_name) == category_nodes_map.end()) {
+         cat_elem = doc.NewElement(cat_name.ToUTF8());
+         root->InsertEndChild(cat_elem);
+
+         category_nodes_map[cat_name] = cat_elem;
+      }
+      else {
+         cat_elem = category_nodes_map[cat_name];
+      }
+
+      tinyxml2::XMLElement *prop_elem = doc.NewElement(prop_name.ToUTF8());
+      prop_elem->SetAttribute("value", pair.second.ToUTF8());
+      cat_elem->InsertEndChild(prop_elem);
+   }
+
+   tinyxml2::XMLError err = doc.SaveFile(config_file.mb_str());
+
+   if (err != tinyxml2::XML_SUCCESS) {
       throw monkeymoore_error(
-         wxString::Format(_("Unable to write to %s"), configFile),
+         wxString::Format(_("Failed to save user preferences. File: %s"), config_file),
          MMError_ConfigFileWriteError
       );
+   }
 }
 
-void MonkeyPrefs::saveSequences (const wxString &fileName, bool recreate)
-{
-   if (recreate)
-   {
+void MonkeyPrefs::saveSequences(const wxString &file_name, bool recreate) {
+   if (recreate) {
       common_charsets.clear();
       common_charsets.push_back(std::make_pair(wxT("Default Hiragana sequence"), MM_DEFAULT_HIRAGANA));
       common_charsets.push_back(std::make_pair(wxT("Default Katakana sequence"), MM_DEFAULT_KATAKANA));
    }
 
-   XMLNode root = XMLNode::createXMLTopNode(wxT("monkey-moore-sequences"), false);
+   tinyxml2::XMLDocument doc;
+   tinyxml2::XMLDeclaration *declaration = doc.NewDeclaration();
+   doc.InsertEndChild(declaration);
 
-   for (auto i = common_charsets.begin(); i != common_charsets.end(); ++i)
-   {
-      XMLNode seq = root.addChild(wxT("sequence"));
-      seq.addAttribute(wxT("name"), i->first);
-      seq.addText(i->second);
+   tinyxml2::XMLElement *root = doc.NewElement("monkey-moore-sequences");
+   doc.InsertEndChild(root);
+
+   for (auto const &pair : common_charsets) {
+      tinyxml2::XMLElement *seq_elem = doc.NewElement("sequence");
+      
+      seq_elem->SetAttribute("name", pair.first.ToUTF8());
+      seq_elem->SetText(pair.second.ToUTF8());
+      
+      root->InsertEndChild(seq_elem);
    }
 
-   auto error = root.writeToFile(fileName, "UTF-16", 1);
+   tinyxml2::XMLError err = doc.SaveFile(file_name.mb_str());
 
-   if (error != XMLError::eXMLErrorNone)
+   if (err != tinyxml2::XML_SUCCESS) {
       throw monkeymoore_error(
-         wxString::Format(_("Unable to write to %s."), fileName),
+         wxString::Format(
+            _("Failed to save custom character sequences. File: %s"),
+            file_name
+         ),
          MMError_SequencesFileWriteError
       );
+   }
 }
