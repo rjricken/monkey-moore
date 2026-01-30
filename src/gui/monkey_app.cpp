@@ -41,7 +41,7 @@ bool MonkeyApp::OnInit ()
    if (!LoadConfiguration())
       return false;
 
-   MonkeyFrame *f = new MonkeyFrame(wxString::Format(wxT("Monkey-Moore %s"), MM_VERSION), m_prefs, wxDefaultPosition, wxSize(450, 460));
+   MonkeyFrame *f = new MonkeyFrame(wxT("Monkey-Moore"), m_prefs, wxDefaultPosition, wxSize(450, 460));
    f->SetBackgroundColour(wxColour(240, 240, 240));
    f->SetMinSize(wxSize(440, 440));
 

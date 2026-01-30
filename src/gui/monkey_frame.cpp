@@ -716,7 +716,7 @@ void MonkeyFrame::OnOptions (wxCommandEvent &WXUNUSED(event))
 */
 void MonkeyFrame::OnAbout (wxCommandEvent &WXUNUSED(event))
 {
-   MonkeyAbout about(this, _("About Monkey-Moore"), wxSize(400, 400));
+   MonkeyAbout about(this, _("About Monkey-Moore"), wxSize(480, 400));
    about.ShowModal();
 }
 
