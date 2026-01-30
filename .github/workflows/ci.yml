@@ -55,8 +55,8 @@ jobs:
           cp build-release/src/gui/monkey-moore-gui dist/monkey-moore/monkey-moore
           chmod +x dist/monkey-moore/monkey-moore
 
-          cp -r build/release/src/gui/images dist/monkey-moore/
-          cp -r build/release/src/gui/language dist/monkey-moore/
+          cp -r build-release/src/gui/images dist/monkey-moore/
+          cp -r build-release/src/gui/language dist/monkey-moore/
 
           cp README.md dist/monkey-moore/
           cp LICENSE dist/monkey-moore/
