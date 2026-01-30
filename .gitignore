@@ -1,5 +1,6 @@
 
 build/
+build-release/
 cmake-build-debug/
 CMakeFiles/
 CMakeCache.txt

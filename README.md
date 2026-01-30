@@ -41,7 +41,7 @@ Monkey-Moore is built for speed on modern hardware:
 Monkey-Moore uses **CMake** for its build system and **wxWidgets** for the cross-platform GUI. A `Justfile` is included for convenience if you use the [Just command runner](https://github.com/casey/just).
 
 ### 1. Install Dependencies
-You will need a C++14 compliant compiler, CMake (3.14+), and the wxWidgets development libraries.
+You will need a C++14 compliant compiler, CMake (3.19+), and the wxWidgets development libraries.
 
 ```bash
 sudo apt-get install build-essential cmake libwxgtk3.2-dev
@@ -52,8 +52,9 @@ sudo apt-get install build-essential cmake libwxgtk3.2-dev
 If you have `just` installed, building is simple:
 
 ```bash
-just configure
-just run
+just configure-release
+just build-release
+just run-release
 ```
 
 ### 3. Compile (standard CMake)
@@ -61,14 +62,11 @@ just run
 If you do not use `just`, you can build manually:
 
 ```bash
-# Create build directory
-mkdir -p build
-
 # Configure (Release mode recommended for performance)
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --preset release
 
-#Compile
-cmake --build build
+# Compile
+cmake --build --preset release
 ```
 
 ### 4. Running the Application
@@ -76,7 +74,7 @@ cmake --build build
 The compiled binary is located in the `src/gui` subdirectory of your build folder:
 
 ```bash
-./build/src/gui/monkey-moore-gui
+./build-release/src/gui/monkey-moore-gui
 ```
 ## Unit Tests
 
@@ -87,5 +85,5 @@ Monkey-Moore uses **Catch2** for unit testing the core search algorithms.
 just test
 
 # Or manually via CTest
-ctest --test-dir build --output-on-failure
+ctest --preset debug
 ```
