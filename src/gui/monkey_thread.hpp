@@ -142,7 +142,7 @@ public:
       std::vector<datablock_type> blocks;
 
 
-      wxLogDebug("fileSize: %I64d", fileSize);
+      wxLogDebug("fileSize: %lld", fileSize);
       wxLogDebug("kwOverlapSize: %u", kwOverlapSize);
       wxLogDebug("dataTypeSize: %u", dataTypeSize);
       wxLogDebug("blockSize: %u", blockSize);
@@ -155,7 +155,7 @@ public:
          wxFileOffset thisBlockOffset = i * blockBaseSize;
          uint32_t thisBlockSize = std::min(blockSize, static_cast<uint32_t>(fileSize - thisBlockOffset));
 
-         wxLogDebug("block #%u: offset(%I64d) size(%u)", i, thisBlockOffset, thisBlockSize);
+         wxLogDebug("block #%u: offset(%lld) size(%u)", i, thisBlockOffset, thisBlockSize);
 
          blocks.push_back(std::make_pair(thisBlockOffset, thisBlockSize));
       }
@@ -195,7 +195,7 @@ public:
             auto search = [&, this] (std::shared_ptr<uint8_t> data, wxFileOffset offset, uint32_t size, uint32_t blockNumber)
             {
                wxString dbgOutput =
-                  wxString::Format("  thread launched for #%u block: [%I64d-%I64d]\n",
+                  wxString::Format("  thread launched for #%u block: [%lld-%lld]\n",
                      blockNumber, offset, offset + size);
 
                for (uint32_t padding = 0; padding < dataTypeSize; ++padding)
@@ -207,7 +207,7 @@ public:
                      dataSize--;
 
                   dbgOutput +=
-                     wxString::Format("    searching block #%u: padding=%u, [%I64d-%I64d]\n",
+                     wxString::Format("    searching block #%u: padding=%u, [%lld-%lld]\n",
                         blockNumber, padding, offset + padding, offset + padding + dataSize * dataTypeSize);
 
                   // swap bytes when needed
