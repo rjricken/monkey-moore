@@ -144,9 +144,9 @@ void MonkeyPrefs::save (const wxString &config_file, bool recreate) {
 
    std::map<wxString, tinyxml2::XMLElement *> category_nodes_map;
 
-   for (auto const &pair : values) {
-      wxString cat_name = pair.first.BeforeFirst(wxT('/'));
-      wxString prop_name = pair.first.AfterFirst(wxT('/'));
+   for (auto const &[category_key, value] : values) {
+      wxString cat_name = category_key.BeforeFirst(wxT('/'));
+      wxString prop_name = category_key.AfterFirst(wxT('/'));
 
       if (cat_name.IsEmpty() || prop_name.IsEmpty()) {
          continue;
@@ -165,7 +165,7 @@ void MonkeyPrefs::save (const wxString &config_file, bool recreate) {
       }
 
       tinyxml2::XMLElement *prop_elem = doc.NewElement(prop_name.ToUTF8());
-      prop_elem->SetAttribute("value", pair.second.ToUTF8());
+      prop_elem->SetAttribute("value", value.ToUTF8());
       cat_elem->InsertEndChild(prop_elem);
    }
 
@@ -193,11 +193,11 @@ void MonkeyPrefs::saveSequences(const wxString &file_name, bool recreate) {
    tinyxml2::XMLElement *root = doc.NewElement("monkey-moore-sequences");
    doc.InsertEndChild(root);
 
-   for (auto const &pair : common_charsets) {
+   for (auto const &[seq_name, seq_value] : common_charsets) {
       tinyxml2::XMLElement *seq_elem = doc.NewElement("sequence");
       
-      seq_elem->SetAttribute("name", pair.first.ToUTF8());
-      seq_elem->SetText(pair.second.ToUTF8());
+      seq_elem->SetAttribute("name", seq_name.ToUTF8());
+      seq_elem->SetText(seq_value.ToUTF8());
       
       root->InsertEndChild(seq_elem);
    }
