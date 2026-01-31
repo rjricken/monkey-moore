@@ -325,7 +325,7 @@ TEST_CASE("Search algorithm in value scan mode") {
    }
 }
 
-TEST_CASE("Helpers functions", "[core]"){
+TEST_CASE("Helper functions", "[core]"){
    SECTION("find_last") {
       std::array<int, 10> data = {3, 3, 5, 7, 6, 3, 8, 9, 3, 10};
 
