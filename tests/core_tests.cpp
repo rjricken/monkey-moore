@@ -271,6 +271,60 @@ TEST_CASE("Search algorithm with wildcard support", "[core]") {
    }
 }
 
+TEST_CASE("Search algorithm in value scan mode") {
+   SECTION("8-bit data type") {
+      std::vector<uint8_t> data = {
+         0x00, 0x00, 0x25, 0x26, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30, 0x20, 0x20, 0x00, 0x00, 0x01, 0x00,
+         0x01, 0x00, 0x00, 0x89, 0x00, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x81, 0x00, 0x00, 0x01, 0x00, 0x00
+      };
+
+      SECTION("Returns correct offset for matching results") {
+         std::vector<short> values = { 60, 61, 62, 63, 64, 71};
+         MonkeyMoore<uint8_t> searcher(values);
+
+         auto results = searcher.search(data.data(), data.size());
+         REQUIRE(results.size() == 2);
+         REQUIRE(results[0].first == 4);
+         REQUIRE(results[1].first == 21);
+      }
+
+      SECTION("Returns no results when no match is found") {
+         std::vector<short> values = { 80, 81, 82, 83, 84, 85, 86 };
+         MonkeyMoore<uint8_t> searcher(values);
+
+         auto results = searcher.search(data.data(), data.size());
+         REQUIRE(results.size() == 0);
+      }
+   }
+
+   SECTION("8-bit data type") {
+      std::vector<uint16_t> data = {
+         0x0000, 0x0100, 0x0135, 0x0136, 0x0135, 0x0136, 0x0137, 0x0138, 
+         0x0139, 0x0140, 0x0120, 0x0120, 0x0000, 0x0100, 0x0101, 0x0000,
+         0x0101, 0x0089, 0x0000, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049, 
+         0x0050, 0x0000, 0x0100, 0x0000, 0x0100, 0x0001, 0x0100, 0x0000
+      };
+
+      SECTION("Returns correct offset on match") {
+         std::vector<short> values = { 105, 106, 107, 108, 109, 116};
+         MonkeyMoore<uint16_t> searcher(values);
+
+         auto results = searcher.search(data.data(), data.size());
+         REQUIRE(results.size() == 2);
+         REQUIRE(results[0].first == 4);
+         REQUIRE(results[1].first == 19);
+      }
+
+      SECTION("Returns no results when no match is found") {
+         std::vector<short> values = { 200, 201, 205, 208, 209 };
+         MonkeyMoore<uint16_t> searcher(values);
+
+         auto results = searcher.search(data.data(), data.size());
+         REQUIRE(results.size() == 0);
+      }
+   }
+}
+
 TEST_CASE("Helpers functions", "[core]"){
    SECTION("find_last") {
       std::array<int, 10> data = {3, 3, 5, 7, 6, 3, 8, 9, 3, 10};
