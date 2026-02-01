@@ -1128,59 +1128,62 @@ void MonkeyFrame::ShowResults (bool showAll)
    wxString hexValueFmt = wxString::Format(wxT("%%c=%%0%uX "), numBytes);
 
    std::vector<typename MonkeyMoore<_DataType>::equivalency_map> unique;
-   auto r = lastResults<_DataType>();
+   auto results = lastResults<_DataType>();
 
    // index of the element being inserted in the wxListCtrl
    long curListIndex = 0;
 
-   if (!r.empty())
+   if (!results.empty())
    {
       if (result_box->GetItemCount() != 0)
          result_box->DeleteAllItems();
 
       result_box->Freeze();
 
-      for (uint32_t i = 0; i < r.size(); i++)
+      for (uint32_t i = 0; i < results.size(); i++)
       {
-         auto &t = std::get<1>(r[i]);
+         const auto &[result_offset, result_map, result_preview] = results[i];
 
          // if another result with the same values was already inserted in the list, don't insert
-         if (!std::count(unique.begin(), unique.end(), t))
+         if (!std::count(unique.begin(), unique.end(), result_map))
          {
             if (!showAll)
-               unique.push_back(t);
+               unique.push_back(result_map);
 
             bool hex_offset = prefs.getBool(wxT("settings/display-offset-mode"), wxT("hex"));
-            wxString offset = wxString::Format(hex_offset ? wxT("0x%llX") : wxT("%lld"), std::get<0>(r[i]));
+            wxString offset = wxString::Format(hex_offset ? wxT("0x%llX") : wxT("%lld"), result_offset);
 
             result_box->InsertItem(curListIndex, offset);
             result_box->SetItemData(curListIndex, i);
 
             wxString values;
-            auto &ref = std::get<1>(r[i]);
 
-            for (auto j = ref.cbegin(); j != ref.cend(); j++)
+            for (auto j = result_map.cbegin(); j != result_map.cend(); j++)
             {
+               const auto &[character, hex_value] = *j;
                // swap bytes acording to the endianness the search was performed on
-               _DataType value = byteorder_little ?
-                  swap_on_le<_DataType>(j->second) :
-                  swap_on_be<_DataType>(j->second);
+               _DataType value_swapped = byteorder_little ?
+                  swap_on_le<_DataType>(hex_value) :
+                  swap_on_be<_DataType>(hex_value);
 
-               values += wxString::Format(hexValueFmt, static_cast<int>((*j).first), value);
+               values += wxString::Format(hexValueFmt, static_cast<int>(character), value_swapped);
             }
 
             result_box->SetItem(curListIndex, 1, values);
-            result_box->SetItem(curListIndex, search_relative ? 2 : 1, std::get<2>(r[i]));
+            result_box->SetItem(curListIndex, search_relative ? 2 : 1, result_preview);
 
             curListIndex++;
          }
       }
 
       result_box->Thaw();
-
       AdjustResultColumns(true);
 
-      wxString counterLabel = wxString::Format(wxT("%d"), static_cast<int>(showAll ? r.size() : unique.size()));
+      wxString counterLabel = wxString::Format(
+         wxT("%d"), 
+         static_cast<int>(showAll ? results.size() : unique.size())
+      );
+
       GetWindow<wxStaticText>(MonkeyMoore_Counter)->SetLabel(counterLabel);
    }
 }
