@@ -130,7 +130,7 @@ public:
       );
 
       const wxFileOffset fileSize = m_info.m_file->Length();
-      const uint32_t blockBaseSize = 524288;
+      const uint32_t blockBaseSize = static_cast<uint32_t>(m_prefs.getInt("settings/perf-memory-pool"));
 
       const auto dataTypeSize = sizeof(_Type);
       const uint32_t kwOverlapSize = (m_info.keylen() - 1) * dataTypeSize;
@@ -141,9 +141,9 @@ public:
 
       std::vector<datablock_type> blocks;
 
-      wxLogDebug("fileSize: %lld", fileSize);
+      wxLogDebug("fileSize: %lld", static_cast<long long>(fileSize));
       wxLogDebug("kwOverlapSize: %u", kwOverlapSize);
-      wxLogDebug("dataTypeSize: %u", dataTypeSize);
+      wxLogDebug("dataTypeSize: %u", static_cast<unsigned int>(dataTypeSize));
       wxLogDebug("blockSize: %u", blockSize);
       wxLogDebug("numBlocks: %u\n", numBlocks);
 
@@ -163,7 +163,7 @@ public:
       const float progressInc = 100.0f / numBlocks;
       float totalProgress = 0.0f;
 
-      int maxThreads = std::thread::hardware_concurrency();
+      int maxThreads = m_prefs.getInt("settings/perf-search-threads");
       std::vector<std::future<void>> active_threads;
 
       // data access synchronization objects
@@ -273,14 +273,15 @@ public:
       }
 
       WaitForActiveThreads(active_threads);
-
       NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, _("Generating previews..."), 100);
 
       sort(m_results.begin(), m_results.end());
 
       // generates previews
-      for (auto i = m_results.begin(); i != m_results.end(); i++)
-         std::get<2>(*i) = GeneratePreview(std::get<0>(*i), std::get<1>(*i));
+      for (auto i = m_results.begin(); i != m_results.end(); i++) {
+         auto &[result_offset, result_map, result_preview] = *i;
+         result_preview = GeneratePreview(result_offset, result_map);
+      }
 
       NotifyMainThread(mmEVT_SEARCHTHREAD_COMPLETED);
 
@@ -316,9 +317,17 @@ private:
    void WaitForActiveThreads (std::vector<std::future<void>> &active_threads) {
       for (auto &future: active_threads) {
          if (future.valid()) {
-            future.wait();
+            try {
+               future.wait();
+            }
+            catch (const std::exception &e) {
+               wxLogError("Search thread failed: %s", e.what());
+            }
+            
          }
       }
+
+      active_threads.clear();
    }
 
    void NotifyMainThread (wxEventType evtType, wxString msg = wxEmptyString, int progress = 0)
