@@ -141,7 +141,6 @@ public:
 
       std::vector<datablock_type> blocks;
 
-
       wxLogDebug("fileSize: %lld", fileSize);
       wxLogDebug("kwOverlapSize: %u", kwOverlapSize);
       wxLogDebug("dataTypeSize: %u", dataTypeSize);
@@ -165,10 +164,9 @@ public:
       float totalProgress = 0.0f;
 
       int maxThreads = std::thread::hardware_concurrency();
-      int threadsRunning = 0;
+      std::vector<std::future<void>> active_threads;
 
       // data access synchronization objects
-      std::mutex threadCountMutex;
       std::mutex resultsMutex;
       std::mutex progressMutex;
 
@@ -177,19 +175,24 @@ public:
       // loops until the last block of data has been passed through to a new thread
       while (nextBlock != blocks.end())
       {
-         std::unique_lock<std::mutex> threadCountLock(threadCountMutex);
+         // clean up finished threads
+         for (auto it = active_threads.begin(); it != active_threads.end();) {
+            if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+               it->get();
+               it = active_threads.erase(it);
+            }
+            else {
+               ++it;
+            }
+         }
 
-         // create a new thread if the max number of concurrent threads has not been reached
-         if (threadsRunning < maxThreads)
-         {
-            threadCountLock.unlock();
-
+         // create a new thread if we have slots available
+         if (active_threads.size() < maxThreads) {
             std::shared_ptr<uint8_t> blockData(new uint8_t[nextBlock->second], std::default_delete<uint8_t[]>());
 
             m_info.m_file->Seek(nextBlock->first, wxFromStart);
             m_info.m_file->Read(blockData.get(), nextBlock->second);
 
-            // _______________________________________________________________________________________
             // this lambda is responsible for running the appropriate search algorithm,
             // adjusting the offset of each result and appending them to the results pool.
             auto search = [&, this] (std::shared_ptr<uint8_t> data, wxFileOffset offset, uint32_t size, uint32_t blockNumber)
@@ -234,52 +237,42 @@ public:
                   totalProgress += progressInc;
 
                   NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE,
-                     _("Searching..."), static_cast<int>(ceil(totalProgress)));
+                     _("Searching..."), std::min(100, static_cast<int>(ceil(totalProgress))));
                }
-               {
-                  // frees a slot for a new thread to be spawned
-                  std::lock_guard<std::mutex> lock(threadCountMutex);
-                  --threadsRunning;
-               }
-
+               
                wxLogDebug(dbgOutput);
             };
-            // _______________________________________________________________________________________
 
             uint32_t curBlockNum = std::distance(blocks.begin(), nextBlock);
             wxLogDebug("Launching thread for #%u block", curBlockNum);
             
-            //                                                                           v remove  v
-            std::async(std::launch::async, search, blockData, nextBlock->first, nextBlock->second, curBlockNum);
+            active_threads.push_back(
+               std::async(
+                  std::launch::async, 
+                  search, 
+                  blockData, 
+                  nextBlock->first, 
+                  nextBlock->second, 
+                  curBlockNum)
+            );
 
-            {
-               std::lock_guard<std::mutex> lock(threadCountMutex);
-               ++threadsRunning;
-            }
             ++nextBlock;
          }
-         else
-         {
-            threadCountLock.unlock();
-
-            // we can't spawn more threads, so wee hint the OS scheduler to free the
-            // remaining time on our timeslice to allow the other threads to execute.
-            wxThread::Yield();
-            wxThread::Sleep(100);
+         else {
+            // maxed out on threads, so we sleep briefly to let them work 
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
          }
 
          // checks if the search was aborted in the main thread
          if (m_frame->IsSearchAborted())
          {
-            WaitRunningThreads(threadCountMutex, threadsRunning);
-
+            WaitForActiveThreads(active_threads);
             NotifyMainThread(mmEVT_SEARCHTHREAD_ABORTED);
             return NULL;
          }
       }
 
-      // we need to wait until all threads have finished
-      WaitRunningThreads(threadCountMutex, threadsRunning);
+      WaitForActiveThreads(active_threads);
 
       NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, _("Generating previews..."), 100);
 
@@ -317,25 +310,14 @@ private:
    }
 
    /**
-   * Wait until all threads have finished execution.
-   * Each thread will decrement a counter variable upon finishing, so  we wait
-   * until this variable reaches 0, which means we have no threads executing.
-   * @param[in] threadCountMutex Synchronization object to the trhead count variable
-   * @param[in] threadsRunning Number of threads running
+   * Wait until all async work has completed.
+   * @param[in] active_threads list of pending futures
    */
-   void WaitRunningThreads (std::mutex &threadCountMutex, const int &threadsRunning)
-   {
-      while (true)
-      {
-         {
-            std::lock_guard<std::mutex> lock(threadCountMutex);
-            
-            if (!threadsRunning)
-               return;
+   void WaitForActiveThreads (std::vector<std::future<void>> &active_threads) {
+      for (auto &future: active_threads) {
+         if (future.valid()) {
+            future.wait();
          }
-
-         wxThread::Yield();
-         wxThread::Sleep(100);
       }
    }
 
