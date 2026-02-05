@@ -34,7 +34,7 @@ void shift_alpha_values(
 const auto hiragana_seq = 
    U"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをゃっゅょ";
 
-TEST_CASE("Search algorithm wih no wildcard support", "[core]") {
+TEST_CASE("Search algorithm wih no wildcard support", "[core][relative]") {
    SECTION("8-bit data type") {
       SECTION("ASCII keyword") {
          std::vector<uint8_t> data = {'d', 'd', 'd', 'c', 'c', 'a', 'c', 'a', 't', 'c', 'h', 'a', 'a', 't'};
@@ -129,7 +129,7 @@ TEST_CASE("Search algorithm wih no wildcard support", "[core]") {
    }
 }
 
-TEST_CASE("Search algorithm with wildcard support", "[core]") {
+TEST_CASE("Search algorithm with wildcard support", "[core][relative][wildcard]") {
    SECTION("8-bit data type") {
       SECTION("ASCII keyword") {
          SECTION("All lowercase") {
@@ -271,7 +271,7 @@ TEST_CASE("Search algorithm with wildcard support", "[core]") {
    }
 }
 
-TEST_CASE("Search algorithm in value scan mode") {
+TEST_CASE("Search algorithm in value scan mode", "[core][value-scan]") {
    SECTION("8-bit data type") {
       std::vector<uint8_t> data = {
          0x00, 0x00, 0x25, 0x26, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30, 0x20, 0x20, 0x00, 0x00, 0x01, 0x00,
