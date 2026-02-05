@@ -69,7 +69,7 @@ TEST_CASE("Search algorithm wih no wildcard support", "[core]") {
             
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 1);
-            REQUIRE(results[0].first == 8);
+            CHECK(results[0].first == 8);
 
             assert_char_seq_result(custom_seq, results[0].second, to_vector("abcdefghijklmnopqrstuvwxyz"));
          }
@@ -118,7 +118,7 @@ TEST_CASE("Search algorithm wih no wildcard support", "[core]") {
             
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 1);
-            REQUIRE(results[0].first == 4);
+            CHECK(results[0].first == 4);
 
 
             std::vector<uint16_t> expected_values(49);
@@ -208,7 +208,7 @@ TEST_CASE("Search algorithm with wildcard support", "[core]") {
             
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 1);
-            REQUIRE(results[0].first == 8);
+            CHECK(results[0].first == 8);
 
             assert_char_seq_result(custom_seq, results[0].second, to_vector("abcdefghijklmnopqrstuvwxyz"));
          }
@@ -230,9 +230,9 @@ TEST_CASE("Search algorithm with wildcard support", "[core]") {
 
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 1);
-            REQUIRE(results[0].first == 31);
-            REQUIRE(results[0].second['a'] == static_cast<uint16_t>('a' + 15));
-            REQUIRE(results[0].second['A'] == static_cast<uint16_t>('A' - 9));
+            CHECK(results[0].first == 31);
+            CHECK(results[0].second['a'] == static_cast<uint16_t>('a' + 15));
+            CHECK(results[0].second['A'] == static_cast<uint16_t>('A' - 9));
          }
 
          SECTION("Returns no results when no match is found") {
@@ -261,7 +261,7 @@ TEST_CASE("Search algorithm with wildcard support", "[core]") {
             
             auto results = searcher.search(data.data(), data.size());
             REQUIRE(results.size() == 1);
-            REQUIRE(results[0].first == 5);
+            CHECK(results[0].first == 5);
 
             std::vector<uint16_t> expected_values(52);
             std::iota(expected_values.begin(), expected_values.end(), 1);
@@ -284,8 +284,8 @@ TEST_CASE("Search algorithm in value scan mode") {
 
          auto results = searcher.search(data.data(), data.size());
          REQUIRE(results.size() == 2);
-         REQUIRE(results[0].first == 4);
-         REQUIRE(results[1].first == 21);
+         CHECK(results[0].first == 4);
+         CHECK(results[1].first == 21);
       }
 
       SECTION("Returns no results when no match is found") {
@@ -311,8 +311,8 @@ TEST_CASE("Search algorithm in value scan mode") {
 
          auto results = searcher.search(data.data(), data.size());
          REQUIRE(results.size() == 2);
-         REQUIRE(results[0].first == 4);
-         REQUIRE(results[1].first == 19);
+         CHECK(results[0].first == 4);
+         CHECK(results[1].first == 19);
       }
 
       SECTION("Returns no results when no match is found") {
@@ -331,12 +331,12 @@ TEST_CASE("Helper functions", "[core]"){
 
       SECTION("returns index of last occurrence of value repeated multiple times") {
          int last_pos = find_last(data.begin(), data.end(), 3);
-         REQUIRE(last_pos == 8);
+         CHECK(last_pos == 8);
       }
 
       SECTION("returns 0 when the target value is not in the sequence") {
          int not_found = find_last(data.begin(), data.end(), 2);
-         REQUIRE(not_found == 0);
+         CHECK(not_found == 0);
       }   
    }
 
@@ -345,17 +345,17 @@ TEST_CASE("Helper functions", "[core]"){
 
       SECTION("returns count for element repeated multiple times at the start of the sequence") {
          int count = count_begin(data.begin(), data.end(), 3);
-         REQUIRE(count == 4);
+         CHECK(count == 4);
       }
 
       SECTION("returns 0 for element that is not repeated at the start of the sequence") {
          int count = count_begin(data.begin(), data.end(), 6);
-         REQUIRE(count == 0);
+         CHECK(count == 0);
       }
 
       SECTION("returns 0 when the target element is not in the sequence") {
          int count = count_begin(data.begin(), data.end(), 2);
-         REQUIRE(count == 0);
+         CHECK(count == 0);
       }
    }
 
@@ -365,18 +365,18 @@ TEST_CASE("Helper functions", "[core]"){
 
    SECTION("is_upper") {
       auto count_all_upper = std::count_if(uppercase.begin(), uppercase.end(), is_upper);
-      REQUIRE(count_all_upper == 26);
+      CHECK(count_all_upper == 26);
 
       auto count_non_alpha = std::count_if(non_alpha.begin(), non_alpha.end(), is_upper);
-      REQUIRE(count_non_alpha == 0);
+      CHECK(count_non_alpha == 0);
    }
 
    SECTION("is_lower") {
       auto count_all_lower = std::count_if(lowercase.begin(), lowercase.end(), is_lower);
-      REQUIRE(count_all_lower == 26);
+      CHECK(count_all_lower == 26);
 
       auto count_non_alpha = std::count_if(non_alpha.begin(), non_alpha.end(), is_lower);
-      REQUIRE(count_non_alpha == 0);
+      CHECK(count_non_alpha == 0);
    }
 }
 
@@ -395,12 +395,12 @@ void assert_matching_ascii_result(
    const DataType expected_lower_a_value,
    const DataType expected_upper_a_value
 ) {
-   REQUIRE(result.first == expected_offset);
+   CHECK(result.first == expected_offset);
 
    auto &equivalency_map = result.second;
 
-   REQUIRE(equivalency_map.at('a') == expected_lower_a_value);
-   REQUIRE(equivalency_map.at('A') == expected_upper_a_value);
+   CHECK(equivalency_map.at('a') == expected_lower_a_value);
+   CHECK(equivalency_map.at('A') == expected_upper_a_value);
 }
 
 template <class DataType>
