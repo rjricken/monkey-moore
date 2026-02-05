@@ -7,8 +7,11 @@ configure:
 build:
     cmake --build --preset debug
 
-test:
+test: build
     ctest --preset debug
+
+test-tag TAG: build
+    ./build/tests/unit-tests {{TAG}} 
 
 run: build
     ./build/src/gui/monkey-moore-gui
