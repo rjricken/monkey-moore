@@ -325,7 +325,49 @@ TEST_CASE("Search algorithm in value scan mode") {
    }
 }
 
-TEST_CASE("Helper functions", "[core]"){
+TEST_CASE("Boyer-Moore skip table allocation", "[core][internal][regression]") {
+   /*
+   * Regression Test: Fix for off-by-one error in Boyer-Moore skip table allocation.
+   *
+   * The skip table size was previously determined by std::numeric_limits<T>::max()
+   * (e.g., 255 for uint8_t). However, since values are used as 0-based indices, 
+   * a size of 255 is insufficient to store the entry for the value 0xFF.
+   *
+   * This fix ensures the table size corresponds to the type's cardinality (max() + 1),
+   * preventing out-of-bounds access when processing the highest possible byte value.
+   */
+   SECTION("Skip table correctly handles maximum representable 8-bit value (0xFF)") {
+      std::vector<uint8_t> data = {
+         0x98, 0x94, 0x00, 0xFF, 0xFF, 0x00, 0x01, 0xA5, 
+         0xA1, 0x94, 0x85, 0x98, 0x94
+      };
+
+      std::vector<CharType> keyword = to_vector(U"text");
+      MonkeyMoore<uint8_t> searcher(keyword);
+
+      auto results = searcher.search(data.data(), data.size());
+      REQUIRE(results.size() == 1);
+
+      CHECK(results[0].first == 9);
+   }
+
+   SECTION("Skip table correctly handles maximum representable 16-bit value (0xFFFF)") {
+      std::vector<uint16_t> data = {
+         0x1098, 0x1094, 0x0000, 0xFFFF, 0xFFFF, 0x1000, 0x1001, 0x10A5, 
+         0x10A1, 0x1094, 0x1085, 0x1098, 0x1094
+      };
+
+      std::vector<CharType> keyword = to_vector(U"text");
+      MonkeyMoore<uint16_t> searcher(keyword);
+
+      auto results = searcher.search(data.data(), data.size());
+      REQUIRE(results.size() == 1);
+
+      CHECK(results[0].first == 9);
+   }
+}
+
+TEST_CASE("Helper functions", "[core][utils]"){
    SECTION("find_last") {
       std::array<int, 10> data = {3, 3, 5, 7, 6, 3, 8, 9, 3, 10};
 

@@ -60,7 +60,7 @@ void MonkeyMoore<Ty>::initialize(
    custom_character_seq = char_seq;
 
    // Multiplied by 2 to account for negative relative differences
-   long skip_table_size = static_cast<long>(std::numeric_limits<Ty>::max()) * 2;
+   long skip_table_size = static_cast<long>(std::numeric_limits<Ty>::max() + 1) * 2;
    skip_table.assign(skip_table_size, 0);
 
    bool has_wildcards = std::count(keyword.begin(), keyword.end(), wildcard) > 0;
@@ -124,7 +124,7 @@ void MonkeyMoore<Ty>::preprocess_no_wildcards() {
    long skip_table_len = static_cast<long>(skip_table.size());
 
    // negative indices are mapped on positions 0-255, and positive ones on 256-511
-   for (int i = keyword_len - 1; i > 0; i--) {
+   for (int i = keyword_len - 1; i >= 0; i--) {
       int index = keyword_table[i] > 0 
          ? (skip_table_len / 2) + keyword_table[i] 
          : -keyword_table[i];
