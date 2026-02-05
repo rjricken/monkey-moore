@@ -6,6 +6,9 @@ FetchContent_Declare(
     GIT_TAG 9.0.0
 )
 
+# Force TinyXML2 to skip building its tests
+set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(tinyxml2)
 
 find_package(wxWidgets REQUIRED COMPONENTS core base adv)
