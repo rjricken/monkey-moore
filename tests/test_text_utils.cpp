@@ -15,9 +15,9 @@ TEST_CASE("Text utilities: sequence algorithms", "[core][utils]"){
          CHECK(last_pos == 8);
       }
 
-      SECTION("returns 0 when the target value is not in the sequence") {
+      SECTION("returns -1 when the target value is not in the sequence") {
          int not_found = find_last_index(data.begin(), data.end(), 2);
-         CHECK(not_found == 0);
+         CHECK(not_found == -1);
       }   
    }
 
