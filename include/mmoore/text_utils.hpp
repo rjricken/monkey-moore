@@ -7,14 +7,14 @@
 #include <cctype>
 #include <cstdint>
 
-/**
+/**   
  * Finds the index of the last occurrence of 'v'.
  * @return The index, or -1 if not found.
  */
 template <class FwdIt, class T>
 inline int find_last_index (FwdIt start, const FwdIt end, const T &v)
 {
-   int last_pos = 0;
+   int last_pos = -1;
 
    for (int i = 0; start != end; i++)
       if (*start++ == v) last_pos = i;

@@ -275,6 +275,10 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
             keyword_wildcards.begin() + i, 
             wildcard);
 
+         if (last_wildcard_index == -1) {
+            last_wildcard_index = 0;
+         }
+
          // normalizes the jump value to 1 if the 
          // adjusted value for last_wildcard_index is <= 1
          int normalized_value = std::max<int>(i - last_wildcard_index - 1, 1);
