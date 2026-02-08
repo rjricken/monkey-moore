@@ -3,8 +3,6 @@
 #ifndef MONKEY_MOORE_HPP
 #define MONKEY_MOORE_HPP
 
-#include "object_pred.hpp"
-
 #include <memory>
 #include <map>
 #include <string>

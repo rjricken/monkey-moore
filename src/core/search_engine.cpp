@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mmoore/byteswap.hpp"
+#include "mmoore/memory_utils.hpp"
 #include "mmoore/search_engine.hpp"
 
 #include <vector>

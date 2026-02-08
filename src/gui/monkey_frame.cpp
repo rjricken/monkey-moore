@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "mmoore/text_utils.hpp"
 #include "monkey_frame.hpp"
 #include "monkey_about.hpp"
 #include "monkey_options.hpp"
@@ -954,11 +955,11 @@ bool MonkeyFrame::CheckKeyword (const wxString &kw, const wxChar wc, const wxStr
    if (!custom_cp && ascii_input)
    {
       int n_lower = static_cast<int>(std::count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
-         return is_lower(static_cast<char32_t>(c.GetValue()));
+         return is_ascii_lower(static_cast<char32_t>(c.GetValue()));
       }));
 
       int n_upper = static_cast <int> (std::count_if(kw.begin(), kw.end(), [](const wxUniChar &c) {
-         return is_upper(static_cast<char32_t>(c.GetValue()));
+         return is_ascii_upper(static_cast<char32_t>(c.GetValue()));
       }));
 
       // we need 3 or more characters with the SAME capitalization
