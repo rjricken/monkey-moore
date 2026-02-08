@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mmoore/monkey_moore.hpp"
-#include "mmoore/object_pred.hpp"
+#include "mmoore/text_utils.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -66,8 +66,8 @@ void MonkeyMoore<Ty>::initialize(
    bool has_wildcards = std::count(keyword.begin(), keyword.end(), wildcard) > 0;
 
    if (custom_character_seq.empty() && search_mode != value_scan) {
-      auto uppercase_chars = std::count_if(keyword.begin(), keyword.end(), is_upper);
-      auto lowercase_chars = std::count_if(keyword.begin(), keyword.end(), is_lower);
+      auto uppercase_chars = std::count_if(keyword.begin(), keyword.end(), is_ascii_upper);
+      auto lowercase_chars = std::count_if(keyword.begin(), keyword.end(), is_ascii_lower);
 
       has_case_change = uppercase_chars > 0 && lowercase_chars > 0;
    }
@@ -155,12 +155,12 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       auto uppercase_count = std::count_if(
          keyword.begin(), 
          keyword.end(), 
-         is_upper);
+         is_ascii_upper);
 
       auto lowercase_count = std::count_if(
          keyword.begin(), 
          keyword.end(), 
-         is_lower);
+         is_ascii_lower);
 
       mostly_lowercase = lowercase_count > uppercase_count;
 
@@ -170,14 +170,14 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
             std::replace_if(
                keyword_wildcards.begin(), 
                keyword_wildcards.end(), 
-               is_lower, 
+               is_ascii_lower, 
                wildcard);
          }
          else {
             std::replace_if(
                keyword_wildcards.begin(), 
                keyword_wildcards.end(), 
-               is_upper, 
+               is_ascii_upper, 
                wildcard);
          }
       }
@@ -270,7 +270,7 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       else {
          // finds the last wildcard in the range 
          // that ends at i in keyword_wildcards
-         int last_wildcard_index = find_last(
+         int last_wildcard_index = find_last_index(
             keyword_wildcards.begin(), 
             keyword_wildcards.begin() + i, 
             wildcard);
@@ -354,6 +354,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
             }
          }
 
+         //TODO: rename to position? i.e. in 16-bit searches this is not the byte offset
          long offset = static_cast <long> (std::distance(data, search_head));
          results.push_back(std::make_pair(offset, result));
 
@@ -474,7 +475,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
 
                while (first_oposing_case_index < keyword_len) {
                   CharType &c = keyword[first_oposing_case_index];
-                  bool match = mostly_lowercase ? is_upper(c) : is_lower(c);
+                  bool match = mostly_lowercase ? is_ascii_upper(c) : is_ascii_lower(c);
 
                   if (match) {
                      break;
@@ -525,7 +526,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
          long offset = static_cast <long> (std::distance(data, search_head));
          results.push_back(std::make_pair(offset, result));
 
-         int leading_wildcards_count = count_begin(
+         int leading_wildcards_count = count_prefix_length(
             keyword_wildcards.begin(), 
             keyword_wildcards.end(), 
             wildcard);
