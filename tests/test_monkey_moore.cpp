@@ -1,36 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <catch2/catch_test_macros.hpp>
 #include "mmoore/monkey_moore.hpp"
-#include "mmoore/text_utils.hpp"
+#include "common.hpp"
 
+#include <catch2/catch_test_macros.hpp>
 #include <numeric>
 #include <codecvt>
-
-std::vector<uint8_t> to_vector(const std::string &from);
-std::vector<CharType> to_vector(const std::u32string &from);
-
-template <class DataType>
-void assert_matching_ascii_result(
-   const typename MonkeyMoore<DataType>::result_type &result, 
-   const uint64_t expected_offset,
-   const DataType expected_lower_a_value,
-   const DataType expected_upper_a_value
-);
-
-template <class DataType>
-void assert_char_seq_result(
-   const std::vector<CharType> &char_seq,
-   const std::map<CharType, DataType> &result, 
-   const std::vector<DataType> &expected_values
-);
-
-template <typename DataType>
-void shift_alpha_values(
-   std::vector<DataType> &sequence, 
-   int lower_shift, 
-   int upper_shift
-);
 
 const auto hiragana_seq = 
    U"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをゃっゅょ";
@@ -368,67 +343,3 @@ TEST_CASE("Search algorithm: Boyer-Moore skip table allocation", "[core][interna
    }
 }
 
-std::vector<CharType> to_vector(const std::u32string &from) {
-   return std::vector<CharType>(from.begin(), from.end());
-}
-
-std::vector<uint8_t> to_vector(const std::string &from) {
-   return std::vector<uint8_t>(from.begin(), from.end());
-}
-
-template <class DataType>
-void assert_matching_ascii_result(
-   const typename MonkeyMoore<DataType>::result_type &result, 
-   const uint64_t expected_offset,
-   const DataType expected_lower_a_value,
-   const DataType expected_upper_a_value
-) {
-   CHECK(result.first == expected_offset);
-
-   auto &equivalency_map = result.second;
-
-   CHECK(equivalency_map.at('a') == expected_lower_a_value);
-   CHECK(equivalency_map.at('A') == expected_upper_a_value);
-}
-
-template <class DataType>
-void assert_char_seq_result(
-   const std::vector<CharType> &char_seq,
-   const std::map<CharType, DataType> &result, 
-   const std::vector<DataType> &expected_values
-) {
-   size_t index = 0;
-
-   for (const auto &seq_element : char_seq) {
-      if (index >= expected_values.size()) {
-         FAIL("Character sequence size exceeds expected length");
-      }
-
-      DataType actual_char = result.at(seq_element);
-      DataType expected_char = expected_values[index];
-
-      CAPTURE(seq_element);
-      CAPTURE(index);
-
-      REQUIRE(actual_char == expected_char);
-      index++;
-   }
-}
-
-template <typename DataType>
-void shift_alpha_values(std::vector<DataType> &sequence, int lower_shift, int upper_shift) {
-   std::transform(
-      sequence.begin(), 
-      sequence.end(), 
-      sequence.begin(), 
-      [&](DataType &i) { 
-         if (is_ascii_lower(i)) {
-            return static_cast<DataType>(i + lower_shift);
-         }
-         else if (is_ascii_upper(i)) {
-            return static_cast<DataType>(i + upper_shift);
-         }
-
-         return i;
-       });
-}
