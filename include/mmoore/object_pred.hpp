@@ -3,8 +3,23 @@
 #ifndef OBJECT_PRED_HPP
 #define OBJECT_PRED_HPP
 
-#include <cctype>
 #include <iterator>
+#include <type_traits>
+
+/**
+ * Helper to align to power of 2 (e.g., align to 4 bytes if using 32-bit integers) 
+ */
+template<size_t Alignment, typename T>
+constexpr T align_up(T num) {
+   static_assert(std::is_integral_v<T>, "'num' must be an integral type");
+
+   static_assert((Alignment & (Alignment - 1)) == 0, "'Alignment' must be a power of 2");
+   static_assert(Alignment != 0, "'Alignment' cannot be zero");
+   
+   constexpr T mask = static_cast<T>(Alignment - 1);
+
+   return (num + mask) & ~mask;
+}
 
 /**
 * The find_last() function searches for the element denoted by v. If such
