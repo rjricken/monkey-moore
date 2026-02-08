@@ -8,7 +8,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(unit-tests test_monkey_moore.cpp)
+add_executable(unit-tests 
+    test_monkey_moore.cpp 
+    test_search_engine.cpp)
 
 target_link_libraries(unit-tests PRIVATE Catch2::Catch2WithMain monkey-core)
 
