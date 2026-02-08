@@ -1,69 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "mmoore/search_engine.hpp"
+#include "common.hpp"
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
 #include <catch2/generators/catch_generators.hpp>
-
-#include "mmoore/search_engine.hpp"
 #include <filesystem>
 #include <vector>
 #include <fstream>
 #include <cstdint>
-
-std::vector<CharType> to_vector(const std::u32string &from);
-
-namespace mmoore {
-   template<typename DataType>
-   bool operator==(const mmoore::SearchResult<DataType> &a, const mmoore::SearchResult<DataType> &b) {
-      return a.offset == b.offset && a.preview == b.preview;
-   }
-
-   template <typename DataType>
-   std::ostream & operator<<(std::ostream &os, const SearchResult<DataType> &sr) {
-      os << "{\n"
-         << "   offset: " << sr.offset << ", \n"
-         << "   preview: " << sr.preview << " \n" 
-         << "}\n";
-      return os;
-   }
-}
-
-template <typename DataType>
-class TempFile {
-public:
-   std::filesystem::path path;
-
-   TempFile(const std::string &text_data, int offset = 0) {
-      std::vector<DataType> data(text_data.size());
-      std::transform(
-         text_data.begin(), 
-         text_data.end(), 
-         data.data(), 
-         [offset](const char &c) { 
-            return static_cast<DataType>(c + offset);
-         }
-      );
-
-      init(data);
-   }
-
-   TempFile(const std::vector<DataType> &data) {
-      init(data);
-   }
-
-   ~TempFile() {
-      if (std::filesystem::exists(path)) {
-         std::filesystem::remove(path);
-      }
-   }
-private:
-   void init(std::vector<DataType> data) {
-      path = std::filesystem::temp_directory_path() / "mmoore_test_blob.bin";
-
-      std::ofstream file(path, std::ios::binary);
-      file.write(reinterpret_cast<const char *>(data.data()), data.size() * sizeof(DataType));
-   }
-};
 
 TEST_CASE("Search engine: 8-bit relative search correctness", "[search-engine][8-bit][relative-search]") {
    std::vector<uint8_t> file_data = {
