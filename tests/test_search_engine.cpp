@@ -281,39 +281,39 @@ TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-e
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
 
-   /* SECTION("Handles a match at the start of file") {
-      TempFile<uint8_t> temp_file("match me please# \0");
+   SECTION("Handles a match at the start of file") {
+      TempFile<uint16_t> temp_file("catch me please# \0");
 
       config.file_path = temp_file.path;
-      config.keyword = to_vector(U"match");
+      config.keyword = to_vector(U"catch");
       config.preferred_preview_width = 8;
 
-      mmoore::SearchEngine<uint8_t> engine(config);
+      mmoore::SearchEngine<uint16_t> engine(config);
       auto results = engine.run([](int, const std::string &){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
       auto &[offset, values_map, preview] = results[0];
       CHECK(offset == 0);
-      CHECK(preview == "match#me");
+      CHECK(preview == "catch#me");
    }
 
    SECTION("Handles a match at the end of file") {
-      TempFile<uint8_t> temp_file("###reach the final");
+      TempFile<uint16_t> temp_file("###the final step");
       
       config.file_path = temp_file.path;
-      config.keyword = to_vector(U"final");
+      config.keyword = to_vector(U"step");
       config.preferred_preview_width = 9;
 
-      mmoore::SearchEngine<uint8_t> engine(config);
+      mmoore::SearchEngine<uint16_t> engine(config);
       auto results = engine.run([](int, const std::string &){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
       auto &[offset, values_map, preview] = results[0];
-      CHECK(offset == 13);
-      CHECK(preview == "the#final");
-   }*/
+      CHECK(offset == 26);
+      CHECK(preview == "inal#step");
+   }
 }
 
 TEST_CASE("Search engine: error handling", "[search-engine][error]") {
