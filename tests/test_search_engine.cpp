@@ -11,6 +11,18 @@
 #include <fstream>
 #include <cstdint>
 
+static std::vector<uint16_t> to_big_endian_bytes(const std::vector<uint16_t> &source_data) {
+   std::vector<uint16_t> big_endian_data;
+   big_endian_data.reserve(source_data.size());
+
+   for (uint16_t value : source_data) {
+      uint16_t swapped_value = (value >> 8) | (value << 8);
+      big_endian_data.push_back(swapped_value);
+   }
+
+   return big_endian_data;
+}
+
 TEST_CASE("Search engine: 8-bit relative search correctness", "[search-engine][8-bit][relative-search]") {
    std::vector<uint8_t> file_data = {
       // t     e     x     t     #     #     #     #  (offset 0)
@@ -81,7 +93,7 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
       0x1094, 0x1085, 0x1098, 0x1094, 0x0010, 0x0010, 0x0011, 0x0011,
       0x0000, 0x1094, 0x1085, 0x1098, 0x1094, 0x0000, 0xFFFF, 0xFFFF,
       0x0000, 0x0000, 0x0001, 0x000A, 0xFFFF, 0xFFFF, 0x0000, 0x0000,
-      0x0000, 0x1094, 0x1085, 0x1094, 0x1085, 0x1098, 0x1094, 0x0000,
+      0x0000, 0x1094, 0x1085, 0x1094, 0x1085, 0x1098, 0x1094, 0x0000,   
       0xFFFF, 0x0000, 0x000A, 0xFFFF, 0xFFFF, 0x0001, 0x0000, 0x0000,
       0xFFFF, 0x0000, 0x000A, 0xFFFF, 0xFFFF, 0x0001, 0x0000, 0x0000,
       0x0000, 0xFFFF, 0x1094, 0x1085, 0x1098, 0x1094, 0x0000, 0x00FF,
@@ -94,14 +106,11 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
    expected_results.push_back({  54, {}, ""});
    expected_results.push_back({ 100, {}, ""});
    expected_results.push_back({ 120, {}, ""});
-
-   TempFile temp_file(file_data);
+   
    std::atomic<bool> abort{false};
 
    mmoore::SearchConfig<uint16_t> config;
-   config.file_path = temp_file.path;
    config.keyword = to_vector(U"text");
-   config.preferred_preview_width = 4;
 
    SECTION("Finds all matches under various configurations") {
       int num_threads = GENERATE(1, 4);
@@ -116,10 +125,34 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
       config.preferred_num_threads = num_threads;
       config.preferred_search_block_size = block_size;
 
+      TempFile temp_file(file_data);
+      config.file_path = temp_file.path;
+
       INFO(" Threads: " << num_threads << ", Block size: " << block_size);
 
       mmoore::SearchEngine<uint16_t> engine(config);
       auto results = engine.run([](int, const std::string &) {}, abort);
+
+      REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
+   }
+
+   SECTION("Find all matches under variou configurations in Big-Endian") {
+      std::vector<uint16_t> file_data_big_endian = to_big_endian_bytes(file_data);
+
+      int num_threads = GENERATE(1, 4);
+      int block_size = GENERATE(512, 24, 47, 58);
+
+      config.preferred_num_threads = num_threads;
+      config.preferred_search_block_size = block_size;
+
+      TempFile temp_file(file_data_big_endian);
+      config.file_path = temp_file.path;
+      config.endianness = mmoore::Endianness::Big;
+
+      INFO(" Threads: " << num_threads << ", Block size: " << block_size);
+
+      mmoore::SearchEngine<uint16_t> engine(config);
+      auto results = engine.run([](int, const std::string &){}, abort);
 
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
