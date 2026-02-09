@@ -23,6 +23,9 @@ configure-release:
 build-release:
     cmake --build --preset release
 
+benchmark: build-release
+    ./build-release/benchmarks/benchmarks --benchmark_time_unit=ms
+
 run-release: build-release
     ./build-release/src/gui/monkey-moore-gui
 

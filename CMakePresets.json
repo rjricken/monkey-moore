@@ -12,7 +12,8 @@
             "binaryDir": "${sourceDir}/build",
             "generator": "Unix Makefiles",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTING": "ON"
             }
         },
         {
@@ -23,7 +24,7 @@
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "BUILD_TESTING": "OFF"
+                "BUILD_BENCHMARKS": "ON"
             }
         }
     ],
