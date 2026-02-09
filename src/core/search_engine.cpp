@@ -26,7 +26,6 @@ mmoore::SearchEngine<DataType>::run(
    bool generate_previews
 ) {
    std::vector<mmoore::SearchResult<DataType>> results;
-   std::clog << "\n\nSeachEngine::run =========================\n";
 
    if (!std::filesystem::exists(config.file_path)) {
       throw std::runtime_error("File not found");
@@ -49,8 +48,6 @@ mmoore::SearchEngine<DataType>::run(
 
    auto blocks = compute_search_blocks(file_size);
 
-   std::clog << "Number of blocks: " << blocks.size() << "\n";
-
    using ResultVector = std::vector<mmoore::SearchResult<DataType>>;
    std::vector<std::future<ResultVector>> active_futures;
 
@@ -68,7 +65,6 @@ mmoore::SearchEngine<DataType>::run(
    while (next_block != blocks.end() || !active_futures.empty()) {
       for (auto it = active_futures.begin(); it != active_futures.end(); ) {
          if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-            std::clog << "[ future is ready ] \n"; 
             ResultVector local_results = it->get();
 
             if (!local_results.empty()) {
@@ -99,7 +95,6 @@ mmoore::SearchEngine<DataType>::run(
             &searcher
          ]() -> ResultVector {   
             ResultVector local_results;
-            std::clog << "--- Worker---\n";
 
             std::ifstream file(config.file_path, std::ios::binary);
             if (!file.is_open()) {
@@ -115,30 +110,23 @@ mmoore::SearchEngine<DataType>::run(
                alignment_padding < sizeof(DataType); 
                ++alignment_padding
             ) {
-               std::clog << " > alignment_padding: " << alignment_padding << "\n";
                std::vector<uint8_t> work_buffer = raw_buffer;
 
                DataType *data_ptr = reinterpret_cast<DataType *>(work_buffer.data() + alignment_padding);
                size_t data_count = static_cast<size_t>(floor(double(current_block.size) / sizeof(DataType)));
-               
-               std::clog << " > data_count: " << data_count << "\n";
 
                if (reinterpret_cast<uint8_t *>(data_ptr + data_count) > work_buffer.data() + current_block.size) {
-                  std::clog << " >> decrementing data_count \n"; 
                   data_count -= 1;
                }
 
                if (sizeof(DataType) > 1) {
-                  std::clog << " >> adjusting endianness \n"; 
                   mmoore::adjust_endianness(data_ptr, data_count, config.endianness);
                }
 
                auto matches = searcher->search(data_ptr, data_count);
-               std::clog << " >> matches found: " << matches.size() << "\n"; 
 
                local_results.reserve(matches.size());
                for (const auto &[match_position, values_map] : matches) {
-                  std::clog << "match { match_position: " << match_position << " }\n";
                   auto offset = 
                      current_block.offset 
                      + (match_position * sizeof(DataType)) 
@@ -157,7 +145,6 @@ mmoore::SearchEngine<DataType>::run(
             return local_results;
          };
 
-         std::clog << "[ starting async worker ] \n"; 
          active_futures.push_back(std::async(std::launch::async, worker));
          ++next_block;
       }
@@ -204,7 +191,6 @@ template<typename DataType>
 std::vector<typename mmoore::SearchEngine<DataType>::SearchBlock> 
 mmoore::SearchEngine<DataType>::compute_search_blocks(uint64_t file_size) {
    std::vector<SearchBlock> blocks;
-   std::clog << "--- Compute Blocks---\n";
 
    size_t pattern_len =  config.is_relative_search
       ? config.keyword.size()
@@ -227,12 +213,6 @@ mmoore::SearchEngine<DataType>::compute_search_blocks(uint64_t file_size) {
          std::min(static_cast<uint64_t>(full_block_size), remaining)
       );
 
-      std::clog << " + file_size " << file_size << "\n";
-      std::clog << " + offset " << offset << "\n";
-      std::clog << " + remaining " << remaining << "\n";
-      std::clog << " + full_block_size " << full_block_size << "\n";
-
-      std::clog << " > Block #" << i << ":" << offset << "/" << offset + size << "\n";
       blocks.push_back({ offset, size });
    }
 
@@ -253,24 +233,13 @@ std::string mmoore::SearchEngine<DataType>::generate_preview(
    // places current match in the center of the preview
    const int kw_half_width = static_cast<int>(std::floor(keyword_len / 2.0));
    const int window_half_width = preview_window_width / 2;
-   std::clog << "kw_half_width = " << kw_half_width << "\n";
-   std::clog << "window_half_wifth = " << window_half_width << "\n";
 
    // calculate ideal start position
    int64_t positions_to_backup = window_half_width - kw_half_width;
-   std::clog << "positions_to_backup = " << positions_to_backup << "\n";
    int64_t bytes_to_backup = positions_to_backup * sizeof(DataType);
-
-   std::clog << "bytes_to_backup = " << bytes_to_backup << "\n";
 
    // align starting position correctly for multi-byte searches
    bytes_to_backup = align_up<sizeof(DataType)>(bytes_to_backup);
-   std::clog << "bytes_to_backup (aligned) = " << bytes_to_backup << "\n";
-
-   if (keyword_len > preview_window_width) {
-      std::clog << "keyword is larger than window" << "\n";
-      //bytes_to_backup = 0;
-   }
 
    int64_t start_offset = static_cast<int64_t>(match_offset) - bytes_to_backup;
    int64_t end_offset = start_offset + (preview_window_width * sizeof(DataType));
@@ -279,7 +248,6 @@ std::string mmoore::SearchEngine<DataType>::generate_preview(
       start_offset -= end_offset - file_size;
    }
 
-   std::clog << "start_offset = " << start_offset << "\n";
    file.seekg(std::max(static_cast<int64_t>(0), start_offset), std::ios::beg);
 
    std::vector<DataType> buffer(preview_window_width);
@@ -289,11 +257,9 @@ std::string mmoore::SearchEngine<DataType>::generate_preview(
    // handle end of file
    size_t bytes_read = file.gcount();
    size_t items_read = bytes_read / sizeof(DataType);
-   std::clog << "items_read: " << items_read << "\n";
    buffer.resize(items_read);
 
    if (sizeof(DataType) > 1) {
-      std::clog << " >> adjusting endianness \n"; 
       mmoore::adjust_endianness(buffer.data(), buffer.size(), config.endianness);
    }
 
@@ -341,8 +307,6 @@ std::string mmoore::SearchEngine<DataType>::decode_raw_data(
          }
       }
    }
-
-   std::clog << "Generated preview: " << result_stream.str() << "\n";
 
    return result_stream.str();
 }

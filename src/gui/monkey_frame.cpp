@@ -318,8 +318,8 @@ MonkeyFrame::~MonkeyFrame ()
 }
 
 // template specializations to return a reference to the correct results vector
-template <> std::vector<result_type8> &MonkeyFrame::lastResults<uint8_t> () { return last_results8; }
-template <> std::vector<result_type16> &MonkeyFrame::lastResults<uint16_t> () { return last_results16; }
+template <> std::vector<mmoore::SearchResult<uint8_t>> &MonkeyFrame::lastResults<uint8_t> () { return last_results8; }
+template <> std::vector<mmoore::SearchResult<uint16_t>> &MonkeyFrame::lastResults<uint16_t> () { return last_results16; }
 
 /**
 * Method called when the browse button is pressed.
@@ -387,6 +387,17 @@ void MonkeyFrame::OnByteOrder (wxCommandEvent &event)
    wxPostEvent(this, wxCommandEvent(wxEVT_BUTTON, MonkeyMoore_Clear));
 
    byteorder_little = event.GetId() == MonkeyMoore_ByteOrderLE;
+}
+
+static std::vector<CharType> convert_to_vector_array(const wxString &from) {
+   std::vector<CharType> result;
+   result.reserve(from.length());
+
+   for (const auto &ch : from) {
+      result.push_back(static_cast<CharType>(ch.GetValue()));
+   }
+
+   return result;
 }
 
 /**
@@ -466,19 +477,22 @@ void MonkeyFrame::OnSearch (wxCommandEvent &WXUNUSED(event))
    if (!file->IsOpened())
       return ShowWarning(MM_WARNING_FILENOTFOUND);
 
-   SearchParameters p = relative_search ?
-      SearchParameters(file, keyword, charpattern, card) :
-      SearchParameters(file, values);
+   mmoore::SearchConfig config;
+   config.is_relative_search = relative_search;
+   config.endianness = byteorder_little ? mmoore::Endianness::Little : mmoore::Endianness::Big;
+   config.file_path = filename.ToStdString();
+   config.wildcard = card;
+   config.keyword = convert_to_vector_array(keyword);
+   config.custom_char_seq = convert_to_vector_array(charpattern);
+   config.reference_values = values;
+   config.preferred_num_threads = prefs.getInt("settings/perf-search-threads");
+   config.preferred_search_block_size = prefs.getInt("settings/perf-memory-pool");
+   config.preferred_preview_width = prefs.getInt("settings/display-preview-width");
 
    if (searchmode_8bits)
-      StartSearchThread<uint8_t>(p);
-   else
-   {
-      p.setEndianness(byteorder_little ?
-         SearchParameters::little_endian :
-         SearchParameters::big_endian);
-
-      StartSearchThread<uint16_t>(p);
+      StartSearchThread<uint8_t>(config);
+   else {
+      StartSearchThread<uint16_t>(config);
    }
 }
 
@@ -586,7 +600,9 @@ void MonkeyFrame::OnCreateTbl (wxCommandEvent &WXUNUSED(event))
 
       MonkeyTable tbldiag(this, _("Create table file"), prefs, images, wxSize(500, 440));
 
-      tbldiag.InitTableData<_DataType>(std::get<1>(results.at(sel_item.GetData())), byteorder_little);
+      auto values_map = results.at(sel_item.GetData()).values_map;
+
+      tbldiag.InitTableData<_DataType>(values_map, byteorder_little);
       tbldiag.CenterOnParent();
       tbldiag.ShowModal();
    }
@@ -1073,10 +1089,10 @@ void MonkeyFrame::AdjustResultColumns (bool sizeToContents)
 * @tparam _DataType Basic underlying type used to represent the data
 */
 template <typename _DataType>
-bool MonkeyFrame::StartSearchThread (SearchParameters &p)
+bool MonkeyFrame::StartSearchThread (mmoore::SearchConfig &config)
 {
    SearchThread<_DataType> *worker =
-      new SearchThread<_DataType>(p, lastResults<_DataType>(), prefs, this);
+      new SearchThread<_DataType>(config, lastResults<_DataType>(), this);
 
    if (worker->Create() == wxTHREAD_NO_ERROR)
    {
