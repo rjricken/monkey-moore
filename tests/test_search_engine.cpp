@@ -342,3 +342,34 @@ TEST_CASE("Search engine: progress reporting", "[search-engine][progress]") {
       CHECK(is_monotonic);
    }
 }
+
+TEST_CASE("Search engine: abort functionality", "[search-engine][abort]") {
+   TempFile<uint8_t> temp_file("match#catch#batch#match#patch#hatch#match", 0x30);
+
+   mmoore::SearchConfig<uint8_t> config;
+   config.file_path = temp_file.path;
+   config.keyword = to_vector(U"match");
+   config.preferred_search_block_size = 5;
+   config.preferred_num_threads = 1;
+
+   std::atomic<bool> abort_flag{false};
+   std::vector<int> progress_history;
+
+   SECTION("Abort search when flag is raised") {
+      mmoore::SearchEngine<uint8_t> engine(config);
+
+      int callback_count = 0;
+      auto saboteur_callback = [&](int percent, const std::string &) {
+         callback_count++;
+         
+         if (callback_count >= 5) {
+            abort_flag = true;
+         }
+      };
+
+      auto results = engine.run(saboteur_callback, abort_flag, false);
+
+      CHECK(results.size() == 0);
+      CHECK(callback_count <= 5);
+   }
+}
