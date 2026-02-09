@@ -16,6 +16,7 @@
 #include "constants.hpp"
 #include "byteswap.hpp"
 #include "mmoore/monkey_moore.hpp"
+#include "mmoore/search_engine.hpp"
 #include "monkey_prefs.hpp"
 
 #include <wx/imaglist.h>
@@ -23,12 +24,6 @@
 #include <vector>
 #include <utility>
 #include <mutex>
-
-// typedefs to prevent lenghty code
-typedef std::tuple<wxFileOffset, MonkeyMoore<uint8_t>::equivalency_map, wxString> result_type8;
-typedef std::tuple<wxFileOffset, MonkeyMoore<uint16_t>::equivalency_map, wxString> result_type16;
-
-struct SearchParameters;
 
 /**
 * Implements the main window frame. Creates and maintains the user interface,
@@ -101,8 +96,8 @@ private:
    bool CheckKeyword (const wxString &kw, const wxChar wc, const wxString &cp);
    void AdjustResultColumns (bool sizeToContents = false);
    
-   template <typename _DataType>
-      bool StartSearchThread (SearchParameters &p);
+   template <typename DataType>
+   bool StartSearchThread (mmoore::SearchConfig &config);
 
    template <typename _DataType>
       void ShowResults (bool showAll = true);
@@ -140,8 +135,7 @@ private:
    * @return A vector containing the last results of _Type
    */
    template <typename _DataType>
-      std::vector<std::tuple<wxFileOffset,
-         typename MonkeyMoore<_DataType>::equivalency_map, wxString>> &lastResults();
+      std::vector<mmoore::SearchResult<_DataType>> &lastResults();
 
    int progressBoxHeight;                     /**< Height of the progress box in pixels */
 
@@ -158,8 +152,8 @@ private:
    wxStopWatch chronometer;                   /**< Times the search                     */
    MonkeyPrefs &prefs;                        /**< Settings and preferences             */
 
-   std::vector<result_type8> last_results8;   /**< Results from the last 8-bit search   */
-   std::vector<result_type16> last_results16; /**< Results from the last 16-bit search  */
+   std::vector<mmoore::SearchResult<uint8_t>> last_results8;   /**< Results from the last 8-bit search   */
+   std::vector<mmoore::SearchResult<uint16_t>> last_results16; /**< Results from the last 16-bit search  */
 
    DECLARE_EVENT_TABLE();
 };

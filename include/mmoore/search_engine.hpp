@@ -20,7 +20,6 @@ namespace mmoore {
       std::string preview;
    };
 
-   template<typename DataType>
    struct SearchConfig {
       std::filesystem::path file_path;
 
@@ -44,7 +43,7 @@ namespace mmoore {
       //TODO: introduce enum to replace the string argument
       using ProgressCallback = std::function<void(int, const std::string &)>;
 
-      explicit SearchEngine(const SearchConfig<DataType> &cfg) : config(cfg) {}
+      explicit SearchEngine(const SearchConfig &cfg) : config(cfg) {}
 
       std::vector<SearchResult<DataType>> run(
          ProgressCallback on_progress, 
@@ -53,7 +52,7 @@ namespace mmoore {
       );
 
    private:
-      SearchConfig<DataType> config;
+      SearchConfig config;
 
       struct SearchBlock {
          uint64_t offset;

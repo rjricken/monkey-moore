@@ -53,7 +53,7 @@ TEST_CASE("Search engine: 8-bit relative search correctness", "[search-engine][8
    TempFile temp_file(file_data);
    std::atomic<bool> abort{false};
 
-   mmoore::SearchConfig<uint8_t> config;
+   mmoore::SearchConfig config;
    config.file_path = temp_file.path;
    config.keyword = to_vector(U"text");
    config.preferred_preview_width = 4;
@@ -109,7 +109,7 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
    
    std::atomic<bool> abort{false};
 
-   mmoore::SearchConfig<uint16_t> config;
+   mmoore::SearchConfig config;
    config.keyword = to_vector(U"text");
 
    SECTION("Finds all matches under various configurations") {
@@ -159,7 +159,7 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
 }
 
 TEST_CASE("Search engine: 8-bit relative search preview generation", "[search-engine][8-bit][preview]") {
-   mmoore::SearchConfig<uint8_t> config;
+   mmoore::SearchConfig config;
    config.preferred_search_block_size = 16;
    config.preferred_num_threads = 1;
 
@@ -236,7 +236,7 @@ TEST_CASE("Search engine: 8-bit relative search preview generation", "[search-en
 }
 
 TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-engine][16-bit][preview]") {
-   mmoore::SearchConfig<uint16_t> config;
+   mmoore::SearchConfig config;
    config.preferred_search_block_size = 32;
    config.preferred_num_threads = 1;
 
@@ -298,7 +298,7 @@ TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-e
 TEST_CASE("Search engine: error handling", "[search-engine][error]") {
    std::atomic<bool> abort{false};
 
-   mmoore::SearchConfig<uint8_t> config;
+   mmoore::SearchConfig config;
    config.file_path = "path/to/inexistent/file";
 
    SECTION("Throws runtime error if file is not found") {
@@ -311,7 +311,7 @@ TEST_CASE("Search engine: progress reporting", "[search-engine][progress]") {
    std::vector<uint8_t> file_data(128, 0x00);
    TempFile temp_file(file_data);
 
-   mmoore::SearchConfig<uint8_t> config;
+   mmoore::SearchConfig config;
    config.file_path = temp_file.path;
    config.keyword = to_vector(U"text");
 
@@ -346,7 +346,7 @@ TEST_CASE("Search engine: progress reporting", "[search-engine][progress]") {
 TEST_CASE("Search engine: abort functionality", "[search-engine][abort]") {
    TempFile<uint8_t> temp_file("match#catch#batch#match#patch#hatch#match", 0x30);
 
-   mmoore::SearchConfig<uint8_t> config;
+   mmoore::SearchConfig config;
    config.file_path = temp_file.path;
    config.keyword = to_vector(U"match");
    config.preferred_search_block_size = 5;
@@ -376,7 +376,7 @@ TEST_CASE("Search engine: abort functionality", "[search-engine][abort]") {
 TEST_CASE("Search engine: custom wildcard support", "[search-engine][wildcard]") {
    TempFile<uint8_t> temp_file("match#catch#batch#match#patch#hatch#match", -0x15);
 
-   mmoore::SearchConfig<uint8_t> config;
+   mmoore::SearchConfig config;
    config.file_path = temp_file.path;
    config.preferred_search_block_size = 20;
    config.preferred_num_threads = 1;
