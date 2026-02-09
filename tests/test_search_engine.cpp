@@ -353,7 +353,6 @@ TEST_CASE("Search engine: abort functionality", "[search-engine][abort]") {
    config.preferred_num_threads = 1;
 
    std::atomic<bool> abort_flag{false};
-   std::vector<int> progress_history;
 
    SECTION("Abort search when flag is raised") {
       mmoore::SearchEngine<uint8_t> engine(config);
@@ -371,5 +370,25 @@ TEST_CASE("Search engine: abort functionality", "[search-engine][abort]") {
 
       CHECK(results.size() == 0);
       CHECK(callback_count <= 5);
+   }
+}
+
+TEST_CASE("Search engine: custom wildcard support", "[search-engine][wildcard]") {
+   TempFile<uint8_t> temp_file("match#catch#batch#match#patch#hatch#match", -0x15);
+
+   mmoore::SearchConfig<uint8_t> config;
+   config.file_path = temp_file.path;
+   config.preferred_search_block_size = 20;
+   config.preferred_num_threads = 1;
+
+   std::atomic<bool> abort_flag{false};
+
+   SECTION("Passes custom wildcard character to core search algorithm") {
+      config.wildcard = '$';
+      config.keyword = to_vector(U"$atch");
+      mmoore::SearchEngine<uint8_t> engine(config);
+
+      auto results = engine.run([](int, const std::string &){}, abort_flag, false);
+      CHECK(results.size() == 7);
    }
 }
