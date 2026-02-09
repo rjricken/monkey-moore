@@ -10,6 +10,13 @@ enable_testing()
 add_subdirectory(src/core)
 add_subdirectory(src/gui)
 
+option(BUILD_TESTING "Build unit tests" OFF)
+option(BUILD_BENCHMARKS "Build performance benchmarks" OFF)
+
 if(BUILD_TESTING)
     add_subdirectory(tests)
+endif()
+
+if(BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
 endif()
