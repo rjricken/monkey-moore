@@ -74,7 +74,7 @@ TEST_CASE("Search engine: 8-bit relative search correctness", "[search-engine][8
       INFO(" Threads: " << num_threads << ", Block size: " << block_size);
 
       mmoore::SearchEngine<uint8_t> engine(config);
-      auto results = engine.run([](int, const std::string &) {}, abort);
+      auto results = engine.run([](int, const mmoore::SearchStep) {}, abort);
 
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
@@ -131,7 +131,7 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
       INFO(" Threads: " << num_threads << ", Block size: " << block_size);
 
       mmoore::SearchEngine<uint16_t> engine(config);
-      auto results = engine.run([](int, const std::string &) {}, abort);
+      auto results = engine.run([](int, const mmoore::SearchStep) {}, abort);
 
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
@@ -152,7 +152,7 @@ TEST_CASE("Search engine: 16-bit relative search correctness", "[search-engine][
       INFO(" Threads: " << num_threads << ", Block size: " << block_size);
 
       mmoore::SearchEngine<uint16_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort);
 
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
@@ -178,7 +178,7 @@ TEST_CASE("Search engine: 8-bit relative search preview generation", "[search-en
       config.preferred_preview_width = 25;
       
       mmoore::SearchEngine<uint8_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
@@ -191,7 +191,7 @@ TEST_CASE("Search engine: 8-bit relative search preview generation", "[search-en
       config.preferred_preview_width = 8;
 
       mmoore::SearchEngine<uint8_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
@@ -208,7 +208,7 @@ TEST_CASE("Search engine: 8-bit relative search preview generation", "[search-en
       config.preferred_preview_width = 9;
 
       mmoore::SearchEngine<uint8_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
@@ -225,7 +225,7 @@ TEST_CASE("Search engine: 8-bit relative search preview generation", "[search-en
       config.preferred_preview_width = 11;
 
       mmoore::SearchEngine<uint8_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
@@ -255,7 +255,7 @@ TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-e
       config.preferred_preview_width = 25;
       
       mmoore::SearchEngine<uint16_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE_THAT(results, Catch::Matchers::Equals(expected_results));
    }
@@ -268,7 +268,7 @@ TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-e
       config.preferred_preview_width = 8;
 
       mmoore::SearchEngine<uint16_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
@@ -285,7 +285,7 @@ TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-e
       config.preferred_preview_width = 9;
 
       mmoore::SearchEngine<uint16_t> engine(config);
-      auto results = engine.run([](int, const std::string &){}, abort, true);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
 
       REQUIRE(results.size() == 1);
 
@@ -303,7 +303,7 @@ TEST_CASE("Search engine: error handling", "[search-engine][error]") {
 
    SECTION("Throws runtime error if file is not found") {
       mmoore::SearchEngine<uint8_t> engine(config);
-      REQUIRE_THROWS_AS(engine.run([](int, const std::string &){}, abort), std::runtime_error);
+      REQUIRE_THROWS_AS(engine.run([](int, const mmoore::SearchStep){}, abort), std::runtime_error);
    }
 }
 
@@ -317,7 +317,7 @@ TEST_CASE("Search engine: progress reporting", "[search-engine][progress]") {
 
    std::atomic<bool> abort{false};
    std::vector<int> progress_history;
-   auto progress_callback = [&](int percent, const std::string &) {
+   auto progress_callback = [&](int percent, const mmoore::SearchStep) {
       progress_history.push_back(percent);
    };
 
@@ -358,7 +358,7 @@ TEST_CASE("Search engine: abort functionality", "[search-engine][abort]") {
       mmoore::SearchEngine<uint8_t> engine(config);
 
       int callback_count = 0;
-      auto saboteur_callback = [&](int percent, const std::string &) {
+      auto saboteur_callback = [&](int percent, const mmoore::SearchStep) {
          callback_count++;
          
          if (callback_count >= 5) {
@@ -388,7 +388,7 @@ TEST_CASE("Search engine: custom wildcard support", "[search-engine][wildcard]")
       config.keyword = to_vector(U"$atch");
       mmoore::SearchEngine<uint8_t> engine(config);
 
-      auto results = engine.run([](int, const std::string &){}, abort_flag, false);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort_flag, false);
       CHECK(results.size() == 7);
    }
 }

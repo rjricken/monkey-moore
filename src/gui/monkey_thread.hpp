@@ -58,9 +58,22 @@ public:
    {
       NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, _("Initializing..."));
 
-      auto progress_callback = [this](int percent, const std::string &message) {
+      auto progress_callback = [this](int percent, const mmoore::SearchStep step) {
          if (m_frame->IsSearchAborted()) {
             m_abort_flag = true;
+         }
+
+         std::string message;
+
+         switch(step) {
+            case mmoore::SearchStep::Searching:
+               message = _("Searching...");
+               break;
+            case mmoore::SearchStep::GeneratingPreviews:
+               message = _("Generating previews...");
+               break;
+            default:
+               throw std::runtime_error("Unreachable");
          }
 
          NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, wxString(message), percent);

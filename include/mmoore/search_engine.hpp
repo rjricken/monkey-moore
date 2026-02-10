@@ -37,11 +37,17 @@ namespace mmoore {
       int preferred_preview_width = 50;
    };
 
+   enum SearchStep {
+      Initializing,
+      Searching,
+      GeneratingPreviews,
+      Aborting
+   };
+
    template<typename DataType> 
    class SearchEngine {
    public:
-      //TODO: introduce enum to replace the string argument
-      using ProgressCallback = std::function<void(int, const std::string &)>;
+      using ProgressCallback = std::function<void(int, const SearchStep)>;
 
       explicit SearchEngine(const SearchConfig &cfg) : config(cfg) {}
 
