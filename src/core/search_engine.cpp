@@ -139,7 +139,7 @@ mmoore::SearchEngine<DataType>::run(
             {
                std::lock_guard<std::mutex> lock(progress_mutex);
                total_progress += progress_increment;
-               on_progress(static_cast<int>(total_progress), "Searching...");
+               on_progress(static_cast<int>(total_progress), SearchStep::Searching);
             }
             
             return local_results;
@@ -163,7 +163,7 @@ mmoore::SearchEngine<DataType>::run(
       }
    }
 
-   on_progress(100, "Generating previews...");
+   on_progress(100, GeneratingPreviews);
 
    std::sort(results.begin(), results.end(), 
       [](mmoore::SearchResult<DataType> &a, mmoore::SearchResult<DataType> &b) {
