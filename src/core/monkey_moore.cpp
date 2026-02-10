@@ -288,11 +288,15 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
 }
 
 /**
-* Performs a non-wildcard boyer-moore based relative search.
-* @param data byte array to search on
-* @param data_len data length
-* @return The relative values found.
-*/
+ * @brief Performs a Relative Boyer-Moore search on the data buffer.
+ * This implementation uses a "lazy" difference calculation strategy to compare 
+ * byte relationships on-the-fly, avoiding temporary memory allocations.
+ * The search loop is structurally split into two parts (Loop Peeling) to ensure
+ * a consistent execution path for the primary comparison logic.
+ * @param data Pointer to the start of the data buffer.
+ * @param data_len The length of the data buffer.
+ * @return std::vector<result_type> A vector of matches containing offset and map.
+ */
 template<class Ty>
 std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moore(
    const Ty *data, 
@@ -303,41 +307,56 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
 
    std::vector <result_type> results;
 
-   long keyword_len = static_cast<long>(keyword.size());
-   long skip_table_len = static_cast<long>(skip_table.size());
+   const long keyword_len = static_cast<long>(keyword.size());
+   const long skip_table_len = static_cast<long>(skip_table.size());
+   const long skip_table_positives_index = skip_table_len / 2;
 
    const Ty *search_head = data;
-   const Ty *search_tail = data + keyword_len;
+   const Ty *data_end = data + data_len;
 
-   std::vector<int> current_rel_table(keyword_len);
+   int mismatched_rel_value = 0;
 
-   while (search_tail <= data + data_len) {
-      // computes relative values for current search position
-      calc_reltable(search_head, current_rel_table.data(), keyword_len);
+   // Helper lambda to calculate the relative difference between two positions.
+   // Returns false immediately if the difference doesn't match the precomputed keyword table. 
+   auto check_match = [&](long current_index, long previous_index) -> bool {
+      int diff = search_head[current_index] - search_head[previous_index];
 
-      // Modern C++ wth STL algorithms
-      // add #include <iterator> at the top
-      /*
-      auto mismatch_pair = std::mismatch(
-         keyword_table.rbegin(), 
-         keyword_table.rend(), 
-         current_rel_table.rbegin());
-      int matches = std::distance(keyword_table.rbegin(), mismatch_pair.first);
-      */
+      if (diff != keyword_table[current_index]) {
+         mismatched_rel_value = diff;
+         return false;
+      }
 
-      int matches = 0;
-      while (matches < keyword_len) {
-         int current_index = keyword_len - matches - 1;
-         
-         if (current_rel_table[current_index] 
-            != keyword_table[current_index]) {
+      return true;
+   };
+
+   while (search_head + keyword_len <= data_end) {
+      bool match_failed = false;
+
+      // Optimized keyword matching (loop peeling)
+      
+      // Part 1 - standard contiguous comparison
+      // Iterates backwards from the last character down to index 1.
+      long k = keyword_len - 1;
+      for (; k > 0; --k) {
+         // Verifies that every character (except the first) has the
+         // correct relative differences from its predecessor.
+         if (!check_match(k, k - 1)) {
+            match_failed = true;
             break;
          }
-
-         matches++;
       }
+
+      // Part 2 - wrap-around comparison
+      // If all characters matched except the first, we verify the relative
+      // difference between the first character (index 0) and the last character.
+      if (!match_failed) {
+         if (!check_match(0, keyword_len - 1)) {
+            match_failed = true;
+         }
+      }
+
       
-      if (matches == keyword_len) {
+      if (!match_failed) {
          equivalency_map result;
 
          if (search_mode != value_scan) {
@@ -358,26 +377,20 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
             }
          }
 
-         //TODO: rename to position? i.e. in 16-bit searches this is not the byte offset
-         long offset = static_cast <long> (std::distance(data, search_head));
-         results.push_back(std::make_pair(offset, result));
+         long match_position = static_cast <long> (std::distance(data, search_head));
+         results.push_back({match_position, result});
 
          search_head += keyword_len - 1;
-         search_tail += keyword_len - 1;
       }
       else {
-         // for partial matches we have to figure out how many units to jump over
-         int &mismatched_rel_value = current_rel_table[keyword_len - matches - 1];
-
+         // Calculate jump distance based on the mismatched relative value
          int skip_table_index = mismatched_rel_value > 0 
-            ? (skip_table_len / 2) + mismatched_rel_value 
+            ? skip_table_positives_index + mismatched_rel_value 
             : -mismatched_rel_value;
 
-         //TODO: check bounds?
          int jump_value = std::max<int>(skip_table[skip_table_index], 1);
 
          search_head += jump_value;
-         search_tail += jump_value;
       }
    }
 
