@@ -16,6 +16,10 @@ test-tag TAG: build
 run: build
     ./build/src/gui/monkey-moore-gui
 
+# runs the program with gbd attached for debugging
+run-debugger: build
+    gdb -q -ex "set debuginfod enabled on" -ex "set confirm off" -ex run --args ./build/src/gui/monkey-moore-gui
+
 # Release workflow (build-release/)
 configure-release:
     cmake --preset release
