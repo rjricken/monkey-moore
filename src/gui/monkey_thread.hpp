@@ -66,16 +66,24 @@ public:
          std::string message;
 
          switch(step) {
+            case mmoore::SearchStep::Initializing:
+               message = _("Initializing...");
+               break;
             case mmoore::SearchStep::Searching:
                message = _("Searching...");
                break;
             case mmoore::SearchStep::GeneratingPreviews:
                message = _("Generating previews...");
                break;
-            default:
-               throw std::runtime_error("Unreachable");
+            case mmoore::SearchStep::Aborting:
+               message = _("Aborting...");
+               break;
          }
 
+         if (message.empty()) {
+            throw std::runtime_error("Unreachable - missing SearchStep enum value");
+         }
+         
          NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, wxString(message), percent);
       };
       
