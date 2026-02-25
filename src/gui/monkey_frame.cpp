@@ -55,6 +55,7 @@ wxEND_EVENT_TABLE()
 wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_COMPLETED, wxThreadEvent);
 wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_UPDATE, wxThreadEvent);
 wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_ABORTED, wxThreadEvent);
+wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_FAILED, wxThreadEvent);
 
 MonkeyFrame::MonkeyFrame (const wxString &title, MonkeyPrefs &mprefs, const wxPoint &pos, const wxSize &size) :
 wxFrame(0, wxID_ANY, title, pos, size, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL), prefs(mprefs),
@@ -1109,6 +1110,7 @@ bool MonkeyFrame::StartSearchThread (mmoore::SearchConfig &config)
       Bind(mmEVT_SEARCHTHREAD_UPDATE, &MonkeyFrame::OnThreadUpdate<_DataType>, this);
       Bind(mmEVT_SEARCHTHREAD_COMPLETED, &MonkeyFrame::OnThreadCompleted<_DataType>, this);
       Bind(mmEVT_SEARCHTHREAD_ABORTED, &MonkeyFrame::OnThreadAborted<_DataType>, this);
+      Bind(mmEVT_SEARCHTHREAD_FAILED, &MonkeyFrame::OnThreadFailed<_DataType>, this);
 
       SetCurrentProgress(0);
       ShowProgressBar();
@@ -1246,16 +1248,27 @@ template <typename _DataType>
 void MonkeyFrame::OnThreadAborted (wxThreadEvent &WXUNUSED(event))
 {
    std::lock_guard<std::mutex> lock(abortMutex);
-
-   search_in_progress = false;
    search_was_aborted = false;
 
-   GetWindow<wxStaticText>(MonkeyMoore_ElapsedTime)->SetLabel(_("Search was aborted."));
-
+   UpdateSearchStatus(_("Search was aborted."));
    lastResults<_DataType>().clear();
+   SetCurrentProgress(0);
+}
+
+template <typename _DataType>
+void MonkeyFrame::OnThreadFailed (wxThreadEvent &event)
+{
+   UpdateSearchStatus(_("Search failed."));
+   lastResults<_DataType>().clear();
+   SetCurrentProgress(0);
+
+   wxMessageBox(event.GetString(), _("Search Error"), wxOK | wxICON_ERROR, this);
+}
+
+void MonkeyFrame::UpdateSearchStatus(const wxString &status_text) {
+   search_in_progress = false;
+   GetWindow<wxStaticText>(MonkeyMoore_ElapsedTime)->SetLabel(status_text);
 
    wxBitmapButton *cancel_search = GetWindow<wxBitmapButton>(MonkeyMoore_Cancel);
    cancel_search->SetBitmapLabel(images.GetBitmap(MonkeyBmp_Done));
-
-   SetCurrentProgress(0);
 }

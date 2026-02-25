@@ -64,6 +64,7 @@ public:
    template <typename _DataType> void OnThreadUpdate (wxThreadEvent &event);
    template <typename _DataType> void OnThreadCompleted (wxThreadEvent &event);
    template <typename _DataType> void OnThreadAborted (wxThreadEvent &event);
+   template <typename _DataType> void OnThreadFailed (wxThreadEvent &event);
 
    /**
    * Sets the progress bar percentage.
@@ -95,6 +96,7 @@ private:
    void ShowProgressBar (const bool show = true);
    bool CheckKeyword (const wxString &kw, const wxChar wc, const wxString &cp);
    void AdjustResultColumns (bool sizeToContents = false);
+   void UpdateSearchStatus(const wxString &status_text);
    
    template <typename DataType>
    bool StartSearchThread (mmoore::SearchConfig &config);

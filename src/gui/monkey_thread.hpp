@@ -30,6 +30,7 @@
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_UPDATE, wxThreadEvent);
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_COMPLETED, wxThreadEvent);
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_ABORTED, wxThreadEvent);
+wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_FAILED, wxThreadEvent);
 
 /**
 * Represents a full-fledged detached thread of execution used to manage the search process.
@@ -54,61 +55,66 @@ public:
    * Method called when the thread is executed.
    * @return Thread-defined return code.
    */
-   virtual void *Entry ()
-   {
-      NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, _("Initializing..."));
+   virtual void *Entry () {
+      try {
+         auto progress_callback = [this](int percent, const mmoore::SearchStep step) {
+            if (m_frame->IsSearchAborted()) {
+               m_abort_flag = true;
+            }
 
-      auto progress_callback = [this](int percent, const mmoore::SearchStep step) {
-         if (m_frame->IsSearchAborted()) {
-            m_abort_flag = true;
+            std::string message;
+
+            switch(step) {
+               case mmoore::SearchStep::Initializing:
+                  message = _("Initializing...");
+                  break;
+               case mmoore::SearchStep::Searching:
+                  message = _("Searching...");
+                  break;
+               case mmoore::SearchStep::GeneratingPreviews:
+                  message = _("Generating previews...");
+                  break;
+               case mmoore::SearchStep::Aborting:
+                  message = _("Aborting...");
+                  break;
+            }
+
+            if (message.empty()) {
+               throw std::runtime_error("Unreachable - missing SearchStep enum value");
+            }
+            
+            NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, wxString(message), percent);
+         };
+
+         mmoore::SearchEngine<DataType> engine(m_config);
+         auto results = engine.run(progress_callback, m_abort_flag, true);
+
+         if (m_abort_flag) {
+            NotifyMainThread(mmEVT_SEARCHTHREAD_ABORTED);
+            return NULL;
          }
 
-         std::string message;
-
-         switch(step) {
-            case mmoore::SearchStep::Initializing:
-               message = _("Initializing...");
-               break;
-            case mmoore::SearchStep::Searching:
-               message = _("Searching...");
-               break;
-            case mmoore::SearchStep::GeneratingPreviews:
-               message = _("Generating previews...");
-               break;
-            case mmoore::SearchStep::Aborting:
-               message = _("Aborting...");
-               break;
-         }
-
-         if (message.empty()) {
-            throw std::runtime_error("Unreachable - missing SearchStep enum value");
-         }
-         
-         NotifyMainThread(mmEVT_SEARCHTHREAD_UPDATE, wxString(message), percent);
-      };
-      
-      mmoore::SearchEngine<DataType> engine(m_config);
-      auto results = engine.run(progress_callback, m_abort_flag, true);
-
-      if (m_abort_flag) {
-         NotifyMainThread(mmEVT_SEARCHTHREAD_ABORTED);
-         return NULL;
+         m_results = std::move(results);
+         NotifyMainThread(mmEVT_SEARCHTHREAD_COMPLETED);
       }
-
-      m_results = std::move(results);
-      NotifyMainThread(mmEVT_SEARCHTHREAD_COMPLETED);
+      catch(const std::exception &e) {
+         NotifyMainThread(mmEVT_SEARCHTHREAD_FAILED, e.what());
+      }
+      catch(...) {
+         NotifyMainThread(
+            mmEVT_SEARCHTHREAD_FAILED,
+            _("Unknown fatal error occurred in search thread."));
+      }
 
       return NULL;
    }
 
 private:
-   void NotifyMainThread (wxEventType evtType, wxString msg = wxEmptyString, int progress = 0)
-   {
+   void NotifyMainThread (wxEventType evtType, wxString msg = wxEmptyString, int progress = 0) {
       wxThreadEvent *evt = new wxThreadEvent(evtType);
+      evt->SetString(msg);
 
-      if (evtType == mmEVT_SEARCHTHREAD_UPDATE)
-      {
-         evt->SetString(msg);
+      if (evtType == mmEVT_SEARCHTHREAD_UPDATE) {
          evt->SetInt(progress);
       }
 
