@@ -127,4 +127,15 @@ void shift_alpha_values(std::vector<DataType> &sequence, int lower_shift, int up
        });
 }
 
+static std::vector<uint8_t> u16_hiragana_to_u8(const std::u16string &source) {
+   std::vector<uint8_t> result(source.size());
+
+   std::transform(source.begin(), source.end(), result.begin(), [](const char16_t c) {
+      const uint8_t u8value = static_cast<uint8_t>((c - 0x3000) & 0xFF);
+      return u8value;
+   });
+
+   return result;
+}
+
 #endif // COMMON_HPP

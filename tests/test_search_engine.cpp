@@ -295,6 +295,58 @@ TEST_CASE("Search engine: 16-bit relative search preview generation", "[search-e
    }
 }
 
+TEST_CASE("Search engine: character sequence relative search preview generation", "[search-engine][preview]") {
+   mmoore::SearchConfig config;
+   config.preferred_search_block_size = 64;
+   config.preferred_num_threads = 1;
+
+   std::atomic<bool> abort{false};
+
+   const auto unicode_hiragana_seq = U"ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖ゙゚゛゜ゝゞゟ";
+
+   SECTION("Finds all matches with correct preview text in 8-bit mode") {
+      std::u16string file_content = u"あした、わたしたちは、にわに、はなを、まきます";
+      std::vector<uint8_t> file_data = u16_hiragana_to_u8(file_content);
+      TempFile<uint8_t> temp_file(file_data);
+
+
+      config.file_path = temp_file.path;
+      config.keyword = to_vector(U"わたしたちは");
+      config.custom_char_seq = to_vector(unicode_hiragana_seq);
+      config.preferred_preview_width = 14;
+
+      mmoore::SearchEngine<uint8_t> engine(config);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
+
+      REQUIRE(results.size() == 1);
+
+      auto &[offset, values_map, preview] = results[0];
+      CHECK(offset == 4);
+      CHECK(preview == "あした#わたしたちは#にわに");
+   }
+
+   SECTION("Finds all matches with correct preview text in 16-bit mode") {
+      std::u16string file_content = u"あした、わたしたちは、にわに、はなを、まきます";
+      std::vector<uint16_t> file_data(file_content.begin(), file_content.end());
+      TempFile<uint16_t> temp_file(file_data);
+
+
+      config.file_path = temp_file.path;
+      config.keyword = to_vector(U"わたしたちは");
+      config.custom_char_seq = to_vector(unicode_hiragana_seq);
+      config.preferred_preview_width = 14;
+
+      mmoore::SearchEngine<uint16_t> engine(config);
+      auto results = engine.run([](int, const mmoore::SearchStep){}, abort, true);
+
+      REQUIRE(results.size() == 1);
+
+      auto &[offset, values_map, preview] = results[0];
+      CHECK(offset == 8);
+      CHECK(preview == "あした#わたしたちは#にわに");
+   }
+}
+
 TEST_CASE("Search engine: error handling", "[search-engine][error]") {
    std::atomic<bool> abort{false};
 
@@ -328,7 +380,8 @@ TEST_CASE("Search engine: progress reporting", "[search-engine][progress]") {
       mmoore::SearchEngine<uint8_t> engine(config);
       engine.run(progress_callback, abort);
 
-      REQUIRE(progress_history.size() == 9);
+       // (8) blocks progress + (3) setup/shutdown
+      REQUIRE(progress_history.size() == 11); 
       CHECK(progress_history.back() == 100);
 
       bool is_monotonic = true;
