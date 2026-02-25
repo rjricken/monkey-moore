@@ -2,7 +2,7 @@
 
 ![CI Status](https://github.com/rjricken/monkey-moore/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-GPLv3-blue)
-![C++ Standard](https://img.shields.io/badge/C%2B%2B-14-blue.svg)
+![C++ Standard](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
 
 **Monkey-Moore** is a high-performance relative search utility designed specifically for ROM hacking, data mining, and reverse engineering.
 
