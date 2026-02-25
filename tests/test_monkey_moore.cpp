@@ -224,7 +224,7 @@ TEST_CASE("Search algorithm: with wildcard support", "[core][relative][wildcard]
          std::u32string additional_kanji = U"学校行";
          std::vector<CharType> custom_seq = to_vector(hiragana_seq + additional_kanji);
 
-         // datais just あしたは 学校に 行きますか？ わたしも 行きたいです。 
+         // data is just あしたは 学校に 行きますか？ わたしも 行きたいです。 
          // converted to 1-based indices corresponding to the character sequence 
          std::vector<uint16_t> data = {
             1, 12, 16, 26, 111, 50, 51, 22, 111, 52, 7, 31, 13, 6, 112, 111, 
