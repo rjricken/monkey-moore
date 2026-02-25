@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "encoding.hpp"
 #include "mmoore/byteswap.hpp"
 #include "mmoore/memory_utils.hpp"
 #include "mmoore/search_engine.hpp"
@@ -31,6 +32,8 @@ mmoore::SearchEngine<DataType>::run(
       throw std::runtime_error("File not found");
    }
 
+   on_progress(0, mmoore::SearchStep::Initializing);
+
    uint64_t file_size = std::filesystem::file_size(config.file_path);
 
    std::unique_ptr<MonkeyMoore<DataType>> searcher;
@@ -61,6 +64,8 @@ mmoore::SearchEngine<DataType>::run(
    const float progress_increment = 100.0f / blocks.size();
 
    auto next_block = blocks.begin();
+
+   on_progress(0, mmoore::SearchStep::Searching);
 
    while (next_block != blocks.end() || !active_futures.empty()) {
       for (auto it = active_futures.begin(); it != active_futures.end(); ) {
@@ -273,15 +278,18 @@ std::string mmoore::SearchEngine<DataType>::decode_raw_data(
 ) {
    const bool is_ascii_search = config.custom_char_seq.empty();
 
-   std::unordered_map<DataType, char> decoding_map(values_map.size());
+   std::unordered_map<DataType, std::string> decoding_map(values_map.size());
+
    for (const auto &[character, value] : values_map) {
       if (is_ascii_search && (character == 'a'  || character == 'A')) {
          for (auto letter_offset = 0; letter_offset < 26; ++letter_offset) {
-            decoding_map[value + static_cast<DataType>(letter_offset)] = static_cast<char>(character + letter_offset);
+            const CharType codepoint = static_cast<CharType>(character) + letter_offset;
+            decoding_map[value + static_cast<DataType>(letter_offset)] = mmoore::encoding::to_utf8(codepoint);
          }
       }
       else {
-         decoding_map[value] = static_cast<char>(character);
+         const CharType codepoint = static_cast<CharType>(character);
+         decoding_map[value] = mmoore::encoding::to_utf8(codepoint);
       }
    }
 
