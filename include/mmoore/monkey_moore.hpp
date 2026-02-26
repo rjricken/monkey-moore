@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef MONKEY_MOORE_HPP
 #define MONKEY_MOORE_HPP

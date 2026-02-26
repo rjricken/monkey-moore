@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef MONKEY_CORE_ENCODING_HPP
 #define MONKEY_CORE_ENCODING_HPP
 
