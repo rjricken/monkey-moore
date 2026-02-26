@@ -3,7 +3,7 @@
 #ifndef MONKEY_CORE_DEBUG_LOGGING_HPP
 #define MONKEY_CORE_DEBUG_LOGGING_HPP
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(MMOORE_ENABLE_LOGGING)
    #include <iostream>
    #include <mutex>
 
@@ -38,5 +38,5 @@
 #else
   #define MMOORE_LOG(...) do {} while(0)
 
-#endif // NDEBUG
+#endif
 #endif // MONKEY_CORE_DEBUG_LOGGING_HPP
