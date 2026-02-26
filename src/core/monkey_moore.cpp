@@ -14,7 +14,7 @@ MonkeyMoore<Ty>::MonkeyMoore(
    const std::vector<CharType> &keyword, 
    CharType wildcard, 
    const std::vector<CharType> &char_seq
-): wildcard(wildcard), search_mode(none) {
+): wildcard(wildcard), search_mode(none), has_case_change(false) {
    assert(!keyword.empty());
 
    initialize(keyword, char_seq);
@@ -24,7 +24,7 @@ MonkeyMoore<Ty>::MonkeyMoore(
 template <class Ty>
 MonkeyMoore<Ty>::MonkeyMoore(
    const std::vector <short> &reference_values
-): wildcard(0), search_mode(value_scan) {
+): wildcard(0), search_mode(value_scan), has_case_change(false) {
    assert(!reference_values.empty());
 
    std::vector<CharType> derived_keyword;
