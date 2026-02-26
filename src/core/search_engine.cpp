@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "encoding.hpp"
+#include "debug_logging.hpp"
 #include "mmoore/byteswap.hpp"
 #include "mmoore/memory_utils.hpp"
 #include "mmoore/search_engine.hpp"
@@ -72,6 +73,8 @@ mmoore::SearchEngine<DataType>::run(
          if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             ResultVector local_results = it->get();
 
+            MMOORE_LOG("Worker finished - found ", local_results.size(), " matches");
+
             if (!local_results.empty()) {
                results.insert(
                   results.end(),
@@ -100,6 +103,8 @@ mmoore::SearchEngine<DataType>::run(
             &searcher
          ]() -> ResultVector {   
             ResultVector local_results;
+
+            MMOORE_LOG("Worker spawned for block [offset=", current_block.offset, ", size=", current_block.size, "]");
 
             std::ifstream file(config.file_path, std::ios::binary);
             if (!file.is_open()) {
@@ -137,6 +142,7 @@ mmoore::SearchEngine<DataType>::run(
                      + (match_position * sizeof(DataType)) 
                      + alignment_padding;
 
+                  MMOORE_LOG("Match found at offset ", offset);
                   local_results.push_back({ offset, values_map });
                }
             }
@@ -158,6 +164,8 @@ mmoore::SearchEngine<DataType>::run(
       }
 
       if (abort_flag) {
+         MMOORE_LOG("Search aborted - waiting for ", active_futures.size(), " active threads");
+
          for (auto &f : active_futures) {
             if (f.valid()) {
                f.wait();
@@ -168,6 +176,7 @@ mmoore::SearchEngine<DataType>::run(
       }
    }
 
+   MMOORE_LOG("Search completed - ", results.size(), " results found");
    on_progress(100, GeneratingPreviews);
 
    std::sort(results.begin(), results.end(), 
@@ -177,6 +186,8 @@ mmoore::SearchEngine<DataType>::run(
    );
 
    if (generate_previews && !results.empty()) {
+      MMOORE_LOG("Starting preview generation for ", results.size(), " results");
+
       std::ifstream preview_file(config.file_path, std::ios::binary);
       if (!preview_file.is_open()) {
          throw std::runtime_error("Failed to open file to generate previews: " + config.file_path.string());
@@ -184,6 +195,7 @@ mmoore::SearchEngine<DataType>::run(
 
       std::for_each(results.begin(), results.end(), 
          [this, &preview_file, file_size](mmoore::SearchResult<DataType> &result) {
+            MMOORE_LOG("Generating preview for result at offset ", result.offset);
             result.preview = generate_preview(preview_file, file_size, result.offset, result.values_map);
          }
       );
@@ -209,6 +221,11 @@ mmoore::SearchEngine<DataType>::compute_search_blocks(uint64_t file_size) {
    uint32_t num_blocks = static_cast<uint32_t>(
       std::ceil(static_cast<double>(file_size) / block_base_size)
    );
+
+   MMOORE_LOG("compute_search_blocks: overlap_size = ", overlap_size);
+   MMOORE_LOG("compute_search_blocks: block_base_size = " , block_base_size);
+   MMOORE_LOG("compute_search_blocks: full_block_size = ", full_block_size);
+   MMOORE_LOG("compute_search_blocks: num_blocks: ", num_blocks);
 
    for (uint32_t i = 0; i < num_blocks; ++i) {
       uint64_t offset = i * block_base_size;
