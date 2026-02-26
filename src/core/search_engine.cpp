@@ -29,6 +29,17 @@ mmoore::SearchEngine<DataType>::run(
 ) {
    std::vector<mmoore::SearchResult<DataType>> results;
 
+   MMOORE_LOG("config: file_path = ", config.file_path);
+   MMOORE_LOG("config: is_relative_search = ", config.is_relative_search);
+   MMOORE_LOG("config: endianness = ", config.endianness == mmoore::Endianness::Little ? "Little" : "Big");
+   MMOORE_LOG("config: keyword (len) = ", config.keyword.size());
+   MMOORE_LOG("config: custom_char_seq (len) = ", config.custom_char_seq.size());
+   MMOORE_LOG("config: wildcard = ", config.wildcard);
+   MMOORE_LOG("config: reference_values (size) = ", config.reference_values.size());
+   MMOORE_LOG("config: preferred_num_threads = ", config.preferred_num_threads);
+   MMOORE_LOG("config: preferred_search_block_size = ", config.preferred_search_block_size);
+   MMOORE_LOG("config: preferred_preview_width = ", config.preferred_preview_width);
+
    if (!std::filesystem::exists(config.file_path)) {
       throw std::runtime_error("File not found");
    }
