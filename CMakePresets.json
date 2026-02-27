@@ -24,6 +24,7 @@
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_TESTING": "ON",
                 "BUILD_BENCHMARKS": "ON"
             }
         }
@@ -42,6 +43,11 @@
         {
             "name": "debug",
             "configurePreset": "debug",
+            "output": { "outputOnFailure": true }
+        },
+        {
+            "name": "release",
+            "configurePreset": "release",
             "output": { "outputOnFailure": true }
         }
     ]

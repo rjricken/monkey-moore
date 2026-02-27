@@ -48,6 +48,9 @@ jobs:
       - name: Build (Release)
         run: cmake --build --preset release
 
+      - name: Run Tests (Release)
+        run: ctest --preset release
+
       - name: Package
         run: |
           mkdir -p dist/monkey-moore
