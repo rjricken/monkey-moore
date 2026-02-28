@@ -41,7 +41,7 @@ Monkey-Moore is built for speed on modern hardware:
 Monkey-Moore uses **CMake** for its build system and **wxWidgets** for the cross-platform GUI. A `Justfile` is included for convenience if you use the [Just command runner](https://github.com/casey/just).
 
 ### 1. Install Dependencies
-You will need a C++14 compliant compiler, CMake (3.19+), and the wxWidgets development libraries.
+You will need a C++17 compliant compiler, CMake (3.19+), and the wxWidgets development libraries.
 
 ```bash
 sudo apt-get install build-essential cmake libwxgtk3.2-dev
@@ -78,7 +78,7 @@ The compiled binary is located in the `src/gui` subdirectory of your build folde
 ```
 ## Unit Tests
 
-Monkey-Moore uses **Catch2** for unit testing the core search algorithms.
+Monkey-Moore uses **Catch2** for unit testing the core search algorithms and multithreaded search engine.
 
 ```bash
 # Run tests via Just
