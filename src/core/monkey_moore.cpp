@@ -247,7 +247,6 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       }
    }
 
-
    // Step 4: builds the skip table (Boyer-Moore bad-character rule)
    std::fill(
       skip_table.begin(), 
@@ -478,37 +477,20 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
             else {
                // if the keyword contains case changes, then we need to find the first occurrence of
                // a character in the opposite case in order to compute its value
-               int first_oposing_case_index = 0;
-
-               while (first_oposing_case_index < keyword_len) {
-                  CharType &c = keyword[first_oposing_case_index];
-                  bool match = mostly_lowercase ? is_ascii_upper(c) : is_ascii_lower(c);
-
-                  if (match) {
-                     break;
-                  }
-
-                  first_oposing_case_index++;
-               }
-
-               /* Modern C++ STL algorithms version
-               auto is_target = [mostly_lowercase](CharType c) {
-                  return mostly_lowercase ? is_upper(c) : is_lower(c);
+               auto is_target = [this](CharType c) {
+                  return mostly_lowercase ? is_ascii_upper(c) : is_ascii_lower(c);
                };
 
-               auto it = std::find_if(keyword.begin(), keyword.end(); is_target);
-               int idx = std::distance(keyword.begin(), it);
-
+               auto it = std::find_if(keyword.begin(), keyword.end(), is_target);
                if (it == keyword.end()) {
-                  throw std::runtime_error("Unexpect end of keyword when finding characters of opposing case");
+                  throw std::runtime_error("Unexpected end of keyword when finding characters of opposing case");
                }
 
-               int oposing_case_char_distance = *(search_head + idx) - *it;
-               */
-
+               int first_oposing_case_index = static_cast<int>(std::distance(keyword.begin(), it));
+            
                int oposing_case_char_distance = 
                   static_cast<int>(*(search_head + first_oposing_case_index))
-                     - static_cast<int>(keyword[first_oposing_case_index]);
+                     - static_cast<int>(*it);
 
                result['A'] = mostly_lowercase 
                   ? static_cast <Ty> ('A' + oposing_case_char_distance) 
