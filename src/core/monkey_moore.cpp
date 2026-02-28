@@ -109,10 +109,10 @@ void MonkeyMoore<Ty>::preprocess_no_wildcards() {
    long keyword_len = static_cast<long>(keyword.size());
 
    if (custom_character_seq.empty()) {
-      keyword_table = compute_relative_values(keyword);
+      expected_diff = compute_relative_values(keyword);
    }
    else {
-      keyword_table = compute_relative_values_char_seq(keyword);
+      expected_diff = compute_relative_values_char_seq(keyword);
    }
 
    // prefills the jump table with the largest jump size
@@ -125,7 +125,7 @@ void MonkeyMoore<Ty>::preprocess_no_wildcards() {
 
    // negative indices are mapped on positions 0-255, and positive ones on 256-511
    for (int i = keyword_len - 1; i >= 0; i--) {
-      int index = keyword_table[i] + std::numeric_limits<Ty>::max();
+      int index = expected_diff[i] + std::numeric_limits<Ty>::max();
 
       if (index >= 0 && index < skip_table_len) {
          // if the skip value for the current index hasn't been set, 
@@ -144,7 +144,7 @@ void MonkeyMoore<Ty>::preprocess_no_wildcards() {
 template <class Ty>
 void MonkeyMoore<Ty>::preprocess_with_wildcards() {
    long keyword_len = static_cast<long>(keyword.size());
-   keyword_wildcards = keyword;
+   case_normalized_keyword = keyword;
    
    // Step 1: initializes case related variables
    if (custom_character_seq.empty()) {
@@ -165,15 +165,15 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       if (uppercase_count > 0 && lowercase_count > 0) {
          if (uppercase_count > lowercase_count) {
             std::replace_if(
-               keyword_wildcards.begin(), 
-               keyword_wildcards.end(), 
+               case_normalized_keyword.begin(), 
+               case_normalized_keyword.end(), 
                is_ascii_lower, 
                wildcard);
          }
          else {
             std::replace_if(
-               keyword_wildcards.begin(), 
-               keyword_wildcards.end(), 
+               case_normalized_keyword.begin(), 
+               case_normalized_keyword.end(), 
                is_ascii_upper, 
                wildcard);
          }
@@ -182,15 +182,14 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
 
    // Step 2: Build the wildcard map and collect valid indices
 
-   //TODO: this is a bad nane - true means it's not a wildcard lol
-   wildcard_pos_map.resize(keyword_len);
+   is_literal_map.resize(keyword_len);
 
    std::vector<long> valid_indices;
    valid_indices.reserve(keyword_len);
 
    for (long i = 0; i < keyword_len; i++) {
-      bool is_valid = (keyword_wildcards[i] != wildcard);
-      wildcard_pos_map[i] = is_valid;
+      bool is_valid = (case_normalized_keyword[i] != wildcard);
+      is_literal_map[i] = is_valid;
 
       if (is_valid) {{
          valid_indices.push_back(i);
@@ -201,10 +200,10 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
 
    // Step 3: 1-pass branchless bridging & relative difference calculation
 
-   keyword_table.assign(keyword_len, 0);
-   wc_match_stride.assign(keyword_len, 0);
-   wc_expected_pattern.assign(keyword_len, 0);
-   wc_wildcard_mask.assign(keyword_len, 0);
+   expected_diff.assign(keyword_len, 0);
+   wc_bridge_offset.assign(keyword_len, 0);
+   wc_expected_diff.assign(keyword_len, 0);
+   wc_bitmask.assign(keyword_len, 0);
 
    /*
       The following table illustrates the computed values for the various lookup structures used
@@ -229,21 +228,21 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
          long previous_index = (k == 0) ? valid_indices.back() : valid_indices[k - 1];
          
          // computes the stride (an integer number representing the distance to the previous non-wildcard character)
-         wc_match_stride[current_index] = static_cast<int>(previous_index - current_index);
+         wc_bridge_offset[current_index] = static_cast<int>(previous_index - current_index);
 
          // computes the relative difference table for the keyword directly
          int relative_diff;
          if (custom_character_seq.empty()) {
-            relative_diff = keyword_wildcards[current_index] - keyword_wildcards[previous_index];
+            relative_diff = case_normalized_keyword[current_index] - case_normalized_keyword[previous_index];
          }
          else {
-            relative_diff = custom_character_index[keyword_wildcards[current_index]]
-               - custom_character_index[keyword_wildcards[previous_index]];
+            relative_diff = custom_character_index[case_normalized_keyword[current_index]]
+               - custom_character_index[case_normalized_keyword[previous_index]];
          }
 
-         keyword_table[current_index] = relative_diff; // same as expected pattern?
-         wc_expected_pattern[current_index] = static_cast<Ty>(relative_diff);
-         wc_wildcard_mask[current_index] = static_cast<Ty>(~0ULL);
+         expected_diff[current_index] = relative_diff; // same as expected pattern?
+         wc_expected_diff[current_index] = static_cast<Ty>(relative_diff);
+         wc_bitmask[current_index] = static_cast<Ty>(~0ULL);
       }
    }
 
@@ -257,13 +256,13 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
 
    for (long i = keyword_len - 1; i > 0; --i) {
       // negative indices are mapped on positions 0-255, and positive ones on 256-511
-      int index = keyword_table[i] + std::numeric_limits<Ty>::max();
+      int index = expected_diff[i] + std::numeric_limits<Ty>::max();
 
       if (index >= 0 && index < skip_table_len) {
          // count the number of wildcards present in the range that starts in i + 1
          auto remaining_wildcards_count = std::count(
-            keyword_wildcards.begin() + i + 1, 
-            keyword_wildcards.end(), 
+            case_normalized_keyword.begin() + i + 1, 
+            case_normalized_keyword.end(), 
             wildcard);
 
          // subtracts the number of wildcards from the regular jump value
@@ -281,15 +280,15 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
    wildcard_skip_table.resize(keyword_len);
 
    for (long i = keyword_len - 1; i >= 0; --i) {
-      if (keyword_wildcards[i] == wildcard) {
+      if (case_normalized_keyword[i] == wildcard) {
          wildcard_skip_table[i] = 1;
       }
       else {
          // finds the last wildcard in the range 
-         // that ends at i in keyword_wildcards
+         // that ends at i in case_normalized_keyword
          int last_wildcard_index = find_last_index(
-            keyword_wildcards.begin(), 
-            keyword_wildcards.begin() + i, 
+            case_normalized_keyword.begin(), 
+            case_normalized_keyword.begin() + i, 
             wildcard);
 
          if (last_wildcard_index == -1) {
@@ -338,7 +337,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
    auto check_match = [&](long current_index, long previous_index) -> bool {
       int diff = search_head[current_index] - search_head[previous_index];
 
-      if (diff != keyword_table[current_index]) {
+      if (diff != expected_diff[current_index]) {
          mismatched_rel_value = diff;
          return false;
       }
@@ -426,13 +425,13 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
    const Ty *search_tail = data + keyword_len;
 
    int leading_wildcards_count = count_prefix_length(
-      keyword_wildcards.begin(),
-      keyword_wildcards.end(),
+      case_normalized_keyword.begin(),
+      case_normalized_keyword.end(),
       wildcard);
 
    // replace with.... = leading_wildcards_count??
    long first_non_wildcard_index = 0;
-   while (first_non_wildcard_index < keyword_len && !wildcard_pos_map[first_non_wildcard_index]) {
+   while (first_non_wildcard_index < keyword_len && !is_literal_map[first_non_wildcard_index]) {
       first_non_wildcard_index++;
    }
 
@@ -445,13 +444,13 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
 
          // fetch the previous value by bridging it using the precomputed stride
          Ty current_value = search_head[i];
-         Ty previous_value = search_head[i + wc_match_stride[i]];
+         Ty previous_value = search_head[i + wc_bridge_offset[i]];
 
-         // computes the unsigned difference between the current and bridged previous value
+         // computes the unsigned difference between the current and bridged previous value  
          Ty current_diff = static_cast<Ty>(current_value - previous_value);
 
          // skip over wildcards while matching the current difference with the expected one
-         if ((current_diff & wc_wildcard_mask[i]) != wc_expected_pattern[i]) {
+         if ((current_diff & wc_bitmask[i]) != wc_expected_diff[i]) {
             // only compute signed relative difference on a mismatch 
             // so we can use it as index for the skip_table
             mismatched_rel_value = static_cast<int>(current_value) - static_cast<int>(previous_value);
@@ -465,7 +464,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
          // handles ascii values
          if (custom_character_seq.empty()) {
             int distance = static_cast<int>(*(search_head + first_non_wildcard_index))
-               - static_cast<int>(keyword_wildcards[first_non_wildcard_index]);
+               - static_cast<int>(case_normalized_keyword[first_non_wildcard_index]);
 
             // if the keyword does not contain case changes, then we need to guess the value
             // of the corresponding character in the opposite case 
