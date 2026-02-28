@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef MEMORY_UTILS_HPP
-#define MEMORY_UTILS_HPP
+#ifndef MONKEY_CORE_MEMORY_UTILS_HPP
+#define MONKEY_CORE_MEMORY_UTILS_HPP
 
 #include <type_traits>
 #include <cstddef>
@@ -22,4 +22,4 @@ constexpr T align_up(T num) {
    return (num + mask) & ~mask;
 }
 
-#endif // MEMORY_UTILS_HPP
+#endif // MONKEY_CORE_MEMORY_UTILS_HPP

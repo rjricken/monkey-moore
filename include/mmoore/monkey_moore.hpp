@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef MONKEY_MOORE_HPP
-#define MONKEY_MOORE_HPP
+#ifndef MONKEY_CORE_MONKEY_MOORE_HPP
+#define MONKEY_CORE_MONKEY_MOORE_HPP
 
 #include <memory>
 #include <map>
@@ -95,4 +95,4 @@ private:
    );
 };
 
-#endif //~MONKEY_MOORE_HPP
+#endif // MONKEY_CORE_MONKEY_MOORE_HPP

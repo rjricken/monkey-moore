@@ -20,11 +20,9 @@
 #include <memory>
 #include <future>
 #include <thread>
-#include <tuple>
 #include <atomic>
 
 #include "constants.hpp"
-#include "byteswap.hpp"
 #include "mmoore/search_engine.hpp"
 
 wxDECLARE_EVENT(mmEVT_SEARCHTHREAD_UPDATE, wxThreadEvent);

@@ -14,7 +14,6 @@
 #endif
 
 #include "constants.hpp"
-#include "byteswap.hpp"
 #include "mmoore/monkey_moore.hpp"
 #include "mmoore/search_engine.hpp"
 #include "monkey_prefs.hpp"

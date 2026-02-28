@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef FILESYSTEM_UTILS_HPP
 #define FILESYSTEM_UTILS_HPP
 
@@ -13,4 +15,4 @@ inline wxString getResourcePath(const wxString &relativePath) {
    return fullPath;
 }
 
-#endif //~FILESYSTEM_UTILS_HPP
+#endif // FILESYSTEM_UTILS_HPP

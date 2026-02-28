@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef TEXT_UTILS_HPP
-#define TEXT_UTILS_HPP
+#ifndef MONKEY_CORE_TEXT_UTILS_HPP
+#define MONKEY_CORE_TEXT_UTILS_HPP
 
 #include <iterator>
 #include <cctype>
@@ -55,4 +55,4 @@ inline bool is_ascii_digit (const char32_t &c) {
    return (c < 128) && std::isdigit(static_cast<unsigned char>(c)); 
 }
 
-#endif // TEXT_UTILS_HPP
+#endif // MONKEY_CORE_TEXT_UTILS_HPP
