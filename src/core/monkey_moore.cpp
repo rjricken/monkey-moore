@@ -220,7 +220,6 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       expected_diff  |     0  +10   +6   -7   +6  -15  +13    0    0  -14   -4  +18   +2   -3  -13
    */
 
-   // todo: should always be true?
    if (!valid_indices.empty()) {
       for (size_t k = 0; k < valid_indices.size(); ++k) {
          long current_index = valid_indices[k];
@@ -259,9 +258,7 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
 
    for (long i = keyword_len - 1; i > 0; --i) {
       // negative indices are mapped on positions 0-255, and positive ones on 256-511
-      int index = keyword_table[i] > 0
-         ? (skip_table_len / 2) + keyword_table[i]
-         : -keyword_table[i];
+      int index = keyword_table[i] + std::numeric_limits<Ty>::max();
 
       if (index >= 0 && index < skip_table_len) {
          // count the number of wildcards present in the range that starts in i + 1
@@ -539,9 +536,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
       }
       else {
          // Calculate jump distance based on the mismatched relative value and wildcard closest wildcard position
-         int skip_table_index = mismatched_rel_value > 0 
-            ? (skip_table_len / 2) + mismatched_rel_value 
-            : -mismatched_rel_value;
+         int skip_table_index = mismatched_rel_value + std::numeric_limits<Ty>::max();
 
          unsigned char wildcard_jump_value = 
             wildcard_skip_table[keyword_len - matches - 1];
