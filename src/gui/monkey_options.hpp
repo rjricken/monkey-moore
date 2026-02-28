@@ -69,7 +69,7 @@ public:
       searchbuf_sz->Add(sb_size, wxSizerFlags().Border(wxRIGHT).Center());
       searchbuf_sz->Add(sb_unit, wxSizerFlags().Border(wxRIGHT).Center());
 
-      sb_size->SetRange(8, 64);
+      sb_size->SetRange(1, 64);
 
       wxBoxSizer *smt_sz = new wxBoxSizer(wxHORIZONTAL);
       wxStaticText *smt_label = new wxStaticText(this, wxID_ANY, _("Search threads: "));
@@ -80,7 +80,6 @@ public:
       smt_sz->Add(smt_units, wxSizerFlags().Border(wxRIGHT).Center());
 
       smt_numthreads->SetRange(1, 16);
-      smt_numthreads->SetValue(std::min<uint16_t>(std::thread::hardware_concurrency(), 16));
 
       wxStaticBoxSizer *perf_sz = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Performance")), wxVERTICAL);
       perf_sz->Add(searchbuf_sz, wxSizerFlags().Border(wxALL ^ wxBOTTOM));
@@ -114,6 +113,7 @@ public:
       prefs.getBool(wxT("settings/display-offset-mode"), wxT("hex")) ? off_hex->SetValue(true) : off_dec->SetValue(true);
 
       sb_size->SetValue(wxString::Format(wxT("%d"), prefs.getInt(wxT("settings/perf-memory-pool")) / 1048576));
+      smt_numthreads->SetValue(prefs.getInt("settings/perf-search-threads"));
    }
 
    ~MonkeyOptions () {
