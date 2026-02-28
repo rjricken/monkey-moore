@@ -54,13 +54,18 @@ private:
    enum { none, simple_relative, wildcard_relative, value_scan } search_mode;
    
    std::vector<CharType> keyword;
-   std::vector<int> keyword_table;
+   std::vector<int> keyword_table; // rename to expected_diff
    std::vector<int> skip_table;
 
    const CharType wildcard;
    std::vector<CharType> keyword_wildcards;
    std::vector<unsigned char> wildcard_skip_table;
-   std::vector<bool> wildcard_pos_map;
+   std::vector<bool> wildcard_pos_map; // rename to non_wc_pos_map?
+
+   // new wildcard impl
+   std::vector<int> wc_match_stride; // rename to wc_prev_stride
+   std::vector<Ty> wc_expected_pattern; // rename to wc_expected_diff
+   std::vector<Ty> wc_wildcard_mask;
 
    bool has_case_change;
    bool mostly_lowercase;
@@ -80,12 +85,6 @@ private:
 
    std::vector <result_type> monkey_moore(const Ty *data, uint64_t data_len);
    std::vector <result_type> monkey_moore_wc(const Ty *data, uint64_t data_len);
-
-   template <class T> void calc_reltable (
-      const T *source, 
-      int *target, 
-      int size
-   ) const;
 
    std::vector<int> compute_relative_values(
       const std::vector<CharType> &source

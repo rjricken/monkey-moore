@@ -148,10 +148,10 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
    long keyword_len = static_cast<long>(keyword.size());
    keyword_wildcards = keyword;
    
+   // Step 1: initializes case related variables
    if (custom_character_seq.empty()) {
-      // if the keyword has both uppercase and lowercase characters,
-      // we replace the least occurring ones with wildcards which are
-      // determined later based on the search results.
+      // if the keyword has both uppercase and lowercase characters, we replace the least 
+      // occurring ones with wildcards which are determined later based on the search results.
       auto uppercase_count = std::count_if(
          keyword.begin(), 
          keyword.end(), 
@@ -164,8 +164,7 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
 
       mostly_lowercase = lowercase_count > uppercase_count;
 
-      if (uppercase_count > 0 && lowercase_count > 0)
-      {
+      if (uppercase_count > 0 && lowercase_count > 0) {
          if (uppercase_count > lowercase_count) {
             std::replace_if(
                keyword_wildcards.begin(), 
@@ -183,53 +182,76 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       }
    }
 
-   // START: builds the wildcard position map
+   // Step 2: Build the wildcard map and collect valid indices
 
-   // indices with false mark wildcards
-   // TODO: either rename this variable or switch to marking wildcards with true
+   //TODO: this is a bad nane - true means it's not a wildcard lol
    wildcard_pos_map.resize(keyword_len);
+
+   std::vector<long> valid_indices;
+   valid_indices.reserve(keyword_len);
+
    for (long i = 0; i < keyword_len; i++) {
-      wildcard_pos_map[i] = keyword_wildcards[i] != wildcard;
+      bool is_valid = (keyword_wildcards[i] != wildcard);
+      wildcard_pos_map[i] = is_valid;
+
+      if (is_valid) {{
+         valid_indices.push_back(i);
+      }}
    }
-      
-   // START: builds the relative difference table
 
-   wildcards_count = static_cast <int> (
-      std::count(
-         keyword_wildcards.begin(), 
-         keyword_wildcards.end(), 
-         wildcard));
+   wildcards_count = keyword_len - static_cast<int>(valid_indices.size());
 
-   std::vector<CharType> keyword_normalized;
-   keyword_normalized.reserve(keyword_len - wildcards_count);
+   // Step 3: 1-pass branchless bridging & relative difference calculation
 
-   // appends non-wildcard characters to keyword_normalized
-   for (long i = 0; i < keyword_len; i++) {
-      if (wildcard_pos_map[i]) {
-         keyword_normalized.push_back(keyword_wildcards[i]);
+   keyword_table.assign(keyword_len, 0);
+   wc_match_stride.assign(keyword_len, 0);
+   wc_expected_pattern.assign(keyword_len, 0);
+   wc_wildcard_mask.assign(keyword_len, 0);
+
+   /*
+      The following table illustrates the computed values for the various lookup structures used
+      to speed up relative searches with support to wildcards. e.g. keyword = *ounter**easure 
+
+                     |     0    0    0    0    0    0    0    0    0    0    1    1    1    1    1
+                     |     0    1    2    3    4    5    6    7    8    9    0    1    2    3    4
+      ---------------+-----------------------------------------------------------------------------
+      valid_indices  |     -    x    x    x    x    x    x    -    -    x    x    x    x    x    x
+      keyword        |     *    o    u    n    t    e    r    *    *    e    a    s    u    r    e
+      stride         |     0  +13   -1   -1   -1   -1   -1    0    0   -3   -1   -1   -1   -1   -1
+      mask           |  0x00 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0x00 0x00 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF
+      expected_diff  |     0  +10   +6   -7   +6  -15  +13    0    0  -14   -4  +18   +2   -3  -13
+   */
+
+   // todo: should always be true?
+   if (!valid_indices.empty()) {
+      for (size_t k = 0; k < valid_indices.size(); ++k) {
+         long current_index = valid_indices[k];
+
+         // find the previous non-wildcard character to bridge the gap
+         // if we are at the first character, wrap around to the last one
+         long previous_index = (k == 0) ? valid_indices.back() : valid_indices[k - 1];
+         
+         // computes the stride (an integer number representing the distance to the previous non-wildcard character)
+         wc_match_stride[current_index] = static_cast<int>(previous_index - current_index);
+
+         // computes the relative difference table for the keyword directly
+         int relative_diff;
+         if (custom_character_seq.empty()) {
+            relative_diff = keyword_wildcards[current_index] - keyword_wildcards[previous_index];
+         }
+         else {
+            relative_diff = custom_character_index[keyword_wildcards[current_index]]
+               - custom_character_index[keyword_wildcards[previous_index]];
+         }
+
+         keyword_table[current_index] = relative_diff; // same as expected pattern?
+         wc_expected_pattern[current_index] = static_cast<Ty>(relative_diff);
+         wc_wildcard_mask[current_index] = static_cast<Ty>(~0ULL);
       }
    }
 
-   std::vector<int> normalized_kw_table = custom_character_seq.empty()
-      ? compute_relative_values(keyword_normalized)
-      : compute_relative_values_char_seq(keyword_normalized);
-   
-   keyword_table.resize(keyword_len); 
 
-   // fills the keyword table with relative values for non-wildcard characters
-   int source_index = static_cast<int>(keyword_normalized.size()) - 1;
-   for (int i = keyword_len - 1; i >= 0; --i) {
-
-      if (wildcard_pos_map[i]) {
-         keyword_table[i] = normalized_kw_table[source_index];
-         source_index -= 1;   
-      }
-      else {
-         keyword_table[i] = 0;
-      }
-   }
-
-   // START: builds the jump table
+   // Step 4: builds the skip table (Boyer-Moore bad-character rule)
    std::fill(
       skip_table.begin(), 
       skip_table.end(), 
@@ -260,7 +282,8 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
       }
    }
 
-   // START: builds the wildcard jump table
+   // Step 5: builds the wildcard skip table 
+   // (similar to the bad-character rule above, but with semantics for wildcards)
    wildcard_skip_table.resize(keyword_len);
 
    for (long i = keyword_len - 1; i >= 0; --i) {
@@ -397,12 +420,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
    return results;
 }
 
-/**
-* Performs a boyer-moore based relative search supporting wildcards.
-* @param data byte array to search on
-* @param data_len data length
-* @return The relative values found.
-*/
+
 template<class Ty>
 std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moore_wc(
    const Ty *data, 
@@ -416,78 +434,58 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
    const Ty *search_head = data;
    const Ty *search_tail = data + keyword_len;
 
-   int normalized_keyword_len = keyword_len - wildcards_count;
+   int leading_wildcards_count = count_prefix_length(
+      keyword_wildcards.begin(),
+      keyword_wildcards.end(),
+      wildcard);
 
-   std::vector<int> current_rel_table(keyword_len);
-   std::vector<Ty> current_normalized(normalized_keyword_len);
-   std::vector<int> current_normalized_rel_table(normalized_keyword_len);
-
-   // current_rel_table = tmp_tbl
-   // current_normalized = tmp_pure
-   // current_normalized_rel_table = tmp_tbl_tmp
+   // replace with.... = leading_wildcards_count??
+   long first_non_wildcard_index = 0;
+   while (first_non_wildcard_index < keyword_len && !wildcard_pos_map[first_non_wildcard_index]) {
+      first_non_wildcard_index++;
+   }
 
    while (search_tail <= data + data_len) {
-      // builds a normalized view of the current search position
-      for (long i=0, j=0; i < keyword_len; i++) {
-         if (wildcard_pos_map[i]) {
-            current_normalized[j++] = search_head[i];
-         }
-      }
-
-      // computes relative values for current position's normalized view
-      calc_reltable(
-         current_normalized.data(), 
-         current_normalized_rel_table.data(), 
-         normalized_keyword_len);
-
-      // computes relative values for the current position,
-      // assigning 0 to indices containing wildcards 
-      long target_index = keyword_len - wildcards_count - 1;
-      for (long i = keyword_len - 1; i >= 0; --i) {
-         if (wildcard_pos_map[i]) {
-            current_rel_table[i] = current_normalized_rel_table[target_index];
-            target_index--;
-         }
-         else {
-            current_rel_table[i] = 0;
-         }
-      }
-
-      // compares the relative values
       int matches = 0;
-      for (; matches < keyword_len; matches++) {
-         int current_index = keyword_len - matches - 1;
+      int mismatched_rel_value = 0;
 
-         if (keyword_wildcards[current_index] == wildcard)
-            continue;
-         if (current_rel_table[current_index] != keyword_table[current_index])
+      for (; matches < keyword_len; matches++) {
+         int i = keyword_len - matches - 1;
+
+         // fetch the previous value by bridging it using the precomputed stride
+         Ty current_value = search_head[i];
+         Ty previous_value = search_head[i + wc_match_stride[i]];
+
+         // computes the unsigned difference between the current and bridged previous value
+         Ty current_diff = static_cast<Ty>(current_value - previous_value);
+
+         // skip over wildcards while matching the current difference with the expected one
+         if ((current_diff & wc_wildcard_mask[i]) != wc_expected_pattern[i]) {
+            // only compute signed relative difference on a mismatch 
+            // so we can use it as index for the skip_table
+            mismatched_rel_value = static_cast<int>(current_value) - static_cast<int>(previous_value);
             break;
+         }
       }
 
-      // we got a match
       if (matches == keyword_len) {
          equivalency_map result;
 
-         long first_non_wildcard_index = 0;
-         while (!wildcard_pos_map[first_non_wildcard_index]) {
-            first_non_wildcard_index++;
-         }
-
          // handles ascii values
          if (custom_character_seq.empty()) {
-            int distance = *(search_head + first_non_wildcard_index) 
-               - keyword_wildcards[first_non_wildcard_index];
+            int distance = static_cast<int>(*(search_head + first_non_wildcard_index))
+               - static_cast<int>(keyword_wildcards[first_non_wildcard_index]);
 
-            // if the key contains the same capitalization, then we guess the value
-            // of the opposite character (ie: if key is "world", we must guess the value of A)
+            // if the keyword does not contain case changes, then we need to guess the value
+            // of the corresponding character in the opposite case 
+            // (e.g. if key is "world", we must guess the value of A)
             if (!has_case_change) {
                result['A'] = static_cast <Ty> ('A' + distance);
                result['a'] = static_cast <Ty> ('a' + distance);
             }
             else {
-               // if the key contains any capitalization changes, we need to
-               // find the correct value of the less frequent case.
-
+               // if the keyword contains case changes, then we need to find the first occurrence of
+               // a character in the opposite case in order to compute its value
                int first_oposing_case_index = 0;
 
                while (first_oposing_case_index < keyword_len) {
@@ -500,7 +498,6 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
 
                   first_oposing_case_index++;
                }
-
 
                /* Modern C++ STL algorithms version
                auto is_target = [mostly_lowercase](CharType c) {
@@ -517,10 +514,9 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
                int oposing_case_char_distance = *(search_head + idx) - *it;
                */
 
-
                int oposing_case_char_distance = 
-                  *(search_head + first_oposing_case_index) 
-                     - keyword[first_oposing_case_index];
+                  static_cast<int>(*(search_head + first_oposing_case_index))
+                     - static_cast<int>(keyword[first_oposing_case_index]);
 
                result['A'] = mostly_lowercase 
                   ? static_cast <Ty> ('A' + oposing_case_char_distance) 
@@ -532,7 +528,7 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
             }
          }
          else {
-            int distance = *(search_head + first_non_wildcard_index) 
+            int distance = static_cast<int>(*(search_head + first_non_wildcard_index))
                - custom_character_index[keyword[first_non_wildcard_index]];
 
             for (CharType c : custom_character_seq) {
@@ -542,19 +538,12 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
 
          long offset = static_cast <long> (std::distance(data, search_head));
          results.push_back(std::make_pair(offset, result));
-
-         int leading_wildcards_count = count_prefix_length(
-            keyword_wildcards.begin(), 
-            keyword_wildcards.end(), 
-            wildcard);
             
          search_head += keyword_len - 1 - leading_wildcards_count;
          search_tail += keyword_len - 1 - leading_wildcards_count;
       }
       else {
-         // for partial matches we have to figure out how many units to jump over
-         int &mismatched_rel_value = current_rel_table[keyword_len - matches - 1];
-
+         // Calculate jump distance based on the mismatched relative value and wildcard closest wildcard position
          int skip_table_index = mismatched_rel_value > 0 
             ? (skip_table_len / 2) + mismatched_rel_value 
             : -mismatched_rel_value;
@@ -566,33 +555,12 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
             wildcard_jump_value, 
             std::max<int>(skip_table[skip_table_index], 1));
 
-
          search_head += jump_size;
          search_tail += jump_size;
       }
    }
 
    return results;
-}
-
-/**
-* Calculates the relative difference between the bytes
-* on src and stores the results on tbl.
-* @param src source bytes
-* @param tbl output table
-* @param size source length
-*/
-template <class Ty>
-template <class T> 
-void MonkeyMoore<Ty>::calc_reltable(
-   const T *source, 
-   int *target, 
-   int size
-) const {
-   target[0] = source[0] - source[size - 1];
-
-   for (int i = size - 1; i > 0; --i)
-      target[i] = source[i] - source[i - 1];
 }
 
 /**
@@ -615,20 +583,6 @@ std::vector<int> MonkeyMoore<Ty>::compute_relative_values(
 
    return target;
 }
-
-/**
-* Custom character pattern version of calc_reltable.
-* @param src source bytes
-* @param tbl output table
-* @param size source length
-*/
-/*void calc_reltable_cp (const CharType *src, int *tbl, int size)
-{
-   tbl[0] = cp_pos[src[0]] - cp_pos[src[size - 1]];
-
-   for (int i = size - 1; i > 0; --i)
-      tbl[i] = cp_pos[src[i]] - cp_pos[src[i - 1]];
-}*/
 
 template <class Ty>
 std::vector<int> MonkeyMoore<Ty>::compute_relative_values_char_seq(
