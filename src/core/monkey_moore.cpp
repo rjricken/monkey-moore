@@ -125,9 +125,7 @@ void MonkeyMoore<Ty>::preprocess_no_wildcards() {
 
    // negative indices are mapped on positions 0-255, and positive ones on 256-511
    for (int i = keyword_len - 1; i >= 0; i--) {
-      int index = keyword_table[i] > 0 
-         ? (skip_table_len / 2) + keyword_table[i] 
-         : -keyword_table[i];
+      int index = keyword_table[i] + std::numeric_limits<Ty>::max();
 
       if (index >= 0 && index < skip_table_len) {
          // if the skip value for the current index hasn't been set, 
@@ -407,13 +405,10 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
       }
       else {
          // Calculate jump distance based on the mismatched relative value
-         int skip_table_index = mismatched_rel_value > 0 
-            ? skip_table_positives_index + mismatched_rel_value 
-            : -mismatched_rel_value;
+         int skip_table_index = mismatched_rel_value + static_cast<int>(std::numeric_limits<Ty>::max());
+         int jump_size = std::max<int>(skip_table[skip_table_index], 1);
 
-         int jump_value = std::max<int>(skip_table[skip_table_index], 1);
-
-         search_head += jump_value;
+         search_head += jump_size;
       }
    }
 
