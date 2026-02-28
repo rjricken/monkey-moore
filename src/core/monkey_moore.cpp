@@ -311,7 +311,7 @@ void MonkeyMoore<Ty>::preprocess_with_wildcards() {
  * a consistent execution path for the primary comparison logic.
  * @param data Pointer to the start of the data buffer.
  * @param data_len The length of the data buffer.
- * @return std::vector<result_type> A vector of matches containing offset and map.
+ * @return std::vector<result_type> A vector of matches containing the offset and equivalency map.
  */
 template<class Ty>
 std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moore(
@@ -410,7 +410,19 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
    return results;
 }
 
-
+/**
+ * @brief Performs a wildcard-aware Relative Boyer-Moore search on the data buffer.
+ * This implementation utilizes a branchless, zero-allocation hot loop to maintain
+ * high pipeline throughput. Wildcards are evaluated using a precomputed bitmask 
+ * strategy (`wc_bitmask`), allowing the CPU to bypass conditional checks entirely 
+ * when a wildcard is encountered. To maintain the strict relative signature across 
+ * wildcards, the algorithm employs precalculated strides (`wc_bridge_offset`) to 
+ * bridge gaps and compare valid characters directly against one another. Mismatches 
+ * are routed through an offset-shifted skip table for fast, branch-free heuristic jumping.
+ * @param data Pointer to the start of the data buffer.
+ * @param data_len The length of the data buffer.
+ * @return std::vector<result_type> A vector of matches containing the offset and equivalency map.
+ */
 template<class Ty>
 std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moore_wc(
    const Ty *data, 
