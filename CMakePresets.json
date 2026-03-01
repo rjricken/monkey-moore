@@ -7,10 +7,10 @@
     "configurePresets": [
         {
             "name": "debug",
-            "displayName": "Debug",
+            "displayName": "Debug Build",
             "description": "Default debug build (fast compilation, symbols)",
             "binaryDir": "${sourceDir}/build",
-            "generator": "Unix Makefiles",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "BUILD_TESTING": "ON"
@@ -18,10 +18,10 @@
         },
         {
             "name": "release",
-            "displayName": "Release",
+            "displayName": "Release Build",
             "description": "Optimized release build",
             "binaryDir": "${sourceDir}/build-release",
-            "generator": "Unix Makefiles",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "BUILD_TESTING": "ON",
