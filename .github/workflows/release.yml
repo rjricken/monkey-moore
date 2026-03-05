@@ -67,13 +67,20 @@ jobs:
 
           $baseUrl = "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX_VERSION }}"
 
-          Write-Host "Downloading wxWidgets v${{ env.WX_VERSION }} binaries..."
+          Write-Host "Downloading wxWidgets v${{ env.WX_VERSION }} headers and binaries..."
+          Invoke-WebRequest -Uri "$baseUrl/wxWidgets-${{ env.WX_VERSION }}-headers.7z" -OutFile "headers.7z"
           Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_Dev.7z" -OutFile "dev.7z"
           Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_ReleaseDLL.7z" -OutFile "release_dll.7z"
 
           Write-Host "Extracting to $wxDir..."
+          7z x headers.7z -o"$wxDir" -y
           7z x dev.7z -o"$wxDir" -y
           7z x release_dll.7z -o"$wxDir" -y
+
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
 
       - name: Configure CMake
         run: cmake --preset release -DwxWidgets_ROOT_DIR="C:\Libraries\wxWidgets"
