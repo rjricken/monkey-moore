@@ -19,7 +19,7 @@ set(GUI_SRCS
    monkey_prefs.cpp
 )
 
-add_executable(monkey-moore-gui ${GUI_SRCS})
+add_executable(monkey-moore-gui WIN32 ${GUI_SRCS})
 
 target_link_libraries(monkey-moore-gui
    PRIVATE
@@ -35,3 +35,21 @@ add_custom_command(TARGET monkey-moore-gui POST_BUILD
    ${CMAKE_SOURCE_DIR}/assets
    $<TARGET_FILE_DIR:monkey-moore-gui>
 )
+
+# On Windows we ship the executable along with all DLLs it depends on
+if(WIN32)
+    install(TARGETS monkey-moore-gui RUNTIME DESTINATION . COMPONENT MonkeyMooreRelease)
+
+    set(CMAKE_INSTALL_UCRT_LIBRARIES FALSE)
+    include(InstallRequiredSystemLibraries)
+
+    # collects the Windows C++ Redistributable DLLs so we can copy them to the staging dir 
+    set(MSVC_RUNTIME_DLLS "")
+    foreach(lib IN LISTS CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+        if(lib MATCHES "vcruntime140\\.dll$" OR lib MATCHES "vcruntime140_1\\.dll$" OR lib MATCHES "msvcp140\\.dll$")
+            list(APPEND MSVC_RUNTIME_DLLS "${lib}")
+        endif()
+    endforeach()
+    
+    install(PROGRAMS ${MSVC_RUNTIME_DLLS} DESTINATION . COMPONENT MonkeyMooreRelease)
+endif()
