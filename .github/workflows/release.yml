@@ -1,0 +1,148 @@
+name: Cross-Platform Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release-linux:
+    name: Build & Package Linux x64
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwxgtk3.2-dev
+
+      - name: Configure CMake
+        run: cmake --preset release
+
+      - name: Build
+        run: cmake --build --preset release
+
+      - name: Package
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          if [[ ! "$TAG_NAME" =~ ^v ]]; then TAG_NAME="dev"; fi
+
+          DIST_NAME="monkey-moore-${TAG_NAME}-linux-x86_64"
+
+          mkdir -p dist/monkey-moore
+
+          cp build-release/src/gui/monkey-moore-gui dist/monkey-moore/monkey-moore
+          chmod +x dist/monkey-moore/monkey-moore
+
+          cp -r assets/* dist/monkey-moore/
+          cp README.md dist/monkey-moore/
+          cp LICENSE dist/monkey-moore/
+
+          cd dist
+          tar -czvf ${DIST_NAME}.tar.gz monkey-moore/
+
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux-Portable-Build
+          path: dist/monkey-moore-*-linux-x86_64.tar.gz
+          retention-days: 1
+
+  release-windows:
+    name: Build & Package Windows x64
+    runs-on: windows-latest
+    env:
+      WX_VERSION: "3.2.9"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and Install Dependencies
+        shell: pwsh
+        run: |
+          $wxDir = "C:\Libraries\wxWidgets"
+          New-Item -ItemType Directory -Force -Path $wxDir
+
+          $baseUrl = "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX_VERSION }}"
+
+          Write-Host "Downloading wxWidgets v${{ env.WX_VERSION }} binaries..."
+          Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_Dev.7z" -OutFile "dev.7z"
+          Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_ReleaseDLL.7z" -OutFile "release_dll.7z"
+
+          Write-Host "Extracting to $wxDir..."
+          7z x dev.7z -o"$wxDir" -y
+          7z x release_dll.7z -o"$wxDir" -y
+
+      - name: Configure CMake
+        run: cmake --preset release -DwxWidgets_ROOT_DIR="C:\Libraries\wxWidgets"
+
+      - name: Build
+        run: cmake --build --preset release
+
+      - name: Stage
+        run: cmake --install build-release --prefix staging --component MonkeyMooreRelease
+      
+      - name: Package
+        shell: pwsh
+        run: |
+          $tagName = "${{ github.ref_name }}"
+          if ($tagName -notmatch "^v") { $tagName = "dev" }
+
+          $distName = "monkey-moore-$tagName-windows-x86_64"
+
+          Write-Host "Packaging $distName..."
+          New-Item -ItemType Directory -Force -Path $distName
+          Copy-Item -Path "staging\*" -Destination $distName -Recurse -Force
+          Rename-Item -Path "$distName\monkey-moore-gui.exe" -NewName "monkey-moore.exe"
+
+          # copy required wxWidgets DLLs
+          $wxLibDir = "C:\Libraries\wxWidgets\lib"
+          Copy-Item -Path "$wxLibDir\wxbase32u_vc14x_x64.dll" -Destination $distName -Force
+          Copy-Item -Path "$wxLibDir\wxmsw32u_core_vc14x_x64.dll" -Destination $distName -Force
+
+          # copy assets (images, language packs)
+          Copy-Item -Path "assets\*" -Destination $distName -Recurse -Force
+
+          Compress-Archive -Path "$distName\*" -DestinationPath "$distName.zip" -Force
+      
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Portable-Build
+          path: monkey-moore-*-windows-x86_64.zip
+
+      - name: Publish Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: monkey-moore-*-windows-x86_64.zip
+          generate_release_notes: true
+
+  publish:
+    name: Publish to GitHub Releases
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [ release-windows, release-linux ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Windows-Portable-Build
+          path: release-assets
+
+      - name: Download Linux Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Linux-Portable-Build
+          path: release-assets
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          generate_release_notes: true
