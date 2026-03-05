@@ -9,7 +9,6 @@ on:
 jobs:
   release-linux:
     name: Build & Package Linux x64
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -119,13 +118,6 @@ jobs:
         with:
           name: Windows-Portable-Build
           path: monkey-moore-*-windows-x86_64.zip
-
-      - name: Publish Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: monkey-moore-*-windows-x86_64.zip
-          generate_release_notes: true
 
   publish:
     name: Publish to GitHub Releases
