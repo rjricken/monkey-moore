@@ -105,7 +105,7 @@ jobs:
           Rename-Item -Path "$distName\monkey-moore-gui.exe" -NewName "monkey-moore.exe"
 
           # copy required wxWidgets DLLs
-          $wxLibDir = "C:\Libraries\wxWidgets\lib"
+          $wxLibDir = "C:\Libraries\wxWidgets\lib\vc14x_x64_dll"
           Copy-Item -Path "$wxLibDir\wxbase32u_vc14x_x64.dll" -Destination $distName -Force
           Copy-Item -Path "$wxLibDir\wxmsw32u_core_vc14x_x64.dll" -Destination $distName -Force
 
