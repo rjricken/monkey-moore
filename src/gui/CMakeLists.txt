@@ -21,6 +21,12 @@ set(GUI_SRCS
 
 add_executable(monkey-moore-gui WIN32 ${GUI_SRCS})
 
+if(WIN32)
+    target_sources(monkey-moore-gui PRIVATE 
+        ${CMAKE_SOURCE_DIR}/resources/msw/monkey_res.rc
+    )
+endif()
+
 target_link_libraries(monkey-moore-gui
    PRIVATE
    monkey-core
