@@ -65,6 +65,12 @@ searchmode_8bits(true), byteorder_little(true)
    SetIcon(wxICON(mmoore));
    wxValidator::SuppressBellOnError();
 
+   #ifdef __WXGTK__
+      wxSize textCtrlSize = wxSize(-1, MM_WIDGET_VERTICAL_SIZE);
+   #else
+      wxSize textCtrlSize = wxDefaultSize;
+   #endif
+
    wxImage buttonset(getResourcePath(wxT("images/buttons.png")), wxBITMAP_TYPE_PNG);
    const int num_images = buttonset.GetWidth() / 18;
 
@@ -84,8 +90,8 @@ searchmode_8bits(true), byteorder_little(true)
 
    // _________________________________________________________________________
    // File
-   wxTextCtrl *fname = new wxTextCtrl(main_panel, MonkeyMoore_FName, wxEmptyString, wxDefaultPosition, wxSize(-1, 28), wxBORDER_DEFAULT);
-   wxButton *browse = new wxButton(main_panel, MonkeyMoore_Browse, _("Browse"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxTextCtrl *fname = new wxTextCtrl(main_panel, MonkeyMoore_FName, wxEmptyString, wxDefaultPosition, textCtrlSize, wxBORDER_DEFAULT);
+   wxButton *browse = new wxButton(main_panel, MonkeyMoore_Browse, _("Browse"), wxDefaultPosition, textCtrlSize, wxBU_NOTEXT | wxBU_EXACTFIT);
 
    browse->SetBitmap(images.GetBitmap(MonkeyBmp_OpenFile));
    browse->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_OpenFileGrayed));
@@ -108,8 +114,8 @@ searchmode_8bits(true), byteorder_little(true)
    searchtype_sz->Add(searchtype_vsr);
 
    // -- search keyword textinput
-   wxTextCtrl *kword = new wxTextCtrl(main_panel, MonkeyMoore_KWord, wxT(""), wxDefaultPosition, wxSize(-1, 28), wxTE_PROCESS_ENTER);
-   wxButton *search = new wxButton(main_panel, MonkeyMoore_Search, _("Search"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxTextCtrl *kword = new wxTextCtrl(main_panel, MonkeyMoore_KWord, wxT(""), wxDefaultPosition, textCtrlSize, wxTE_PROCESS_ENTER);
+   wxButton *search = new wxButton(main_panel, MonkeyMoore_Search, _("Search"), wxDefaultPosition, textCtrlSize, wxBU_NOTEXT | wxBU_EXACTFIT);
 
    search->SetBitmap(images.GetBitmap(MonkeyBmp_Search));
    search->SetBitmapDisabled(images.GetBitmap(MonkeyBmp_SearchGrayed));
@@ -119,9 +125,9 @@ searchmode_8bits(true), byteorder_little(true)
    searchinput_sz->Add(search, wxSizerFlags().Expand());
 
    // -- search options (controls below the keyword input)
-   wxButton *advanced = new wxButton(main_panel, MonkeyMoore_Advanced, _("Advanced"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxButton *advanced = new wxButton(main_panel, MonkeyMoore_Advanced, _("Advanced"), wxDefaultPosition, textCtrlSize, wxBU_NOTEXT | wxBU_EXACTFIT);
    wxCheckBox *use_wc = new wxCheckBox(main_panel, MonkeyMoore_UseWC, _(" Enable Wildcards"));
-   wxTextCtrl *wildcard = new wxTextCtrl(main_panel, MonkeyMoore_Wildcard, wxEmptyString, wxDefaultPosition, wxSize(30, 28));
+   wxTextCtrl *wildcard = new wxTextCtrl(main_panel, MonkeyMoore_Wildcard, wxEmptyString, wxDefaultPosition, wxSize(30, MM_WIDGET_VERTICAL_SIZE));
    wxRadioButton *searchmode_8bit = new wxRadioButton(main_panel, MonkeyMoore_8bitMode, _(" 8-bit"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
    wxRadioButton *searchmode_16bit = new wxRadioButton(main_panel, MonkeyMoore_16bitMode, _(" 16-bit"));
 
@@ -150,8 +156,8 @@ searchmode_8bits(true), byteorder_little(true)
 
    // -- custom character pattern row
    wxCheckBox *adv_enablepat = new wxCheckBox(main_panel, MonkeyMoore_EnableCP, _(" Character sequence:"));
-   wxTextCtrl *char_pattern = new wxTextCtrl(main_panel, MonkeyMoore_CharPattern, wxEmptyString, wxDefaultPosition, wxSize(-1, 28));
-   wxButton *charset_list = new wxButton(main_panel, MonkeyMoore_CharsetList, _("Sequences List"), wxDefaultPosition, wxSize(-1, 28), wxBU_NOTEXT | wxBU_EXACTFIT);
+   wxTextCtrl *char_pattern = new wxTextCtrl(main_panel, MonkeyMoore_CharPattern, wxEmptyString, wxDefaultPosition, textCtrlSize);
+   wxButton *charset_list = new wxButton(main_panel, MonkeyMoore_CharsetList, _("Sequences List"), wxDefaultPosition, textCtrlSize, wxBU_NOTEXT | wxBU_EXACTFIT);
 
    // disabled at startup
    char_pattern->Disable();
@@ -1189,7 +1195,7 @@ void MonkeyFrame::ShowResults (bool showAll)
             }
 
             result_box->SetItem(curListIndex, 1, values);
-            result_box->SetItem(curListIndex, search_relative ? 2 : 1, result_preview);
+            result_box->SetItem(curListIndex, search_relative ? 2 : 1, wxString::FromUTF8(result_preview));
 
             curListIndex++;
          }

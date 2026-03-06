@@ -6,6 +6,14 @@
 #define MM_VERSION wxT("1.1.0")
 #define MM_BUILD   __TDATE__
 
+#ifdef __WXGTK__
+   // removes the massive padding modern GTK themes add to widgets
+   #define MM_WIDGET_VERTICAL_SIZE 28 
+#else
+   // let other OSes fall back to their native default
+   #define MM_WIDGET_VERTICAL_SIZE -1 
+#endif
+
 #define MM_CONFIG_FILE wxT("config.xml")
 #define MM_CUSTOMSEQS_FILE wxT("customseqs.xml")
 #define MM_GITHUB_REPO_URL wxT("https://github.com/rjricken/monkey-moore")
