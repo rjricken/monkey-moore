@@ -8,6 +8,8 @@
 
 By leveraging an optimized, multi-threaded implementation of the **Boyer-Moore string search algorithm**, it performs rapid pattern matching across large binary files. Monkey-Moore offers extensive configuration options, making it the ideal tool for locating text or data in proprietary formats where the encoding is unknown.
 
+![Monkey-Moore](./.github/assets/screenshot-1.png)
+
 ## Overview: What is Relative Searching?
 
 Relative searching is a specialized technique used to discover data that cannot be found via standard hexadecimal or ASCII text searches.
