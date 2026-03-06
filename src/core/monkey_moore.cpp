@@ -325,7 +325,6 @@ std::vector <typename MonkeyMoore<Ty>::result_type> MonkeyMoore<Ty>::monkey_moor
 
    const long keyword_len = static_cast<long>(keyword.size());
    const long skip_table_len = static_cast<long>(skip_table.size());
-   const long skip_table_positives_index = skip_table_len / 2;
 
    const Ty *search_head = data;
    const Ty *data_end = data + data_len;
