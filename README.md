@@ -8,7 +8,10 @@
 
 By leveraging an optimized, multi-threaded implementation of the **Boyer-Moore string search algorithm**, it performs rapid pattern matching across large binary files. Monkey-Moore offers extensive configuration options, making it the ideal tool for locating text or data in proprietary formats where the encoding is unknown.
 
-![Monkey-Moore](./.github/assets/screenshot-1.png)
+<p>
+  <img alt="Monkey-Moore for Linux" src="./.github/assets/screenshot-linux-1.png" style="width: 45%; max-width: 438px;" />
+  <img alt="Monkey-Moore for Windows" src="./.github/assets/screenshot-windows-1.png" style="width: 45%; max-width: 426px;" />
+</p>
 
 ## Overview: What is Relative Searching?
 
