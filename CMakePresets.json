@@ -11,6 +11,7 @@
             "description": "Default debug build (fast compilation, symbols)",
             "binaryDir": "${sourceDir}/build",
             "generator": "Ninja",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "BUILD_TESTING": "ON"
@@ -22,6 +23,7 @@
             "description": "Optimized release build",
             "binaryDir": "${sourceDir}/build-release",
             "generator": "Ninja",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "BUILD_TESTING": "ON",

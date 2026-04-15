@@ -1,16 +1,4 @@
-include(FetchContent)
-
-FetchContent_Declare(
-    tinyxml2
-    GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
-    GIT_TAG 9.0.0
-)
-
-# Force TinyXML2 to skip building its tests
-set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(tinyxml2)
-
+find_package(tinyxml2 CONFIG REQUIRED)
 find_package(wxWidgets REQUIRED COMPONENTS core base adv)
 
 set(GUI_SRCS
@@ -31,10 +19,17 @@ target_link_libraries(monkey-moore-gui
    PRIVATE
    monkey-core
    tinyxml2::tinyxml2
-   wxWidgets::wxWidgets
+   ${wxWidgets_LIBRARIES}
 )
 
-target_include_directories(monkey-moore-gui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(monkey-moore-gui PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${wxWidgets_INCLUDE_DIRS}
+)
+
+target_compile_definitions(monkey-moore-gui PRIVATE
+    ${wxWidgets_DEFINITIONS}
+)
 
 add_custom_command(TARGET monkey-moore-gui POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E copy_directory

@@ -1,0 +1,11 @@
+{
+   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+   "name": "monkey-moore",
+   "version": "1.1.0",
+   "dependencies": [
+      "benchmark",
+      "catch2",
+      "tinyxml2",
+      "wxwidgets"
+   ]
+}
