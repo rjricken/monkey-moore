@@ -9,6 +9,9 @@ on:
       - "master"
   workflow_dispatch:
 
+env:
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
 jobs:
   build-linux:
     name: Build & Test (Linux)
@@ -16,10 +19,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Set VCPKG_ROOT
+        run: echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
+      - name: Install Host Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwxgtk3.2-dev
+          sudo apt-get install -y build-essential curl zip unzip tar autoconf automake libtool pkg-config bison flex
 
       - name: Configure CMake
         run: cmake --preset release
@@ -38,23 +51,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download and Install Dependencies
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Set VCPKG_ROOT
         shell: pwsh
-        run: |
-          $wxDir = "C:\Libraries\wxWidgets"
-          New-Item -ItemType Directory -Force -Path $wxDir
-
-          $baseUrl = "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX_VERSION }}"
-
-          Write-Host "Downloading wxWidgets v${{ env.WX_VERSION }} headers and binaries..."
-          Invoke-WebRequest -Uri "$baseUrl/wxWidgets-${{ env.WX_VERSION }}-headers.7z" -OutFile "headers.7z"
-          Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_Dev.7z" -OutFile "dev.7z"
-          Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_ReleaseDLL.7z" -OutFile "release_dll.7z"
-
-          Write-Host "Extracting to $wxDir..."
-          7z x headers.7z -o"$wxDir" -y
-          7z x dev.7z -o"$wxDir" -y
-          7z x release_dll.7z -o"$wxDir" -y
+        run: Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT"
 
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -62,7 +68,7 @@ jobs:
           arch: x64
 
       - name: Configure CMake
-        run: cmake --preset release -DwxWidgets_ROOT_DIR="C:\Libraries\wxWidgets"
+        run: cmake --preset release
 
       - name: Build
         run: cmake --build --preset release
