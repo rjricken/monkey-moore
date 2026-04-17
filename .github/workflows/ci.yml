@@ -32,7 +32,7 @@ jobs:
       - name: Install Host Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential curl zip unzip tar autoconf automake libtool pkg-config bison flex
+          sudo apt-get install -y build-essential curl zip unzip tar autoconf autoconf-archive automake libtool libltdl-dev pkg-config bison flex ninja-build libx11-dev libxft-dev libxext-dev libxi-dev libxtst-dev libxcursor-dev libxdamage-dev libxcomposite-dev libxrandr-dev libxrender-dev libxfixes-dev libxkbcommon-dev libgl1-mesa-dev
 
       - name: Configure CMake
         run: cmake --preset release
