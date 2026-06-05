@@ -3,16 +3,6 @@
 #ifndef MONKEY_SEQS_HPP
 #define MONKEY_SEQS_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-   #pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
 #include "constants.hpp"
 #include "monkey_app.hpp"
 #include "monkey_prefs.hpp"
@@ -22,9 +12,6 @@
 #include <vector>
 #include <utility>
 
-/**
-* -
-*/
 class MonkeySeqs : public wxDialog
 {
 public:

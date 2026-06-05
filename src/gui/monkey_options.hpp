@@ -3,21 +3,17 @@
 #ifndef MONKEY_OPTIONS_HPP
 #define MONKEY_OPTIONS_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
-
 #include "constants.hpp"
 #include "monkey_prefs.hpp"
 
 #include <thread>
+#include <wx/sizer.h>
 #include <wx/spinctrl.h>
+#include <wx/statbox.h>
+#include <wx/stattext.h>
+#include <wx/radiobut.h>
+#include <wx/event.h>
+#include <wx/button.h>
 
 /**
 * Implements the about dialog box, which displays information about the program.

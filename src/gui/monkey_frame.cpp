@@ -11,7 +11,12 @@
 
 #include <wx/file.h>
 #include <wx/tokenzr.h>
-#include <wx/clipbrd.h> 
+#include <wx/clipbrd.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/settings.h>
+#include <wx/valtext.h> 
+#include <wx/menu.h>
 #include <algorithm>
 #include <numeric>
 #include <utility>

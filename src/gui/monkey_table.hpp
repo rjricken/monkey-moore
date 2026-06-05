@@ -3,16 +3,6 @@
 #ifndef MONKEY_TABLE_HPP
 #define MONKEY_TABLE_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-   #pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
 #include "constants.hpp"
 #include "byteswap.hpp"
 #include "monkey_prefs.hpp"
@@ -21,6 +11,9 @@
 #include <limits>
 #include <wx/dataview.h>
 #include <wx/file.h>
+#include <wx/filedlg.h>
+#include <wx/bmpbuttn.h>
+#include <wx/choice.h>
 
 /**
 * Implements the table creation dialog box, which displays information

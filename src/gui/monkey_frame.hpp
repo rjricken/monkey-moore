@@ -3,16 +3,6 @@
 #ifndef MONKEY_FRAME_HPP
 #define MONKEY_FRAME_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
-
 #include "constants.hpp"
 #include "mmoore/monkey_moore.hpp"
 #include "mmoore/search_engine.hpp"
@@ -20,6 +10,11 @@
 
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
+#include <wx/frame.h>
+#include <wx/gauge.h>
+#include <wx/checkbox.h>
+#include <wx/stopwatch.h>
+#include <wx/msgdlg.h>
 #include <vector>
 #include <utility>
 #include <mutex>

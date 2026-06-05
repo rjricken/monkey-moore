@@ -1,13 +1,29 @@
 find_package(tinyxml2 CONFIG REQUIRED)
 find_package(wxWidgets REQUIRED COMPONENTS core base adv)
 
+set(GUI_HEADERS
+   byteswap.hpp
+   constants.hpp
+   filesystem_utils.hpp
+   monkey_about.hpp
+   monkey_app.hpp
+   monkey_error.hpp
+   monkey_frame.hpp
+   monkey_options.hpp
+   monkey_prefs.hpp
+   monkey_seqs.hpp
+   monkey_table.hpp
+   monkey_thread.hpp
+)
+
 set(GUI_SRCS
    monkey_app.cpp
    monkey_frame.cpp
    monkey_prefs.cpp
+   about_dialog.cpp
 )
 
-add_executable(monkey-moore-gui WIN32 ${GUI_SRCS})
+add_executable(monkey-moore-gui WIN32 ${GUI_SRCS} ${GUI_HEADERS})
 
 if(WIN32)
     target_sources(monkey-moore-gui PRIVATE 
@@ -29,6 +45,10 @@ target_include_directories(monkey-moore-gui PRIVATE
 
 target_compile_definitions(monkey-moore-gui PRIVATE
     ${wxWidgets_DEFINITIONS}
+)
+
+target_precompile_headers(monkey-moore-gui PRIVATE 
+    <wx/wxprec.h>
 )
 
 add_custom_command(TARGET monkey-moore-gui POST_BUILD

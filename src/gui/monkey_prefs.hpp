@@ -3,19 +3,13 @@
 #ifndef MONKEY_PREFS_HPP
 #define MONKEY_PREFS_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
-
 #include <map>
 #include <utility>
 #include <vector>
+
+#include <wx/string.h>
+#include <wx/gdicmn.h>
+#include <wx/wxcrt.h>
 
 /**
 * Stores the application settings and preferences, allowing it to be

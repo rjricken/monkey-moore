@@ -4,9 +4,10 @@
 #include "monkey_error.hpp"
 #include "constants.hpp"
 
-#include <tinyxml2.h>
 #include <map>
 #include <vector>
+#include <tinyxml2.h>
+#include <wx/translation.h>
 
 static wxString fromXml(const char *value) {
    return value ? wxString::FromUTF8(value) : wxString();

@@ -6,6 +6,7 @@
 #include "filesystem_utils.hpp"
 #include "constants.hpp"
 
+#include <wx/app.h>
 #include <wx/file.h>
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
@@ -18,6 +19,8 @@ bool MonkeyApp::OnInit ()
       return false;
 
    wxImage::AddHandler(new wxPNGHandler());
+
+   SetAppName("monkey-moore");
 
    // set up language selection system
    m_loc.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT);

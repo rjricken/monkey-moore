@@ -3,16 +3,6 @@
 #ifndef MONKEY_THREAD_HPP
 #define MONKEY_THREAD_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-   #pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
 #include <wx/file.h>
 #include <cmath>
 #include <vector>

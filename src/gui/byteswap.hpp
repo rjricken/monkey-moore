@@ -3,17 +3,8 @@
 #ifndef BYTESWAP_HPP
 #define BYTESWAP_HPP
 
-#include <wx/wxprec.h>
-
-#ifdef __BORLANDC__
-   #pragma hdrstop
-#endif
-
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
 #include <cstdint>
+#include <wx/defs.h>
 
 /*
    When dealing with endianness, we need to consider 2 things:
