@@ -26,6 +26,10 @@ set(GUI_SRCS
 add_executable(monkey-moore-gui WIN32 ${GUI_SRCS} ${GUI_HEADERS})
 
 if(WIN32)
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/assets/platform/windows/monkey_res.rc
+        PROPERTIES COMPILE_FLAGS  "/I ${CMAKE_SOURCE_DIR}/assets/icons"
+    )
+
     target_sources(monkey-moore-gui PRIVATE 
         ${CMAKE_SOURCE_DIR}/assets/platform/windows/monkey_res.rc
     )
