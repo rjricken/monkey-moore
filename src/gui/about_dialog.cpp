@@ -23,7 +23,7 @@ MonkeyAbout::MonkeyAbout(
    url->SetPosition(wxPoint(200, 195));
 
    doc_moore = new wxImage(212, 269);
-   doc_moore->LoadFile(getResourcePath(wxT("images/doctor_moore.png")), wxBITMAP_TYPE_PNG);
+   doc_moore->LoadFile(getResourcePath(wxT("ui/doctor_moore.png")), wxBITMAP_TYPE_PNG);
 }
 
 MonkeyAbout::~MonkeyAbout () {

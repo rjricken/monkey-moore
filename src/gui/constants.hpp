@@ -3,6 +3,8 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include <wx/defs.h>
+
 #define MM_VERSION wxT("1.1.0")
 #define MM_BUILD   __TDATE__
 

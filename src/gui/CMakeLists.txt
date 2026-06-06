@@ -27,7 +27,7 @@ add_executable(monkey-moore-gui WIN32 ${GUI_SRCS} ${GUI_HEADERS})
 
 if(WIN32)
     target_sources(monkey-moore-gui PRIVATE 
-        ${CMAKE_SOURCE_DIR}/resources/msw/monkey_res.rc
+        ${CMAKE_SOURCE_DIR}/assets/platform/windows/monkey_res.rc
     )
 endif()
 
@@ -73,4 +73,41 @@ if(WIN32)
     endforeach()
     
     install(PROGRAMS ${MSVC_RUNTIME_DLLS} DESTINATION . COMPONENT MonkeyMooreRelease)
+endif()
+
+if(UNIX AND NOT APPLE)
+    set_target_properties(monkey-moore-gui PROPERTIES OUTPUT_NAME "monkey-moore")
+
+    install(TARGETS monkey-moore-gui RUNTIME DESTINATION bin)
+
+    install(DIRECTORY
+            ${CMAKE_SOURCE_DIR}/assets/ui
+            ${CMAKE_SOURCE_DIR}/assets/i18n/locales
+            DESTINATION share/monkey-moore
+    )
+
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/icons/16x16.png
+            DESTINATION share/icons/hicolor/16x16/apps
+            RENAME "monkey-moore.png"
+    )
+
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/icons/24x24.png
+            DESTINATION share/icons/hicolor/24x24/apps
+            RENAME "monkey-moore.png"
+    )
+
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/icons/32x32.png
+            DESTINATION share/icons/hicolor/32x32/apps
+            RENAME "monkey-moore.png"
+    )
+
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/icons/48x48.png
+            DESTINATION share/icons/hicolor/48x48/apps
+            RENAME "monkey-moore.png"
+    )
+
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/icons/monkey-moore.png
+            DESTINATION share/icons/hicolor/512x512/apps
+            RENAME "monkey-moore.png"
+    )
 endif()

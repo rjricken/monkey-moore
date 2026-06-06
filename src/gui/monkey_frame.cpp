@@ -24,8 +24,8 @@
 #include <memory>
 #include <array>
 
-#if !defined(__WXMSW__) && !defined(__WXPM__)
-   #include "../resources/mmoore.xpm"
+#ifndef __WXMSW__
+   #include "../assets/icons/mmoore.xpm"
 #endif
 
 wxBEGIN_EVENT_TABLE(MonkeyFrame, wxFrame)
@@ -62,12 +62,55 @@ wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_UPDATE, wxThreadEvent);
 wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_ABORTED, wxThreadEvent);
 wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_FAILED, wxThreadEvent);
 
+static void setupAppIcon(MonkeyFrame *m_frame) {
+#if defined(__WXMSW__)
+   // On Windows we just reference the icon name in the resource file
+   SetIcon(wxICON(mmoore));
+
+#elif defined(__linux__) || defined(__WXGTK__)
+   // On Linux we dynamically load the icon and force it to the window manager 
+
+   wxIconBundle iconBundle;
+   wxArrayString iconPaths;
+
+   iconPaths.Add(wxT("icons/16x16.png"));
+   iconPaths.Add(wxT("icons/24x24.png"));
+   iconPaths.Add(wxT("icons/32x32.png"));
+   iconPaths.Add(wxT("icons/48x48.png"));
+
+   for (const auto &path : iconPaths) {
+      wxString fullPath = getResourcePath(path);
+
+      if (wxFileName::Exists(fullPath)) {
+         iconBundle.AddIcon(fullPath, wxBITMAP_TYPE_PNG);
+      }
+      else {
+         wxLogDebug("Optional icon missing: %s", fullPath);
+      }
+   }
+
+   if (!iconBundle.IsEmpty()) {
+      m_frame->SetIcons(iconBundle);
+   }
+   else {
+      m_frame->SetIcon(wxICON(mmoore));
+   }
+
+#else
+   // On macOS this is just a fallback
+
+   SetIcon(wxICON(mmoore));
+   
+#endif
+}
+
 MonkeyFrame::MonkeyFrame (const wxString &title, MonkeyPrefs &mprefs, const wxPoint &pos, const wxSize &size) :
 wxFrame(0, wxID_ANY, title, pos, size, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL), prefs(mprefs),
 search_done(false), search_in_progress(false), search_was_aborted(false), advanced_shown(false),
 searchmode_8bits(true), byteorder_little(true)
 {
-   SetIcon(wxICON(mmoore));
+   setupAppIcon(this);
+
    wxValidator::SuppressBellOnError();
 
    #ifdef __WXGTK__
@@ -76,7 +119,7 @@ searchmode_8bits(true), byteorder_little(true)
       wxSize textCtrlSize = wxDefaultSize;
    #endif
 
-   wxImage buttonset(getResourcePath(wxT("images/buttons.png")), wxBITMAP_TYPE_PNG);
+   wxImage buttonset(getResourcePath(wxT("ui/buttons.png")), wxBITMAP_TYPE_PNG);
    const int num_images = buttonset.GetWidth() / 18;
 
    images.Create(18, 15, true, num_images);

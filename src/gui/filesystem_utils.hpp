@@ -7,12 +7,19 @@
 #include <wx/filename.h>
 
 inline wxString getResourcePath(const wxString &relativePath) {
-   wxFileName executablePath(wxStandardPaths::Get().GetExecutablePath());
-   wxString resourcePath = executablePath.GetPath();
-   
-   wxString fullPath = resourcePath + wxFileName::GetPathSeparator() + relativePath ;
+   wxString dataDir = wxStandardPaths::Get().GetDataDir();
+   wxString fullPath = dataDir + wxFileName::GetPathSeparator() + relativePath;
 
-   return fullPath;
+   if (wxFileName::Exists(fullPath)) {
+      return fullPath;
+   }
+
+   wxFileName devPath(wxStandardPaths::Get().GetExecutablePath());
+
+   devPath.RemoveLastDir();
+   devPath.AppendDir(wxT("assets"));
+
+   return devPath.GetPath() + wxFileName::GetPathSeparator() + relativePath;
 }
 
 #endif // FILESYSTEM_UTILS_HPP

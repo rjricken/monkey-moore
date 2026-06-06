@@ -11,7 +11,7 @@
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
 
-IMPLEMENT_APP(MonkeyApp)
+wxIMPLEMENT_APP(MonkeyApp);
 
 bool MonkeyApp::OnInit ()
 {
@@ -24,7 +24,7 @@ bool MonkeyApp::OnInit ()
 
    // set up language selection system
    m_loc.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT);
-   wxLocale::AddCatalogLookupPathPrefix(getResourcePath(wxT("./language")));
+   wxLocale::AddCatalogLookupPathPrefix(getResourcePath(wxT("./locales")));
    m_loc.AddCatalog(wxT("monkeymoore"));
 
    // retrieve the OS specific data directory for our application

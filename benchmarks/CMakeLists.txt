@@ -1,9 +1,9 @@
 find_package(benchmark CONFIG REQUIRED)
 
-add_executable(benchmarks bench_search.cpp)
+add_executable(mmoore-benchmarks bench_search.cpp)
 
 target_link_libraries(
-    benchmarks
+    mmoore-benchmarks
     PRIVATE
     monkey-core
     benchmark::benchmark
@@ -11,8 +11,8 @@ target_link_libraries(
 )
 
 if (MSVC)
-    target_compile_options(benchmarks PRIVATE /O2)
+    target_compile_options(mmoore-benchmarks PRIVATE /O2)
 else()
-    target_compile_options(benchmarks PRIVATE -O3)
+    target_compile_options(mmoore-benchmarks PRIVATE -O3)
 endif()
 
