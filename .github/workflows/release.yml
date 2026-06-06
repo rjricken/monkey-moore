@@ -98,7 +98,6 @@ jobs:
           Write-Host "Packaging $distName..."
           New-Item -ItemType Directory -Force -Path $distName
           Copy-Item -Path "staging\*" -Destination $distName -Recurse -Force
-          Rename-Item -Path "$distName\monkey-moore-gui.exe" -NewName "monkey-moore.exe"
 
           # copy required wxWidgets DLLs
           $wxLibDir = "C:\Libraries\wxWidgets\lib\vc14x_x64_dll"
@@ -106,7 +105,8 @@ jobs:
           Copy-Item -Path "$wxLibDir\wxmsw32u_core_vc14x_x64.dll" -Destination $distName -Force
 
           # copy assets (images, language packs)
-          Copy-Item -Path "assets\*" -Destination $distName -Recurse -Force
+          Copy-Item -Path "assets\ui" -Destination $distName -Recurse -Force
+          Copy-Item -Path "assets\i18n\locales" -Destination $distName -Recurse -Force
 
           Compress-Archive -Path "$distName\*" -DestinationPath "$distName.zip" -Force
       

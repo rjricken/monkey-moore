@@ -25,6 +25,8 @@ set(GUI_SRCS
 
 add_executable(monkey-moore-gui WIN32 ${GUI_SRCS} ${GUI_HEADERS})
 
+set_target_properties(monkey-moore-gui PROPERTIES OUTPUT_NAME "monkey-moore")
+
 if(WIN32)
     set_source_files_properties(${CMAKE_SOURCE_DIR}/assets/platform/windows/monkey_res.rc
         PROPERTIES COMPILE_FLAGS  "/I ${CMAKE_SOURCE_DIR}/assets/icons"
@@ -76,8 +78,6 @@ if(WIN32)
 endif()
 
 if(UNIX AND NOT APPLE)
-    set_target_properties(monkey-moore-gui PROPERTIES OUTPUT_NAME "monkey-moore")
-
     install(TARGETS monkey-moore-gui RUNTIME DESTINATION bin)
 
     install(DIRECTORY
