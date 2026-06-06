@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Monkey-Moore
+Comment=Fast relative search tool for ROM hacking
+Exec=monkey-moore
+StartupWMClass=monkey-moore
+Icon=monkey-moore
+Terminal=false
+Type=Application
+Categories=Utility;Development;
