@@ -65,7 +65,7 @@ wxDEFINE_EVENT(mmEVT_SEARCHTHREAD_FAILED, wxThreadEvent);
 static void setupAppIcon(MonkeyFrame *m_frame) {
 #if defined(__WXMSW__)
    // On Windows we just reference the icon name in the resource file
-   SetIcon(wxICON(mmoore));
+   m_frame->SetIcon(wxICON(mmoore));
 
 #elif defined(__linux__) || defined(__WXGTK__)
    // On Linux we dynamically load the icon and force it to the window manager 
@@ -99,7 +99,7 @@ static void setupAppIcon(MonkeyFrame *m_frame) {
 #else
    // On macOS this is just a fallback
 
-   SetIcon(wxICON(mmoore));
+   m_frame->SetIcon(wxICON(mmoore));
    
 #endif
 }
