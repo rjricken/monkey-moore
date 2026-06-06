@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwxgtk3.2-dev
+          sudo apt-get install -y libwxgtk3.2-dev wget
 
       - name: Configure CMake
         run: cmake --preset release
@@ -24,30 +24,27 @@ jobs:
       - name: Build
         run: cmake --build --preset release
 
-      - name: Package
+      - name: Package AppImage
         run: |
           TAG_NAME="${{ github.ref_name }}"
           if [[ ! "$TAG_NAME" =~ ^v ]]; then TAG_NAME="dev"; fi
 
-          DIST_NAME="monkey-moore-${TAG_NAME}-linux-x86_64"
+          # Download linuxdeploy and make it executable
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
 
-          mkdir -p dist/monkey-moore
+          # Configure and run the packager
+          export LINUXDEPLOY=$(pwd)/linuxdeploy-x86_64.AppImage
+          chmod +x scripts/package-appimage.sh
+          ./scripts/package-appimage.sh build-release
 
-          cp build-release/src/gui/monkey-moore-gui dist/monkey-moore/monkey-moore
-          chmod +x dist/monkey-moore/monkey-moore
-
-          cp -r assets/* dist/monkey-moore/
-          cp README.md dist/monkey-moore/
-          cp LICENSE dist/monkey-moore/
-
-          cd dist
-          tar -czvf ${DIST_NAME}.tar.gz monkey-moore/
+          mv dist/Monkey-Moore-x86_64.AppImage "dist/monkey-moore-${TAG_NAME}-linux-x86_64.AppImage"
 
       - name: Upload Linux Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Linux-Portable-Build
-          path: dist/monkey-moore-*-linux-x86_64.tar.gz
+          path: dist/monkey-moore-*-linux-x86_64.AppImage
           retention-days: 1
 
   release-windows:
