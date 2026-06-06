@@ -47,10 +47,6 @@ target_compile_definitions(monkey-moore-gui PRIVATE
     ${wxWidgets_DEFINITIONS}
 )
 
-target_precompile_headers(monkey-moore-gui PRIVATE 
-    <wx/wxprec.h>
-)
-
 add_custom_command(TARGET monkey-moore-gui POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E copy_directory
    ${CMAKE_SOURCE_DIR}/assets
