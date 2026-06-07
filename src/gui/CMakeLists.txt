@@ -5,7 +5,7 @@ set(GUI_HEADERS
    byteswap.hpp
    constants.hpp
    filesystem_utils.hpp
-   monkey_about.hpp
+   about_dialog.hpp
    monkey_app.hpp
    monkey_error.hpp
    monkey_frame.hpp

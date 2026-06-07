@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "monkey_about.hpp"
+#include "about_dialog.hpp"
 
 #include <wx/hyperlink.h>
 #include <wx/sizer.h>

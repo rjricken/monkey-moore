@@ -2,7 +2,7 @@
 
 #include "mmoore/text_utils.hpp"
 #include "monkey_frame.hpp"
-#include "monkey_about.hpp"
+#include "about_dialog.hpp"
 #include "monkey_options.hpp"
 #include "monkey_table.hpp"
 #include "monkey_seqs.hpp"
