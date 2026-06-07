@@ -67,8 +67,6 @@ jobs:
   release-windows:
     name: Build & Package Windows x64
     runs-on: windows-latest
-    env:
-      WX_VERSION: "3.2.9"
     steps:
       - uses: actions/checkout@v4
 
@@ -88,31 +86,13 @@ jobs:
         shell: pwsh
         run: New-Item -ItemType Directory -Force -Path $env:VCPKG_DEFAULT_BINARY_CACHE
 
-      - name: Download and Install Dependencies
-        shell: pwsh
-        run: |
-          $wxDir = "C:\Libraries\wxWidgets"
-          New-Item -ItemType Directory -Force -Path $wxDir
-
-          $baseUrl = "https://github.com/wxWidgets/wxWidgets/releases/download/v${{ env.WX_VERSION }}"
-
-          Write-Host "Downloading wxWidgets v${{ env.WX_VERSION }} headers and binaries..."
-          Invoke-WebRequest -Uri "$baseUrl/wxWidgets-${{ env.WX_VERSION }}-headers.7z" -OutFile "headers.7z"
-          Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_Dev.7z" -OutFile "dev.7z"
-          Invoke-WebRequest -Uri "$baseUrl/wxMSW-${{ env.WX_VERSION }}_vc14x_x64_ReleaseDLL.7z" -OutFile "release_dll.7z"
-
-          Write-Host "Extracting to $wxDir..."
-          7z x headers.7z -o"$wxDir" -y
-          7z x dev.7z -o"$wxDir" -y
-          7z x release_dll.7z -o"$wxDir" -y
-
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
       - name: Configure CMake
-        run: cmake --preset release -DwxWidgets_ROOT_DIR="C:\Libraries\wxWidgets"
+        run: cmake --preset release
 
       - name: Build
         run: cmake --build --preset release
@@ -132,10 +112,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path $distName
           Copy-Item -Path "staging\*" -Destination $distName -Recurse -Force
 
-          # copy required wxWidgets DLLs
-          $wxLibDir = "C:\Libraries\wxWidgets\lib\vc14x_x64_dll"
-          Copy-Item -Path "$wxLibDir\wxbase32u_vc14x_x64.dll" -Destination $distName -Force
-          Copy-Item -Path "$wxLibDir\wxmsw32u_core_vc14x_x64.dll" -Destination $distName -Force
+          Copy-Item -Path "build-release\*.dll" -Destination $distName -Force
 
           # copy assets (images, language packs)
           Copy-Item -Path "assets\ui" -Destination $distName -Recurse -Force
