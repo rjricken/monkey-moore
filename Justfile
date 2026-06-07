@@ -21,11 +21,11 @@ test-tag TAG: build
 
 # runs the program
 run: build
-    ./build/src/gui/monkey-moore-gui
+    ./build/monkey-moore
 
 # runs the program with gbd attached for debugging
 run-debugger: build
-    gdb -q -ex "set debuginfod enabled on" -ex "set confirm off" -ex run --args ./build/src/gui/monkey-moore-gui
+    gdb -q -ex "set debuginfod enabled on" -ex "set confirm off" -ex run --args ./build/monkey-moore
 
 # Release workflow (build-release/)
 
@@ -43,11 +43,14 @@ test-release: build-release
 
 # runs benchmarks against release artifacts
 benchmark: build-release
-    ./build-release/benchmarks/benchmarks --benchmark_time_unit=ms
+    ./build-release/mmoore-benchmarks --benchmark_time_unit=ms
 
 # runs the program in release mode
 run-release: build-release
-    ./build-release/src/gui/monkey-moore-gui
+    ./build-release/monkey-moore
+
+package-appimage: build-release 
+    ./scripts/package-appimage.sh
 
 # Utils
 
