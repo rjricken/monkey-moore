@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef MONKEY_ABOUT_HPP
-#define MONKEY_ABOUT_HPP
+#ifndef ABOUT_DIALOG_HPP
+#define ABOUT_DIALOG_HPP
 
 #include "constants.hpp"
 #include "filesystem_utils.hpp"
@@ -29,4 +29,4 @@ private:
    DECLARE_EVENT_TABLE()
 };
 
-#endif //~MONKEY_ABOUT_HPP
+#endif
