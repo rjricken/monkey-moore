@@ -5,7 +5,7 @@
 #include "about_dialog.hpp"
 #include "monkey_options.hpp"
 #include "monkey_table.hpp"
-#include "monkey_seqs.hpp"
+#include "dialogs/monkey_seqs.hpp"
 #include "monkey_thread.hpp"
 #include "drop_target.hpp"
 #include "filesystem_utils.hpp"

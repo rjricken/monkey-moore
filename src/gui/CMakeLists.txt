@@ -12,7 +12,7 @@ set(GUI_HEADERS
    monkey_frame.hpp
    monkey_options.hpp
    monkey_prefs.hpp
-   monkey_seqs.hpp
+   dialogs/monkey_seqs.hpp
    monkey_table.hpp
    monkey_thread.hpp
 )

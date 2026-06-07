@@ -3,9 +3,9 @@
 #ifndef MONKEY_SEQS_HPP
 #define MONKEY_SEQS_HPP
 
-#include "constants.hpp"
-#include "monkey_app.hpp"
-#include "monkey_prefs.hpp"
+#include "../constants.hpp"
+#include "../monkey_app.hpp"
+#include "../monkey_prefs.hpp"
 
 #include <wx/dataview.h>
 #include <wx/file.h>
