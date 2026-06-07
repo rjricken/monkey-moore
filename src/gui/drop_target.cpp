@@ -1,5 +1,6 @@
-#include "drop_target.hpp"
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "drop_target.hpp"
 #include "monkey_frame.hpp"
 
 SearchFileDropTarget::SearchFileDropTarget(

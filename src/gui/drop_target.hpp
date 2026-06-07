@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DROP_TARGET_HPP
 #define DROP_TARGET_HPP
 
