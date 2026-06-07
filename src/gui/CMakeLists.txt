@@ -6,7 +6,7 @@ set(GUI_HEADERS
    constants.hpp
    drop_target.hpp
    filesystem_utils.hpp
-   about_dialog.hpp
+   dialogs/about_dialog.hpp
    monkey_app.hpp
    monkey_error.hpp
    monkey_frame.hpp
@@ -21,7 +21,7 @@ set(GUI_SRCS
    monkey_app.cpp
    monkey_frame.cpp
    monkey_prefs.cpp
-   about_dialog.cpp
+   dialogs/about_dialog.cpp
    drop_target.cpp
 )
 
