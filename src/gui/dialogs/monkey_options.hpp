@@ -3,8 +3,8 @@
 #ifndef MONKEY_OPTIONS_HPP
 #define MONKEY_OPTIONS_HPP
 
-#include "constants.hpp"
-#include "monkey_prefs.hpp"
+#include "../constants.hpp"
+#include "../monkey_prefs.hpp"
 
 #include <thread>
 #include <wx/sizer.h>

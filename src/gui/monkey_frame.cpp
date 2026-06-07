@@ -3,7 +3,7 @@
 #include "mmoore/text_utils.hpp"
 #include "monkey_frame.hpp"
 #include "dialogs/about_dialog.hpp"
-#include "monkey_options.hpp"
+#include "dialogs/monkey_options.hpp"
 #include "monkey_table.hpp"
 #include "dialogs/custom_sequences.hpp"
 #include "monkey_thread.hpp"
