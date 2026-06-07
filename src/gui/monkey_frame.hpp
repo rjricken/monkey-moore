@@ -60,6 +60,8 @@ public:
    template <typename _DataType> void OnThreadAborted (wxThreadEvent &event);
    template <typename _DataType> void OnThreadFailed (wxThreadEvent &event);
 
+   void SetTargetFile(wxString filename);
+
    /**
    * Sets the progress bar percentage.
    * @param percentage a value in the 0-100 range

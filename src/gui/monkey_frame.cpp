@@ -7,6 +7,7 @@
 #include "monkey_table.hpp"
 #include "monkey_seqs.hpp"
 #include "monkey_thread.hpp"
+#include "drop_target.hpp"
 #include "filesystem_utils.hpp"
 
 #include <wx/file.h>
@@ -363,6 +364,9 @@ searchmode_8bits(true), byteorder_little(true)
 
    // binds the common charsets menu entries dynamically to the correct event handler
    Bind(wxEVT_COMMAND_MENU_SELECTED, &MonkeyFrame::OnCharsetChosen, this, start, end);
+
+   SearchFileDropTarget *drop_target = new SearchFileDropTarget(this);
+   this->SetDropTarget(drop_target);
 }
 
 /**
@@ -385,15 +389,25 @@ void MonkeyFrame::OnBrowse (wxCommandEvent &WXUNUSED(event))
    const long flags = wxFD_OPEN | wxFD_FILE_MUST_EXIST;
    wxFileDialog dialog(this, MM_MSG_OPENFL, prefs.get(wxT("directories/open-file")), wxT(""), _("All files (*.*)|*.*"), flags);
 
-   if (dialog.ShowModal() == wxID_OK)
-   {
-      wxTextCtrl *fname = GetWindow<wxTextCtrl>(MonkeyMoore_FName);
-      
-      if (!fname->IsEmpty()) fname->Clear();
-      fname->WriteText(dialog.GetPath());
-
-      prefs.set(wxT("directories/open-file"), dialog.GetDirectory());
+   if (dialog.ShowModal() == wxID_OK) {
+      SetTargetFile(dialog.GetPath());
       FindWindowById(MonkeyMoore_KWord)->SetFocus();
+   }
+}
+
+void MonkeyFrame::SetTargetFile(wxString target_path) {
+   wxTextCtrl *filename_ctrl = GetWindow<wxTextCtrl>(MonkeyMoore_FName);
+
+   if (!filename_ctrl->IsEmpty()) {
+      filename_ctrl->Clear();
+   }
+
+   if (wxFileName::Exists(target_path)) {
+      filename_ctrl->WriteText(target_path);
+      prefs.set(wxT("directories/open-file"), wxFileName(target_path).GetPath());
+   }
+   else {
+      ShowWarning(_("The target file does not exist"));
    }
 }
 

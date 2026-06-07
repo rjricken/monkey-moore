@@ -4,6 +4,7 @@ find_package(wxWidgets REQUIRED COMPONENTS core base adv)
 set(GUI_HEADERS
    byteswap.hpp
    constants.hpp
+   drop_target.hpp
    filesystem_utils.hpp
    about_dialog.hpp
    monkey_app.hpp
@@ -21,6 +22,7 @@ set(GUI_SRCS
    monkey_frame.cpp
    monkey_prefs.cpp
    about_dialog.cpp
+   drop_target.cpp
 )
 
 add_executable(monkey-moore-gui WIN32 ${GUI_SRCS} ${GUI_HEADERS})
