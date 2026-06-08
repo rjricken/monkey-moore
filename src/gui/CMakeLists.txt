@@ -23,6 +23,7 @@ set(GUI_SRCS
    monkey_prefs.cpp
    dialogs/about_dialog.cpp
    dialogs/custom_sequences.cpp
+   dialogs/settings.cpp
    drop_target.cpp
 )
 

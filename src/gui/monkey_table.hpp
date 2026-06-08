@@ -10,6 +10,8 @@
 #include <vector>
 #include <limits>
 #include <wx/dataview.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/file.h>
 #include <wx/filedlg.h>
 #include <wx/bmpbuttn.h>
