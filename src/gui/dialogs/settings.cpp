@@ -1,4 +1,4 @@
-#include "monkey_options.hpp"
+#include "settings.hpp"
 
 #include <thread>
 #include <wx/sizer.h>
@@ -9,11 +9,11 @@
 #include <wx/checkbox.h>
 #include <wx/button.h>
 
-BEGIN_EVENT_TABLE(MonkeyOptions, wxDialog)
-   EVT_BUTTON(wxID_OK, MonkeyOptions::OnOk)
+BEGIN_EVENT_TABLE(SettingsDialog, wxDialog)
+   EVT_BUTTON(wxID_OK, SettingsDialog::OnOk)
 END_EVENT_TABLE()
 
-MonkeyOptions::MonkeyOptions(
+SettingsDialog::SettingsDialog(
     wxWindow *parent, 
     const wxString &title, 
     MonkeyPrefs &pref, 
@@ -106,10 +106,10 @@ MonkeyOptions::MonkeyOptions(
    smt_numthreads->SetValue(prefs.getInt("settings/perf-search-threads"));
 }
 
-MonkeyOptions::~MonkeyOptions() {
+SettingsDialog::~SettingsDialog() {
 }
 
-void MonkeyOptions::OnOk(wxCommandEvent &WXUNUSED(event)) {
+void SettingsDialog::OnOk(wxCommandEvent &WXUNUSED(event)) {
    prefs.setBool(wxT("settings/ui-center-window"), dynamic_cast<wxCheckBox *>(FindWindowById(MonkeyOptions_AlwaysCenter))->GetValue());
    prefs.setBool(wxT("settings/ui-remember-size"), dynamic_cast<wxCheckBox *>(FindWindowById(MonkeyOptions_RememberSize))->GetValue());
    prefs.setBool(wxT("settings/ui-remember-position"), dynamic_cast<wxCheckBox *>(FindWindowById(MonkeyOptions_RememberPos))->GetValue());

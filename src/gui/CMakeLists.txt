@@ -10,7 +10,7 @@ set(GUI_HEADERS
    monkey_app.hpp
    monkey_error.hpp
    monkey_frame.hpp
-   dialogs/monkey_options.hpp
+   dialogs/settings.hpp
    monkey_prefs.hpp
    dialogs/custom_sequences.hpp
    monkey_table.hpp

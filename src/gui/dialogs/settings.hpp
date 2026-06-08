@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef MONKEY_OPTIONS_HPP
-#define MONKEY_OPTIONS_HPP
+#ifndef SETTINGS_HPP
+#define SETTINGS_HPP
 
 #include "../constants.hpp"
 #include "../monkey_prefs.hpp"
@@ -13,12 +13,12 @@
 * Implements the about dialog box, which displays information about the program.
 * ie: version, build, license, author(s).
 */
-class MonkeyOptions : public wxDialog
+class SettingsDialog : public wxDialog
 {
 public:
-   MonkeyOptions (wxWindow *parent, const wxString &title, MonkeyPrefs &pref, const wxSize &size = wxDefaultSize);
+   SettingsDialog (wxWindow *parent, const wxString &title, MonkeyPrefs &pref, const wxSize &size = wxDefaultSize);
 
-   ~MonkeyOptions ();
+   ~SettingsDialog ();
 
    void OnOk (wxCommandEvent &WXUNUSED(event));
 
@@ -28,4 +28,4 @@ private:
    DECLARE_EVENT_TABLE()
 };
 
-#endif //~MONKEY_OPTIONS_HPP
+#endif
