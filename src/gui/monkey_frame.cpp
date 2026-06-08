@@ -766,7 +766,7 @@ void MonkeyFrame::OnCopyAddress (wxCommandEvent &WXUNUSED(event))
 
 void MonkeyFrame::OnManageCharSeqs (wxCommandEvent &WXUNUSED(event))
 {
-   MonkeySeqs seqs(this, _("Manage character sequences"), prefs, images, wxSize(450, 340));
+   CustomSequencesDialog seqs(this, _("Manage character sequences"), prefs, images, wxSize(450, 340));
    seqs.CenterOnParent();
    seqs.ShowModal();
 

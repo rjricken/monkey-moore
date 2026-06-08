@@ -14,10 +14,10 @@
 #include <vector>
 #include <utility>
 
-class MonkeySeqs : public wxDialog {
+class CustomSequencesDialog : public wxDialog {
 public:
-   MonkeySeqs (wxWindow *parent, const wxString &title, MonkeyPrefs &pref, wxImageList &imgs, const wxSize& size = wxDefaultSize);
-   ~MonkeySeqs ();
+   CustomSequencesDialog (wxWindow *parent, const wxString &title, MonkeyPrefs &pref, wxImageList &imgs, const wxSize& size = wxDefaultSize);
+   ~CustomSequencesDialog ();
 
    void OnRemove (wxCommandEvent &WXUNUSED(event));
    void OnAddItem (wxCommandEvent &WXUNUSED(event));

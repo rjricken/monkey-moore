@@ -8,15 +8,15 @@
 #include <wx/dataview.h>
 #include <wx/file.h>
 
-wxBEGIN_EVENT_TABLE(MonkeySeqs, wxDialog)
-   EVT_BUTTON(MonkeySeqs_AddNew, MonkeySeqs::OnAddItem)
-   EVT_BUTTON(MonkeySeqs_Remove, MonkeySeqs::OnRemove)
-   EVT_BUTTON(MonkeySeqs_Cancel, MonkeySeqs::OnCancel)
-   EVT_BUTTON(MonkeySeqs_SaveChanges, MonkeySeqs::OnSave)
-   EVT_UPDATE_UI(MonkeySeqs_Remove, MonkeySeqs::OnUpdateUI)
+wxBEGIN_EVENT_TABLE(CustomSequencesDialog, wxDialog)
+   EVT_BUTTON(MonkeySeqs_AddNew, CustomSequencesDialog::OnAddItem)
+   EVT_BUTTON(MonkeySeqs_Remove, CustomSequencesDialog::OnRemove)
+   EVT_BUTTON(MonkeySeqs_Cancel, CustomSequencesDialog::OnCancel)
+   EVT_BUTTON(MonkeySeqs_SaveChanges, CustomSequencesDialog::OnSave)
+   EVT_UPDATE_UI(MonkeySeqs_Remove, CustomSequencesDialog::OnUpdateUI)
 wxEND_EVENT_TABLE()
 
-MonkeySeqs::MonkeySeqs(
+CustomSequencesDialog::CustomSequencesDialog(
    wxWindow *parent, 
    const wxString &title, 
    MonkeyPrefs &pref, 
@@ -64,11 +64,11 @@ MonkeySeqs::MonkeySeqs(
    InitTableData(seqs);
 }
 
-MonkeySeqs::~MonkeySeqs()
+CustomSequencesDialog::~CustomSequencesDialog()
 {
 }
 
-void MonkeySeqs::OnRemove(wxCommandEvent &WXUNUSED(event))
+void CustomSequencesDialog::OnRemove(wxCommandEvent &WXUNUSED(event))
 {
    wxDataViewListCtrl *dataVw = static_cast<wxDataViewListCtrl *>(FindWindowById(MonkeySeqs_DataTable));
 
@@ -89,7 +89,7 @@ void MonkeySeqs::OnRemove(wxCommandEvent &WXUNUSED(event))
    }
 }
 
-void MonkeySeqs::OnAddItem(wxCommandEvent &WXUNUSED(event))
+void CustomSequencesDialog::OnAddItem(wxCommandEvent &WXUNUSED(event))
 {
    wxDataViewListCtrl *dataVw = static_cast<wxDataViewListCtrl *>(FindWindowById(MonkeySeqs_DataTable));
 
@@ -104,7 +104,7 @@ void MonkeySeqs::OnAddItem(wxCommandEvent &WXUNUSED(event))
    dataVw->EditItem(item, col);
 }
 
-void MonkeySeqs::OnUpdateUI(wxUpdateUIEvent &event)
+void CustomSequencesDialog::OnUpdateUI(wxUpdateUIEvent &event)
 {
    wxDataViewListCtrl *dataVw = static_cast<wxDataViewListCtrl *>(FindWindowById(MonkeySeqs_DataTable));
 
@@ -112,12 +112,12 @@ void MonkeySeqs::OnUpdateUI(wxUpdateUIEvent &event)
       event.Enable(dataVw->GetSelectedItemsCount() ? true : false);
 }
 
-void MonkeySeqs::OnCancel(wxCommandEvent &WXUNUSED(event))
+void CustomSequencesDialog::OnCancel(wxCommandEvent &WXUNUSED(event))
 {
    Close();
 }
 
-void MonkeySeqs::OnSave(wxCommandEvent &WXUNUSED(event))
+void CustomSequencesDialog::OnSave(wxCommandEvent &WXUNUSED(event))
 {
    wxDataViewListCtrl *dataVw = static_cast<wxDataViewListCtrl *>(FindWindowById(MonkeySeqs_DataTable));
    wxDataViewListStore *store = dataVw->GetStore();
@@ -154,7 +154,7 @@ void MonkeySeqs::OnSave(wxCommandEvent &WXUNUSED(event))
    Close();
 }
 
-void MonkeySeqs::InitTableData(
+void CustomSequencesDialog::InitTableData(
    const std::vector<std::pair<wxString, wxString>> &items
 ) {
    wxDataViewListCtrl *datavw = static_cast<wxDataViewListCtrl *>(FindWindowById(MonkeySeqs_DataTable));
