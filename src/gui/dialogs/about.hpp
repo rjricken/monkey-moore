@@ -4,7 +4,6 @@
 #define ABOUT_DIALOG_HPP
 
 #include "../constants.hpp"
-#include "../filesystem_utils.hpp"
 
 #include <wx/image.h>
 #include <wx/dialog.h>

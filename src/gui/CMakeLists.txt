@@ -2,10 +2,8 @@ find_package(tinyxml2 CONFIG REQUIRED)
 find_package(wxWidgets REQUIRED COMPONENTS core base adv)
 
 set(GUI_HEADERS
-   byteswap.hpp
    constants.hpp
    drop_target.hpp
-   filesystem_utils.hpp
    monkey_app.hpp
    monkey_error.hpp
    monkey_frame.hpp
@@ -15,6 +13,8 @@ set(GUI_HEADERS
    dialogs/custom_sequences.hpp
    dialogs/settings.hpp
    dialogs/table_creator.hpp
+   utils/byteswap.hpp
+   utils/filesystem_utils.hpp
 )
 
 set(GUI_SRCS

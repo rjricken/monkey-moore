@@ -3,7 +3,7 @@
 #include "monkey_app.hpp"
 #include "monkey_frame.hpp"
 #include "monkey_error.hpp"
-#include "filesystem_utils.hpp"
+#include "utils/filesystem_utils.hpp"
 #include "constants.hpp"
 
 #include <wx/app.h>

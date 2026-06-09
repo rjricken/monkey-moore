@@ -3,7 +3,7 @@
 #include "table_creator.hpp"
 
 #include "../constants.hpp"
-#include "../byteswap.hpp"
+#include "../utils/byteswap.hpp"
 #include "../monkey_prefs.hpp"
 
 #include <vector>

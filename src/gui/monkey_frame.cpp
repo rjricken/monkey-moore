@@ -8,8 +8,8 @@
 #include "dialogs/custom_sequences.hpp"
 #include "search_thread.hpp"
 #include "drop_target.hpp"
-#include "filesystem_utils.hpp"
-#include "byteswap.hpp"
+#include "utils/filesystem_utils.hpp"
+#include "utils/byteswap.hpp"
 
 #include <wx/file.h>
 #include <wx/filedlg.h>

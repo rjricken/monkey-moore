@@ -2,6 +2,8 @@
 
 #include "about.hpp"
 
+#include "../utils/filesystem_utils.hpp"
+
 #include <wx/hyperlink.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
