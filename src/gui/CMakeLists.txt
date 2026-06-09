@@ -10,11 +10,11 @@ set(GUI_HEADERS
    monkey_error.hpp
    monkey_frame.hpp
    monkey_prefs.hpp
+   search_thread.hpp
    dialogs/about.hpp
    dialogs/custom_sequences.hpp
    dialogs/settings.hpp
    dialogs/table_creator.hpp
-   monkey_thread.hpp
 )
 
 set(GUI_SRCS

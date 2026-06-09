@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef MONKEY_THREAD_HPP
-#define MONKEY_THREAD_HPP
+#ifndef SEARCH_THREAD_HPP
+#define SEARCH_THREAD_HPP
 
 #include <wx/file.h>
 #include <cmath>
@@ -119,4 +119,4 @@ private:
    std::vector<result_type> &m_results;
 };
 
-#endif //~MONKEY_THREAD_HPP
+#endif

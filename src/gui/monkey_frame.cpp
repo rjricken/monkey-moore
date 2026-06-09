@@ -6,7 +6,7 @@
 #include "dialogs/settings.hpp"
 #include "dialogs/table_creator.hpp"
 #include "dialogs/custom_sequences.hpp"
-#include "monkey_thread.hpp"
+#include "search_thread.hpp"
 #include "drop_target.hpp"
 #include "filesystem_utils.hpp"
 #include "byteswap.hpp"
