@@ -4,7 +4,7 @@
 #include "monkey_frame.hpp"
 #include "dialogs/about.hpp"
 #include "dialogs/settings.hpp"
-#include "monkey_table.hpp"
+#include "dialogs/monkey_table.hpp"
 #include "dialogs/custom_sequences.hpp"
 #include "monkey_thread.hpp"
 #include "drop_target.hpp"

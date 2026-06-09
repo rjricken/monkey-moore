@@ -6,14 +6,14 @@ set(GUI_HEADERS
    constants.hpp
    drop_target.hpp
    filesystem_utils.hpp
-   dialogs/about.hpp
    monkey_app.hpp
    monkey_error.hpp
    monkey_frame.hpp
-   dialogs/settings.hpp
    monkey_prefs.hpp
+   dialogs/about.hpp
    dialogs/custom_sequences.hpp
-   monkey_table.hpp
+   dialogs/settings.hpp
+   dialogs/monkey_table.hpp
    monkey_thread.hpp
 )
 

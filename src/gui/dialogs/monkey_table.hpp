@@ -3,9 +3,9 @@
 #ifndef MONKEY_TABLE_HPP
 #define MONKEY_TABLE_HPP
 
-#include "constants.hpp"
-#include "byteswap.hpp"
-#include "monkey_prefs.hpp"
+#include "../constants.hpp"
+#include "../byteswap.hpp"
+#include "../monkey_prefs.hpp"
 
 #include <vector>
 #include <limits>
