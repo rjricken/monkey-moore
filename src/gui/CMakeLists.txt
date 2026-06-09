@@ -24,6 +24,7 @@ set(GUI_SRCS
    dialogs/about.cpp
    dialogs/custom_sequences.cpp
    dialogs/settings.cpp
+   dialogs/table_creator.cpp
    drop_target.cpp
 )
 

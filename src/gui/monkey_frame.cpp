@@ -9,14 +9,17 @@
 #include "monkey_thread.hpp"
 #include "drop_target.hpp"
 #include "filesystem_utils.hpp"
+#include "byteswap.hpp"
 
 #include <wx/file.h>
+#include <wx/filedlg.h>
 #include <wx/tokenzr.h>
 #include <wx/clipbrd.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
+#include <wx/bmpbuttn.h>
 #include <wx/settings.h>
 #include <wx/radiobut.h>
 #include <wx/valtext.h> 
