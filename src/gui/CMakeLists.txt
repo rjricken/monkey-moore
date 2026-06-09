@@ -13,7 +13,7 @@ set(GUI_HEADERS
    dialogs/about.hpp
    dialogs/custom_sequences.hpp
    dialogs/settings.hpp
-   dialogs/monkey_table.hpp
+   dialogs/table_creator.hpp
    monkey_thread.hpp
 )
 

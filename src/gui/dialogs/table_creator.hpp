@@ -22,10 +22,10 @@
 * about the created table file and makes it possible to the user to edit
 * its contents before saving in the specified format and encoding.
 */
-class MonkeyTable : public wxDialog
+class TableCreatorDialog : public wxDialog
 {
 public:
-   MonkeyTable (wxWindow *parent, const wxString &title, MonkeyPrefs &pref, wxImageList &imgs, const wxSize& size = wxDefaultSize) :
+   TableCreatorDialog (wxWindow *parent, const wxString &title, MonkeyPrefs &pref, wxImageList &imgs, const wxSize& size = wxDefaultSize) :
    wxDialog(parent, wxID_ANY, title, wxDefaultPosition, size), prefs(pref)
    {
       filters.push_back(_("Thingy table file (*.tbl)|*.tbl"));
@@ -77,7 +77,7 @@ public:
       SetSizer(global_sz);
    }
 
-   ~MonkeyTable () {
+   ~TableCreatorDialog () {
    }
 
    /**
@@ -237,8 +237,8 @@ private:
    DECLARE_EVENT_TABLE()
 };
 
-BEGIN_EVENT_TABLE(MonkeyTable, wxDialog)
-   EVT_BUTTON(MonkeyTable_SaveTable, MonkeyTable::OnSaveTable)
+BEGIN_EVENT_TABLE(TableCreatorDialog, wxDialog)
+   EVT_BUTTON(MonkeyTable_SaveTable, TableCreatorDialog::OnSaveTable)
 END_EVENT_TABLE()
 
 #endif //~MONKEY_TABLE_HPP

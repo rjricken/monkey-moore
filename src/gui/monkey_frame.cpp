@@ -4,7 +4,7 @@
 #include "monkey_frame.hpp"
 #include "dialogs/about.hpp"
 #include "dialogs/settings.hpp"
-#include "dialogs/monkey_table.hpp"
+#include "dialogs/table_creator.hpp"
 #include "dialogs/custom_sequences.hpp"
 #include "monkey_thread.hpp"
 #include "drop_target.hpp"
@@ -670,7 +670,7 @@ void MonkeyFrame::OnCreateTbl (wxCommandEvent &WXUNUSED(event))
       result_box->GetItem(sel_item);
       wxASSERT(sel_item.GetData() < results.size());
 
-      MonkeyTable tbldiag(this, _("Create table file"), prefs, images, wxSize(500, 440));
+      TableCreatorDialog tbldiag(this, _("Create table file"), prefs, images, wxSize(500, 440));
 
       auto values_map = results.at(sel_item.GetData()).values_map;
 
