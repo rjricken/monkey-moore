@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "about_dialog.hpp"
+#include "about.hpp"
 
 #include <wx/hyperlink.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/dcbuffer.h>
 
-BEGIN_EVENT_TABLE(MonkeyAbout, wxDialog)
-EVT_PAINT(MonkeyAbout::OnPaint)
+BEGIN_EVENT_TABLE(AboutDialog, wxDialog)
+   EVT_PAINT(AboutDialog::OnPaint)
 END_EVENT_TABLE()
 
-MonkeyAbout::MonkeyAbout(
+AboutDialog::AboutDialog(
    wxWindow *parent, 
    const wxString &title, 
    const wxSize &size
@@ -26,11 +26,11 @@ MonkeyAbout::MonkeyAbout(
    doc_moore->LoadFile(getResourcePath(wxT("ui/doctor_moore.png")), wxBITMAP_TYPE_PNG);
 }
 
-MonkeyAbout::~MonkeyAbout () {
+AboutDialog::~AboutDialog () {
    delete doc_moore;
 }
 
-void MonkeyAbout::OnPaint(
+void AboutDialog::OnPaint(
    wxPaintEvent &WXUNUSED(event)
 ) {
    wxPaintDC dc(this);

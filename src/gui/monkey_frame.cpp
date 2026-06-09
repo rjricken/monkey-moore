@@ -2,7 +2,7 @@
 
 #include "mmoore/text_utils.hpp"
 #include "monkey_frame.hpp"
-#include "dialogs/about_dialog.hpp"
+#include "dialogs/about.hpp"
 #include "dialogs/settings.hpp"
 #include "monkey_table.hpp"
 #include "dialogs/custom_sequences.hpp"
@@ -805,7 +805,7 @@ void MonkeyFrame::OnOptions (wxCommandEvent &WXUNUSED(event))
 */
 void MonkeyFrame::OnAbout (wxCommandEvent &WXUNUSED(event))
 {
-   MonkeyAbout about(this, _("About Monkey-Moore"), wxSize(480, 400));
+   AboutDialog about(this, _("About Monkey-Moore"), wxSize(480, 400));
    about.ShowModal();
 }
 

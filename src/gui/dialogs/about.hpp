@@ -14,12 +14,12 @@
 * Implements the about dialog box, which displays information about the program.
 * ie: version, build, license, author(s).
 */
-class MonkeyAbout : public wxDialog
+class AboutDialog : public wxDialog
 {
 public:
-   MonkeyAbout (wxWindow* parent, const wxString& title, const wxSize& size = wxDefaultSize);
+   AboutDialog (wxWindow* parent, const wxString& title, const wxSize& size = wxDefaultSize);
 
-   ~MonkeyAbout ();
+   ~AboutDialog ();
 
    void OnPaint(wxPaintEvent &WXUNUSED(event));
 
